@@ -1,8 +1,8 @@
-# Setup and Teardown functions
+# Setup 및 Teardown 함수
 
-So far, you've been putting most of the code within the `default` function. All code within the default function is called **VU code**, because it is code that every virtual user executes and repeats until the end of the test.
+지금까지 대부분의 코드를 `default` 함수 내에 넣었습니다. default 함수 내의 모든 코드는 **VU 코드**라고 하며, 모든 가상 사용자가 테스트가 끝날 때까지 실행하고 반복하는 코드입니다.
 
-Unless you specify a number of virtual users and a test duration in [the test options](../II-k6-Foundations/06-k6-Load-Test-Options.md), k6 runs your script once with one iteration and one virtual user. But what happens when you set a test duration of, say, one minute?
+[테스트 옵션](../II-k6-Foundations/06-k6-Load-Test-Options.md)에서 가상 사용자 수와 테스트 기간을 지정하지 않으면, k6는 한 번의 iteration과 하나의 가상 사용자로 스크립트를 한 번 실행합니다. 그런데 테스트 기간을 1분으로 설정하면 어떻게 될까요?
 
 ```js
 import { sleep } from 'k6'
@@ -21,7 +21,7 @@ export default function () {
 
 ```
 
-If you run the test above, you'll notice the following lines in the output:
+위 테스트를 실행하면 출력에서 다음 줄들이 보입니다:
 
 ```plain
 INFO[0000] An iteration was executed                     source=console
@@ -38,28 +38,28 @@ INFO[0008] An iteration was executed                     source=console
 running (1m00.0s), 0/1 VUs, 60 complete and 0 interrupted iterations
 ```
 
-Each of these lines represents one iteration - a single execution of the VU code.
+각 줄은 하나의 iteration, 즉 VU 코드의 단일 실행을 나타냅니다.
 
-Since k6 repeatedly executes everything inside the default function, you can plan your scripts accordingly. For example, there's no need to loop code within the default function now that you know that the entire function will be repeated throughout the test.
+k6가 default 함수 내의 모든 것을 반복적으로 실행하기 때문에, 이에 맞게 스크립트를 계획할 수 있습니다. 예를 들어, 전체 함수가 테스트 전반에 걸쳐 반복된다는 것을 알기 때문에 이제 default 함수 내에서 코드를 반복할 필요가 없습니다.
 
-However, putting ALL code within the default function can also be detrimental to your test.
+그러나 모든 코드를 default 함수 내에 넣으면 테스트에 해가 될 수 있습니다.
 
-## Issues with iterating all code
+## 모든 코드를 반복하는 경우의 문제점
 
-Repeating all the code within the default function can be unnecessarily resource-intensive, especially if your script involves the following:
-- Generating or reading from large data files
-- Test data preparation, such as creating user accounts that the tests will use
-- Initializing imported libraries
+default 함수 내의 모든 코드를 반복하는 것은 특히 스크립트에 다음과 같은 것이 포함된 경우 불필요하게 리소스를 많이 사용할 수 있습니다:
+- 대용량 데이터 파일 생성 또는 읽기
+- 테스트가 사용할 사용자 계정 생성과 같은 테스트 데이터 준비
+- 가져온 라이브러리 초기화
 
-Another issue that might arise from putting all the code in the default function has to do with the business process you're trying to test. 
+모든 코드를 default 함수에 넣는 것과 관련하여 발생할 수 있는 또 다른 문제는 테스트하려는 비즈니스 프로세스와 관련이 있습니다.
 
-If the focus of your test scenario is an action that requires a login, such as a new user portal page, you may not necessarily care about repeating the login on every iteration. In fact, repeatedly logging in and logging out might cause test user accounts to be locked out by the application's security policies.
+테스트 scenario의 초점이 새 사용자 포털 페이지와 같이 로그인이 필요한 작업인 경우, 모든 iteration에서 로그인을 반복할 필요가 없을 수 있습니다. 실제로 반복적으로 로그인하고 로그아웃하면 애플리케이션의 보안 정책에 의해 테스트 사용자 계정이 잠길 수 있습니다.
 
-You may also want to execute some code only after the entire test. A common use case for this is removing any unnecessary data that the test may have generated. For example, you may want to remove all remaining items in a cart, or delete an account. Insufficient test data management may degrade your test environment over time and lead to misleading load test results.
+또한 전체 테스트 후에만 일부 코드를 실행하고 싶을 수도 있습니다. 이에 대한 일반적인 사용 사례는 테스트가 생성했을 수 있는 불필요한 데이터를 제거하는 것입니다. 예를 들어, 장바구니에 남아 있는 모든 항목을 제거하거나 계정을 삭제할 수 있습니다. 불충분한 테스트 데이터 관리는 시간이 지남에 따라 테스트 환경을 저하시키고 부하 테스트 결과를 오해하게 만들 수 있습니다.
 
-## Where should you put what code?
+## 어디에 어떤 코드를 넣어야 하나요?
 
-In k6, where you put your code changes when and how often that code is executed.
+k6에서 코드를 어디에 넣느냐에 따라 해당 코드가 실행되는 시기와 빈도가 달라집니다.
 
 ```js
 // This is init code. It runs once per VU before VU code, once before setup, and once before teardown.
@@ -80,18 +80,18 @@ export function teardown() {
 
 ### Init
 
-Code in the global scope is called init code, and it is executed:
-- Once when each VU is initialized, before anything in the default function
-- Once before the `setup()` function
-- Once before the `teardown()` function
+전역 범위의 코드는 init 코드라고 하며, 다음과 같이 실행됩니다:
+- default 함수의 모든 것 이전에 각 VU가 초기화될 때 한 번
+- `setup()` 함수 이전에 한 번
+- `teardown()` 함수 이전에 한 번
 
-You can think of this section as a place to make any preparations you need before you run the first iteration per user.
+이 섹션은 VU당 첫 번째 iteration을 실행하기 전에 필요한 준비를 하는 곳으로 생각할 수 있습니다.
 
-Here are some things that you may want to put in init code:
-- Declaration of variables that you may want to reuse between iterations of a single VU or across VUs (such as a [Shared Array](04-Adding-test-data.md#Shared-Array))
-- A [k6 Load Test Options](../II-k6-Foundations/06-k6-Load-Test-Options.md) object where you can set the parameters of the test
+init 코드에 넣을 수 있는 항목은 다음과 같습니다:
+- 단일 VU의 iteration 간에 또는 VU 전반에 걸쳐 재사용하고 싶을 수 있는 변수 선언(예: [Shared Array](04-Adding-test-data.md#Shared-Array))
+- 테스트의 매개변수를 설정할 수 있는 [k6 부하 테스트 옵션](../II-k6-Foundations/06-k6-Load-Test-Options.md) 객체
 
-Not all k6 features are available for use in the init section; for example, you cannot make HTTP requests within init code.
+모든 k6 기능이 init 섹션에서 사용 가능한 것은 아닙니다. 예를 들어, init 코드 내에서 HTTP 요청을 할 수 없습니다.
 
 ### Setup
 
@@ -101,16 +101,16 @@ export function setup() {
 }
 ```
 
-The setup function is a helper function where you can put code that needs to be executed only once across all VUs, before any VU code. It is executed right after the init code.
+setup 함수는 모든 VU 코드 이전에, 모든 VU 전체에 걸쳐 한 번만 실행되어야 하는 코드를 넣을 수 있는 헬퍼 함수입니다. init 코드 바로 뒤에 실행됩니다.
 
-Here are some things that you may want to do during setup:
-- Checking that the test environment is in an expected state
-- Generating test data that multiple VUs will use (this data can then be passed onto other functions)
-- Setting expected HTTP response codes for the rest of the test via [`setResponseCallback()`](https://k6.io/docs/javascript-api/k6-http/setresponsecallback-callback/)
+setup 중에 하고 싶을 수 있는 항목은 다음과 같습니다:
+- 테스트 환경이 예상된 상태인지 확인
+- 여러 VU가 사용할 테스트 데이터 생성(이 데이터는 다른 함수로 전달될 수 있음)
+- [`setResponseCallback()`](https://k6.io/docs/javascript-api/k6-http/setresponsecallback-callback/)을 통해 나머지 테스트에 대한 예상 HTTP 응답 코드 설정
 
-Anything returned in the setup function will be saved and can be passed on to the default and teardown functions like this:
+setup 함수에서 반환된 모든 것은 저장되고 다음과 같이 default 및 teardown 함수로 전달될 수 있습니다:
 
-The full k6 API is available during setup, including making HTTP requests.
+HTTP 요청 수행을 포함하여 전체 k6 API를 setup 중에 사용할 수 있습니다.
 
 ### Teardown
 
@@ -120,16 +120,16 @@ export function teardown() {
 }
 ```
 
-The teardown function is similar to the setup function in that it runs only once per test (not per VU), but it runs at the _end_ of the test. Any teardown code will be the last to be executed by k6 before test results are generated.
+teardown 함수는 테스트당 한 번만 실행된다는 점에서 setup 함수와 유사하지만(VU당이 아님), 테스트의 _끝_에 실행됩니다. 모든 teardown 코드는 테스트 결과가 생성되기 전에 k6가 마지막으로 실행합니다.
 
-If the `setup()` function ends abnormally, the `teardown()` function isn't called. Consider adding logic to the setup for proper cleanup if necessary. 
+`setup()` 함수가 비정상적으로 종료되면 `teardown()` 함수는 호출되지 않습니다. 필요한 경우 적절한 정리를 위해 setup에 로직을 추가하는 것을 고려하세요.
 
-Here are some things you might want to do during teardown:
-- Logging out any active users
-- Deleting test data generated during test execution
-- Putting the test environment back to the state it was in before the test
+teardown 중에 하고 싶을 수 있는 항목은 다음과 같습니다:
+- 활성 사용자 로그아웃
+- 테스트 실행 중 생성된 테스트 데이터 삭제
+- 테스트 전 상태로 테스트 환경 복구
 
-The full k6 API is available during teardown, including making HTTP requests.
+HTTP 요청 수행을 포함하여 전체 k6 API를 teardown 중에 사용할 수 있습니다.
 
 ```js
 export function setup() {
@@ -147,25 +147,25 @@ export function teardown(data) {
 }
 ```
 
-Check the [test lifecycle documentation](https://k6.io/docs/using-k6/test-lifecycle/) for more details.
+자세한 내용은 [테스트 라이프사이클 문서](https://k6.io/docs/using-k6/test-lifecycle/)를 확인하세요.
 
-## Setup and teardown while debugging
+## 디버깅 중 Setup 및 Teardown
 
-You may want to skip setup and teardown in some situations, such as when you're debugging your script or running a small shakeout test that doesn't require data generation.
+스크립트를 디버깅하거나 데이터 생성이 필요하지 않은 소규모 점검 테스트를 실행하는 경우와 같이, 일부 상황에서는 setup과 teardown을 건너뛰고 싶을 수 있습니다.
 
-You can skip these functions using the CLI like this:
+다음과 같이 CLI를 사용하여 이 함수들을 건너뛸 수 있습니다:
 
 ```shell
 k6 run test.js --no-setup --no-teardown
 ```
 
-### Setup/teardown per VU
+### VU당 Setup/Teardown
 
-The setup and teardown helper functions run once per TEST, not per VU. What if you want to run certain code at the beginning or at the end of every VU?
+setup과 teardown 헬퍼 함수는 VU당이 아니라 테스트당 한 번 실행됩니다. 모든 VU의 시작이나 끝에 특정 코드를 실행하려면 어떻게 해야 할까요?
 
-#### Before each VU
+#### 각 VU 이전
 
-You can declare a variable in the init code that you can use to run code only on the first iteration of a VU like this:
+다음과 같이 init 코드에서 변수를 선언하여 VU의 첫 번째 iteration에서만 코드를 실행할 수 있습니다:
 
 ```js
 // This is init code. It runs once per VU before VU code, once before setup, and once before teardown.
@@ -186,15 +186,15 @@ export default function () {
 }
 ```
 
-You can use this approach to log in with a user account only once, and then iterate through actions after authentication.
+이 접근 방식을 사용하면 사용자 계정으로 한 번만 로그인한 다음 인증 후 동작을 반복할 수 있습니다.
 
-#### After each VU
+#### 각 VU 이후
 
-If you know exactly how many iterations you want your test to run, you can apply the same approach involving the variable in init code to run code per VU, just before going to the teardown function. You could also include VU code that is conditional on the relative time that the test has been running.
+테스트가 실행할 iteration 수를 정확히 알고 있다면, init 코드의 변수를 포함하는 동일한 접근 방식을 적용하여 teardown 함수로 가기 직전에 VU당 코드를 실행할 수 있습니다. 테스트가 실행된 상대적 시간에 조건부로 VU 코드를 포함할 수도 있습니다.
 
-However, you might not always know how many iterations your test will run or how long it will run for. For those situations, the best option is to use the teardown function instead.
+그러나 테스트가 몇 번의 iteration을 실행할지 또는 얼마나 오래 실행될지 항상 알 수는 없습니다. 그런 상황에서 가장 좋은 옵션은 대신 teardown 함수를 사용하는 것입니다.
 
-Below is an example of how this might work in a situation where you'd like to choose a random user account, log in once per VU, and then log out all user accounts:
+아래는 무작위 사용자 계정을 선택하고, VU당 한 번 로그인하고, 그런 다음 모든 사용자 계정을 로그아웃하고 싶은 상황에서 이것이 어떻게 작동할 수 있는지에 대한 예입니다:
 
 ```js
 import { sleep } from 'k6'
@@ -234,21 +234,21 @@ export function teardown() {
 }
 ```
 
-## Test your knowledge
+## 지식 확인
 
 ### Question 1
 
-Which function is typically executed the most number of times in a full load test?
+전체 부하 테스트에서 가장 많은 횟수로 실행되는 함수는 무엇입니까?
 
-A: The default function
+A: default 함수
 
-B: The setup function
+B: setup 함수
 
-C: The teardown function
+C: teardown 함수
 
 ### Question 2
 
-A k6 test runs 100 VUs for 30 minutes. Assuming the test script contains a setup function, how many times would you expect the setup function to have been executed?
+k6 테스트가 100 VU로 30분 동안 실행됩니다. 테스트 스크립트에 setup 함수가 포함되어 있다고 가정할 때, setup 함수가 몇 번 실행될 것으로 예상합니까?
 
 A: 100
 
@@ -258,7 +258,7 @@ C: 30
 
 ### Question 3
 
-A test script has setup, default, and teardown functions and runs with 1 VU for 1 iteration. How many times would you expect the init code to be executed?
+테스트 스크립트에 setup, default, teardown 함수가 있고 1 VU로 1번의 iteration으로 실행됩니다. init 코드가 몇 번 실행될 것으로 예상합니까?
 
 A: 1
 
@@ -266,8 +266,8 @@ B: 3
 
 C: 5
 
-### Answers
+### 정답
 
-1. A. The setup and teardown functions are deliberately executed only once per test (at the beginning and at the end, respectively). Meanwhile, the default function is what is repeatedly executed.
-2. B. The setup function is only executed once, at the beginning of the test.
-3. B. Init code (code in the global scope) is executed once per VU, once before setup, and once before teardown.
+1. A. setup과 teardown 함수는 의도적으로 테스트당 한 번씩만 실행됩니다(각각 시작과 끝에). 한편 default 함수는 반복적으로 실행됩니다.
+2. B. setup 함수는 테스트 시작 시 한 번만 실행됩니다.
+3. B. Init 코드(전역 범위의 코드)는 VU당 한 번, setup 이전에 한 번, teardown 이전에 한 번 실행됩니다.

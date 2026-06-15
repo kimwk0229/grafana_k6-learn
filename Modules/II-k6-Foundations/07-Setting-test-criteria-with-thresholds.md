@@ -1,10 +1,10 @@
-k6 encourages developers and testers to define goals for each test. To do this, you can set [thresholds](https://k6.io/docs/using-k6/thresholds) to evaluate whether the test performs to a certain criteria. As an example, you can use thresholds to assert that the system performs within your service-level objectives while the test runs.
+k6는 개발자와 테스터가 각 테스트에 대한 목표를 정의하도록 권장합니다. 이를 위해 테스트가 특정 기준에 맞게 수행되는지 평가하는 [임계값(thresholds)](https://k6.io/docs/using-k6/thresholds)을 설정할 수 있습니다. 예를 들어, 테스트가 실행되는 동안 시스템이 서비스 수준 목표(SLO) 내에서 성능을 발휘하는지 확인하기 위해 thresholds를 사용할 수 있습니다.
 
-You can also use Thresholds to determine whether a test passed or failed. Adding thresholds to a load-testing script is useful because it tells k6 to alert you when those thresholds are breached, or even stop the test. Having thresholds as part of the code makes it easier for other colleagues to step in and run the test.
+테스트 통과 또는 실패를 결정하기 위해 thresholds를 사용할 수도 있습니다. 부하 테스트 스크립트에 thresholds를 추가하는 것은 k6가 해당 thresholds가 위반될 때 경고하거나 테스트를 중단하도록 지시하기 때문에 유용합니다. 코드의 일부로 thresholds를 포함하면 다른 동료가 테스트를 실행하는 데 더 쉽게 참여할 수 있습니다.
 
-If you'd like to run load tests within a CI/CD pipeline, you'll also want k6 to send non-zero exit codes so that failures are clearly recorded.
+CI/CD 파이프라인 내에서 부하 테스트를 실행하려는 경우, 실패가 명확하게 기록되도록 k6가 0이 아닌 종료 코드를 보내기를 원할 것입니다.
 
-You can add thresholds to a k6 script in the Test Options object:
+테스트 옵션 객체의 k6 스크립트에 thresholds를 추가할 수 있습니다:
 
 ```js
 export let options = {
@@ -20,22 +20,22 @@ export let options = {
 };
 ```
 
-Thresholds are always based on metrics. You can review the full list of [built-in metrics here](https://k6.io/docs/using-k6/metrics/#built-in-metrics).
+thresholds는 항상 메트릭을 기반으로 합니다. [내장 메트릭의 전체 목록](https://k6.io/docs/using-k6/metrics/#built-in-metrics)을 검토할 수 있습니다.
 
-Thresholds are expressed as a statement of what is expected:
-- When threshold statements evaluate to `true`, the threshold is met and the test passes. The exit code that k6 returns is 0.
-- When threshold statements are `false`, the threshold is not met, the test fails, and k6 returns a non-zero exit code.
+thresholds는 기대되는 것에 대한 진술로 표현됩니다:
+- threshold 진술이 `true`로 평가되면, threshold가 충족되고 테스트가 통과됩니다. k6가 반환하는 종료 코드는 0입니다.
+- threshold 진술이 `false`이면, threshold가 충족되지 않아 테스트가 실패하고, k6는 0이 아닌 종료 코드를 반환합니다.
 
-## Types of thresholds
+## thresholds 유형
 
-Below are the most common types of thresholds you can set. You can set multiple types thresholds in a single test:
-- Error rate
-- Response time
-- Checks
+다음은 설정할 수 있는 가장 일반적인 thresholds 유형입니다. 단일 테스트에서 여러 유형의 thresholds를 설정할 수 있습니다:
+- 오류율
+- 응답 시간
+- check
 
-**Testing best practice**: Use error rate, response time, and checks thresholds in your tests where possible.
+**테스트 모범 사례**: 가능한 경우 테스트에서 오류율, 응답 시간 및 check thresholds를 사용하세요.
 
-### Error rate
+### 오류율
 
 ```js
 thresholds: {
@@ -43,18 +43,18 @@ thresholds: {
 },
 ```
 
-To add a threshold for the error rate, use the metric `http_req_failed` and enter the error rate that you expect the test to fall within. By default, `http_req_failed` counts any HTTP 4xx and HTTP 5xx errors as a failure. You can change this behavior with [`setResponseCallback()`](https://k6.io/docs/javascript-api/k6-http/setresponsecallback-callback/).
+오류율에 대한 threshold를 추가하려면, `http_req_failed` 메트릭을 사용하고 테스트가 충족되길 기대하는 오류율을 입력하세요. 기본적으로 `http_req_failed`는 모든 HTTP 4xx 및 HTTP 5xx 오류를 실패로 계산합니다. 이 동작은 [`setResponseCallback()`](https://k6.io/docs/javascript-api/k6-http/setresponsecallback-callback/)으로 변경할 수 있습니다.
 
-The threshold above will be met only if the error rate during the test is less than or equal to 5%.
+위의 threshold는 테스트 중 오류율이 5% 이하인 경우에만 충족됩니다.
 
-#### Rule of thumb: error rate
+#### 경험칙: 오류율
 
-What's a good error rate? This depends on your test, script, test data, application, and end users' tolerance for error:
-- For mission-critical applications, consider a lower error rate such as 1%.
-- For auxiliary or non-critical applications, consider a higher error rate of 5%.
-- For testing disaster recovery situations, where you're purposely terminating or restarting server nodes, an error rate of 10-15% may be acceptable.
+좋은 오류율이란 무엇일까요? 이는 테스트, 스크립트, 테스트 데이터, 애플리케이션 및 사용자의 오류에 대한 허용 범위에 따라 다릅니다:
+- 미션 크리티컬 애플리케이션의 경우 1%와 같이 낮은 오류율을 고려하세요.
+- 보조적이거나 중요하지 않은 애플리케이션의 경우 5%와 같은 높은 오류율을 고려하세요.
+- 재해 복구 상황 테스트의 경우, 의도적으로 서버 노드를 종료하거나 재시작하는 경우 10-15%의 오류율이 허용 가능할 수 있습니다.
 
-### Response time
+### 응답 시간
 
 ```js
 thresholds: {
@@ -62,34 +62,34 @@ thresholds: {
 },
 ```
 
-In the example above, the response time threshold is set to a 95th percentile response time of 5000 milliseconds. This statement will be true if 95% of all HTTP requests have a response time of 5 seconds or less.
+위의 예시에서 응답 시간 threshold는 5000밀리초의 95번째 백분위수 응답 시간으로 설정되어 있습니다. 이 진술은 모든 HTTP 요청의 95%가 5초 이하의 응답 시간을 가지면 참입니다.
 
-You can add a response time threshold using any of the metrics displayed in the [k6 end-of-test summary](03-Understanding-k6-results.md):
+[k6 테스트 종료 요약](03-Understanding-k6-results.md)에 표시된 메트릭 중 하나를 사용하여 응답 시간 threshold를 추가할 수 있습니다:
 
 ```plain
 http_req_duration..............: avg=151.06ms min=151.06ms med=151.06ms max=151.06ms p(90)=151.06ms p(95)=151.06ms
 ```
 
-That includes:
-- average: `http_req_duration: ['avg<=5000'],`
-- minimum: `http_req_duration: ['min<=1000'],`
-- median: `http_req_duration: ['med<=3000'],`
-- maximum: `http_req_duration: ['max<=6000'],`
-- percentiles: `http_req_duration: ['p(95)<=5000'],`
+여기에는 다음이 포함됩니다:
+- 평균: `http_req_duration: ['avg<=5000'],`
+- 최솟값: `http_req_duration: ['min<=1000'],`
+- 중앙값: `http_req_duration: ['med<=3000'],`
+- 최댓값: `http_req_duration: ['max<=6000'],`
+- 백분위수: `http_req_duration: ['p(95)<=5000'],`
 
-**Testing best practice**: All of these metrics can be skewed by the presence of outliers in response time on either extreme, but if you don't know which one to choose, we recommend starting with the 95th percentile response time.
+**테스트 모범 사례**: 이러한 메트릭들은 모두 극단적인 응답 시간 이상값의 존재에 의해 왜곡될 수 있지만, 어떤 것을 선택해야 할지 모르겠다면 95번째 백분위수 응답 시간으로 시작하는 것을 권장합니다.
 
-#### Rule of thumb: response time
+#### 경험칙: 응답 시간
 
 [![Google mobile-page-speed-new-industry-benchmarks](../../images/52qQi-marketing-strategies-app-and-mobile-page-load-time-statistics-downlo.jpg)](https://www.thinkwithgoogle.com/marketing-strategies/app-and-mobile/page-load-time-statistics/)
 
-[According to research by Google](https://www.thinkwithgoogle.com/marketing-strategies/app-and-mobile/mobile-page-speed-new-industry-benchmarks/), the probability of potential customers leaving your site increases by 32% when the response time increases to 3 seconds.
+[Google의 연구에 따르면](https://www.thinkwithgoogle.com/marketing-strategies/app-and-mobile/mobile-page-speed-new-industry-benchmarks/), 응답 시간이 3초로 늘어날 때 잠재 고객이 사이트를 떠날 확률이 32% 증가합니다.
 
-When in doubt, we recommend using a 95th percentile response time of 2 seconds as a starting point.
+확신이 없다면, 시작점으로 2초의 95번째 백분위수 응답 시간을 사용하는 것을 권장합니다.
 
-#### Using multiple response time thresholds
+#### 여러 응답 시간 threshold 사용하기
 
-You can also string along multiple thresholds for the same metric in an array, and response time is a good candidate for this:
+동일한 메트릭에 대해 여러 thresholds를 배열로 연결할 수도 있으며, 응답 시간이 이에 적합한 후보입니다:
 
 ```js
 thresholds: {
@@ -97,12 +97,12 @@ thresholds: {
 },
 ```
 
-The threshold above states that:
-- 90% of all HTTP requests should have a response time lower than 400 ms
-- 95% of all HTTP requests should have a response time lower than 800 ms
-- 99.9% of all HTTP requests should have a response time lower than 2000 ms
+위의 threshold는 다음을 진술합니다:
+- 모든 HTTP 요청의 90%는 400ms 미만의 응답 시간을 가져야 합니다.
+- 모든 HTTP 요청의 95%는 800ms 미만의 응답 시간을 가져야 합니다.
+- 모든 HTTP 요청의 99.9%는 2000ms 미만의 응답 시간을 가져야 합니다.
 
-> :warning: Specifying multiple thresholds for the same metric. If you want to include more than one threshold for the same metric, such as `http_req_duration` above, you **must** declare them in an array. The example below will NOT work, and will result in only the last line being used as a threshold:
+> :warning: 동일한 메트릭에 대해 여러 thresholds 지정하기. `http_req_duration`과 같이 동일한 메트릭에 대해 하나 이상의 threshold를 포함하려면 배열로 선언해야 **합니다**. 아래 예시는 작동하지 **않으며**, 마지막 줄만 threshold로 사용될 것입니다:
 
 ```js
 thresholds: {
@@ -112,9 +112,9 @@ thresholds: {
 },
 ```
 
-### Checks
+### check
 
-As you learned in [Adding checks to your script](04-Adding-checks-to-your-script.md), failed checks are reported, but they don't affect the status of the test as a whole. If you want to make the test fail when a certain check error rate is reached, you can use a combination of checks and thresholds:
+[스크립트에 check 추가하기](04-Adding-checks-to-your-script.md)에서 배웠듯이, 실패한 check는 보고되지만 전체 테스트의 상태에 영향을 미치지 않습니다. 특정 check 오류율에 도달했을 때 테스트가 실패하게 하려면, check와 thresholds의 조합을 사용할 수 있습니다:
 
 ```js
 thresholds: {
@@ -122,13 +122,13 @@ thresholds: {
 },
 ```
 
-The threshold above states that 90% or more of all checks in the test should be successful. Otherwise, the test will fail.
+위의 threshold는 테스트의 모든 check 중 90% 이상이 성공해야 한다고 진술합니다. 그렇지 않으면 테스트가 실패합니다.
 
-## Aborting test on fail
+## 실패 시 테스트 중단
 
-There may be situations in which you would like the test to stop running if thresholds aren't met. For example, if a test has a very high error rate due to an application component being unresponsive, it may be better to stop the test and start troubleshooting the issue.
+thresholds가 충족되지 않을 때 테스트를 중단하고 싶은 상황이 있을 수 있습니다. 예를 들어, 애플리케이션 구성 요소가 응답하지 않아 테스트에서 매우 높은 오류율이 발생하는 경우, 테스트를 중단하고 문제를 해결하는 것이 더 나을 수 있습니다.
 
-In these situations, you can extend the relevant threshold to tell k6 to abort the test if the threshold is not met. Instead of:
+이러한 상황에서는 관련 threshold를 확장하여 threshold가 충족되지 않으면 k6가 테스트를 중단하도록 지시할 수 있습니다. 다음 대신:
 
 ```js
 thresholds: {
@@ -136,7 +136,7 @@ thresholds: {
 },
 ```
 
-try this:
+다음을 시도하세요:
 
 ```js
 thresholds: {
@@ -147,17 +147,17 @@ thresholds: {
 },
 ```
 
-The extra parameter `abortOnFail: true` instructs k6 to stop the test (without a [graceful stop](https://k6.io/docs/misc/glossary/#graceful-stop)) as soon as the threshold is crossed. In this case, that happens when the error rate goes over 5%. k6 will display the end-of-test summary report with an error that looks like this:
+추가 파라미터 `abortOnFail: true`는 threshold가 초과되는 즉시 k6가 테스트를 중단하도록([graceful stop](https://k6.io/docs/misc/glossary/#graceful-stop) 없이) 지시합니다. 이 경우 오류율이 5%를 초과하면 발생합니다. k6는 다음과 같은 오류와 함께 테스트 종료 요약 보고서를 표시합니다:
 
 ```plain
 ERRO[0012] some thresholds have failed 
 ```
 
-and you'll know that the test aborted due to a threshold failure.
+이것은 threshold 실패로 인해 테스트가 중단되었음을 알려줍니다.
 
-## Run it yourself!
+## 직접 실행해보세요!
 
-Your script should look something like this:
+스크립트는 다음과 같아야 합니다:
 
 ```js
 import http from 'k6/http';
@@ -190,13 +190,13 @@ export default function() {
 }
 ```
 
-Copy the script, save it, and do a `k6 run test.js` to run the test with thresholds.
+스크립트를 복사하고 저장한 후 `k6 run test.js`를 실행하여 thresholds가 있는 테스트를 실행해보세요.
 
-## Test your knowledge
+## 지식 확인
 
-### Question 1
+### 문제 1
 
-Your team has decided to aim for a 95th percentile response time of 2 seconds. What is the best way to express this as a threshold?
+팀이 95번째 백분위수 응답 시간을 2초로 목표로 결정했습니다. 이를 threshold로 표현하는 가장 좋은 방법은?
 
 A: `http_req_duration: ['p(95)>2000'],`
 
@@ -204,9 +204,9 @@ B: `http_response_time: ['avg<=2000'],`
 
 C: `http_req_duration: ['p(95)<=2000'],`
 
-### Question 2
+### 문제 2
 
-Your test script has the following threshold defined in the test options:
+테스트 스크립트에 다음 threshold가 정의되어 있습니다:
 
 ```js
 thresholds: {
@@ -214,16 +214,17 @@ thresholds: {
 },
 ```
 
-The test runs for 100 iterations of 1 HTTP request each. 3 of the HTTP requests fail the check. Which of the following outcomes would you expect?
+테스트가 각각 1번의 HTTP 요청으로 100번 반복됩니다. 3번의 HTTP 요청이 check를 실패합니다. 다음 중 어떤 결과를 기대할 수 있나요?
 
-A: The test will abort on failure of the check threshold.
+A: check threshold 실패로 인해 테스트가 중단됩니다.
 
-B: The test will run to completion and will be marked as a success because check failures do not fail tests.
+B: check 실패는 테스트를 실패시키지 않으므로 테스트가 완료되고 성공으로 표시됩니다.
 
-C: The test will run to completion, but there will be an error that some thresholds have failed.
-### Question 3
+C: 테스트가 완료되지만 일부 thresholds가 실패했다는 오류가 있을 것입니다.
 
-Your test script has the following threshold defined in the test options:
+### 문제 3
+
+테스트 스크립트에 다음 threshold가 정의되어 있습니다:
 
 ```js
 thresholds: {
@@ -233,26 +234,26 @@ thresholds: {
 }
 ```
 
-Which of the following statements is true?
+다음 중 참인 진술은?
 
-A: The test will fail if the error rate is 5% or higher.
+A: 오류율이 5% 이상이면 테스트가 실패합니다.
 
-B: The test will fail if the error rate exceeds 3%.
+B: 오류율이 3%를 초과하면 테스트가 실패합니다.
 
-C: The test will pass if the 90th percentile response time is 4 seconds.
+C: 90번째 백분위수 응답 시간이 4초이면 테스트가 통과합니다.
 
-## A note on thresholds
+## 임계값에 대한 참고 사항
 
-Thresholds are useful as initial indicators of the success or failure of a test run. However, they should not be used as the _only_ way to assess a test.
+thresholds는 테스트 실행의 성공 또는 실패에 대한 초기 지표로 유용합니다. 그러나 테스트를 평가하는 _유일한_ 방법으로 사용해서는 안 됩니다.
 
-The main limitation of thresholds is that they're based on metrics, and metrics can be heavily influenced by the presence of a handful of outlier measurements that are either extremely low or extremely high.
+thresholds의 주요 한계는 메트릭을 기반으로 하며, 메트릭은 극도로 낮거나 높은 소수의 이상값 측정에 크게 영향을 받을 수 있다는 것입니다.
 
-Metrics like percentiles do a slightly better job at describing where measurements fall, but there's no replacement for graphing each of those measurements and seeing the shape of the distribution of the data for yourself.
+백분위수와 같은 메트릭은 측정값이 어디에 해당하는지 설명하는 데 약간 더 나은 역할을 하지만, 해당 측정값 각각을 그래프로 그리고 데이터 분포의 형태를 직접 보는 것을 대체할 수는 없습니다.
 
-The problem is that k6 OSS doesn't produce graphs natively. In the next section, you'll learn about how to output results for use in your results visualization tool of choice.
+문제는 k6 OSS가 기본적으로 그래프를 생성하지 않는다는 것입니다. 다음 섹션에서는 선택한 결과 시각화 도구에서 사용하기 위해 결과를 출력하는 방법을 배웁니다.
 
-### Answers
+### 정답
 
-1. C. Thresholds are expressed in terms of what would cause them to pass, so C is the correct answer because it describes a test whose 95th percentile response time is less than (faster than) or equal to 2000 ms, or 2 seconds. Anything beyond this would cause the threshold to fail.
-2. C. Thresholds don't abort tests on failure [unless `abortOnFail` is set to `true`](https://k6.io/docs/using-k6/thresholds/#aborting-a-test-when-a-threshold-is-crossed), so only C is correct. The test will still go through the execution, but a message will be displayed in the end-of-test summary to say that some thresholds have failed.
-3. B. A is incorrect because when contradicting thresholds are defined, the last one will be used, so the threshold on `http_req_failure` will be set to 3% rather than 5%. C is incorrect because the threshold is set to pass if the response time is *less than* 4 seconds, so a 4-second response time will cause it to fail.
+1. C. thresholds는 통과 원인이 되는 것으로 표현되므로, C가 정답입니다. 95번째 백분위수 응답 시간이 2000ms(2초) 이하(더 빠른)인 테스트를 설명하기 때문입니다. 이를 초과하면 threshold가 실패합니다.
+2. C. thresholds는 [`abortOnFail`이 `true`로 설정되지 않으면](https://k6.io/docs/using-k6/thresholds/#aborting-a-test-when-a-threshold-is-crossed) 실패 시 테스트를 중단하지 않으므로, C만 올바릅니다. 테스트는 여전히 실행되지만 일부 thresholds가 실패했다는 메시지가 테스트 종료 요약에 표시됩니다.
+3. B. A는 모순되는 thresholds가 정의될 때 마지막 것이 사용되므로, `http_req_failure`의 threshold는 5%가 아닌 3%로 설정되기 때문에 틀립니다. C는 threshold가 응답 시간이 4초 *미만*이면 통과로 설정되어 있어 4초 응답 시간은 실패하게 하기 때문에 틀립니다.

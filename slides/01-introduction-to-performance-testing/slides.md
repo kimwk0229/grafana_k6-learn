@@ -1,39 +1,38 @@
-## What is performance testing?
+## 성능 테스팅이란 무엇인가?
 
-It measures qualitative aspects of a user's experience of a system, such as its responsiveness and reliability.
-
----
-
-## Why should we do performance testing?
+시스템에 대한 사용자 경험의 질적인 측면, 예를 들어 응답성과 신뢰성을 측정합니다.
 
 ---
 
-- **Improve user experience.**
-- **Prepare for unexpected demand.** 
-- **Increase confidence in the application.**
-- **Assess and optimize infrastructure.**
+## 왜 성능 테스팅을 해야 할까?
 
 ---
 
-## Common excuses for not performance testing
+- **사용자 경험 개선.**
+- **예상치 못한 수요에 대비.** 
+- **애플리케이션에 대한 신뢰도 향상.**
+- **인프라 평가 및 최적화.**
 
 ---
 
-- **Our application is too small**
-- **It's expensive or time-consuming**
-- **It requires extensive technical knowledge**
+## 성능 테스팅을 하지 않는 일반적인 이유
 
 ---
 
-- **We don't have a performance environment**
-- **Observability trumps performance testing**
-- **The cloud is infinite; we can always scale up**
+- **우리 애플리케이션은 너무 작다**
+- **비용이 많이 들거나 시간이 오래 걸린다**
+- **광범위한 기술적 지식이 필요하다**
 
 ---
 
-## Frontend vs backend performance testing
+- **성능 환경이 없다**
+- **관찰 가능성이 성능 테스팅보다 중요하다**
+- **클라우드는 무한하므로 언제든지 확장할 수 있다**
 
-- Move to: [02-frontend-vs-backend-performance-testing](?p=02-frontend-vs-backend-performance-testing)
+---
 
+## 프론트엔드 vs 백엔드 성능 테스팅
+
+- 이동: [02-frontend-vs-backend-performance-testing](?p=02-frontend-vs-backend-performance-testing)
 
 

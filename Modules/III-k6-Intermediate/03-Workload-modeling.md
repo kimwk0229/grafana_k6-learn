@@ -1,107 +1,107 @@
-# Workload modeling
+# 워크로드 모델링
 
-It's not enough to know _what_ to test (which pages or endpoints to hit)&mdash;you should also think about _how_ to test. How many virtual users should you simulate? Will those users pause their execution to simulate "think times" of real users? Are the users new or returning? The answers to these questions can affect your test results.
+_무엇을_ 테스트할지 아는 것(어떤 페이지나 endpoint를 요청할지)만으로는 충분하지 않습니다&mdash;_어떻게_ 테스트할지도 생각해야 합니다. 얼마나 많은 VU를 시뮬레이션해야 합니까? 그 사용자들은 실제 사용자의 "생각 시간(think time)"을 시뮬레이션하기 위해 실행을 일시 중지합니까? 사용자는 신규 사용자입니까, 아니면 기존 사용자입니까? 이 질문들에 대한 답은 테스트 결과에 영향을 줄 수 있습니다.
 
-The process of **workload modeling** involves determining *how* to apply load against the system, and it's essential for a successful load test.
+**워크로드 모델링**의 프로세스는 시스템에 부하를 *어떻게* 적용할지 결정하는 것을 포함하며, 성공적인 부하 테스트를 위해 필수적입니다.
 
-Your workload model is heavily influenced by the situations or scenarios you'd like to test. The closer your load test gets to simulating those circumstances, the more *realistic* it is. Realism could mean simulating peak traffic in production, but it could also mean simulating smaller and more targeted traffic against a particular component of your system. It all depends on the situation you're trying to recreate and test.
+워크로드 모델은 테스트하고자 하는 상황이나 scenario에 의해 크게 영향을 받습니다. 부하 테스트가 그런 상황을 시뮬레이션하는데 더 가까울수록, 더 *현실적*입니다. 현실성은 프로덕션에서의 피크 트래픽을 시뮬레이션하는 것을 의미할 수 있지만, 시스템의 특정 구성 요소에 대한 더 작고 표적화된 트래픽을 시뮬레이션하는 것을 의미할 수도 있습니다. 이는 모두 재현하고 테스트하려는 상황에 따라 달라집니다.
 
-If your load-testing script isn't realistic enough, you may not achieve the expected test throughput, or you may not test the same components of a system that real users hit in production. Unrealistic test scripts and scenarios can lead to inconsistent and inaccurate results. More dangerously, they can create a false sense of confidence in what a system can withstand.
+부하 테스트 스크립트가 충분히 현실적이지 않다면, 예상되는 테스트 처리량을 달성하지 못하거나, 실제 사용자가 프로덕션에서 사용하는 시스템의 동일한 구성 요소를 테스트하지 못할 수 있습니다. 비현실적인 테스트 스크립트와 scenario는 일관성이 없고 부정확한 결과를 초래할 수 있습니다. 더 위험하게는, 시스템이 견딜 수 있는 것에 대한 잘못된 자신감을 만들어낼 수 있습니다.
 
-## Challenges in workload modeling
+## 워크로드 모델링의 과제
 
-Making scripts and scenarios realistic increases the value that a load test can provide. However, test realism is not an easy task. Increasing the realism of a load test can often increase the amount of time and effort required to create and maintain your test suite. There are also many factors that make human behavior hard to simulate:
+스크립트와 scenario를 현실적으로 만드는 것은 부하 테스트가 제공할 수 있는 가치를 높입니다. 그러나 테스트 현실성은 쉬운 작업이 아닙니다. 부하 테스트의 현실성을 높이면 테스트 모음을 만들고 유지하는 데 필요한 시간과 노력이 증가할 수 있습니다. 또한 인간의 행동을 시뮬레이션하기 어렵게 만드는 여러 요인도 있습니다:
 
-- **Computers are faster than humans**. Automated simulations can be executed at inhuman speeds. A machine does not have to stop about what to do next.
-- **Human behavior is unpredictable**. Sometimes, humans don't do the most logical or reasonable thing. Historical data can help identify exactly how your end users behave and inform your load-test-script behavior.
-- **User flows can be complex**. As systems grow in scope, the number of user flows that a load test needs simulate to be realistic increase as well. A load test may need to cover multiple end-to-end flows, each of which may require different test parameters.
-- **Distributed systems come with multiple points of failure**. Software with event-driven or microservices-based architectures have many modular components, each of which may need to be tested and monitored.
-- **Many systems have multiple traffic sources.** Users' geographical locations and internet speeds affect the load they apply on the system.
+- **컴퓨터는 인간보다 빠릅니다**. 자동화된 시뮬레이션은 인간이 할 수 없는 속도로 실행될 수 있습니다. 기계는 다음에 무엇을 해야 하는지 멈출 필요가 없습니다.
+- **인간의 행동은 예측 불가능합니다**. 때로는 인간이 가장 논리적이거나 합리적인 행동을 하지 않습니다. 역사적인 데이터는 최종 사용자가 정확히 어떻게 행동하는지 파악하고 부하 테스트 스크립트 동작을 알리는 데 도움이 됩니다.
+- **사용자 흐름은 복잡할 수 있습니다**. 시스템이 범위가 확장됨에 따라, 현실적이기 위해 부하 테스트가 시뮬레이션해야 하는 사용자 흐름의 수도 증가합니다. 부하 테스트는 각각 다른 테스트 매개변수를 요구할 수 있는 여러 엔드 투 엔드 흐름을 다루어야 할 수 있습니다.
+- **분산 시스템에는 여러 장애 지점이 있습니다**. 이벤트 기반 또는 마이크로서비스 기반 아키텍처를 가진 소프트웨어는 각각 테스트되고 모니터링되어야 할 수 있는 많은 모듈식 구성 요소를 가지고 있습니다.
+- **많은 시스템에는 여러 트래픽 소스가 있습니다.** 사용자의 지리적 위치와 인터넷 속도는 시스템에 가하는 부하에 영향을 미칩니다.
 
-So, how can we make automated tests realistic despite these obstacles?
+그렇다면 이러한 장애물에도 불구하고 자동화된 테스트를 어떻게 현실적으로 만들 수 있을까요?
 
-## Elements of a workload model
+## 워크로드 모델의 요소
 
-When creating a workload model, consider these variables.
+워크로드 모델을 만들 때 이러한 변수를 고려하세요.
 
-### Test parameters
+### 테스트 매개변수
 
-Test parameters are values that affect how your load-testing script is executed. Parameters include:
-- Duration
-- Number of VUs
-- Number of iterations
-- Load profile, including stages during the test
+테스트 매개변수는 부하 테스트 스크립트가 실행되는 방식에 영향을 미치는 값입니다. 매개변수에는 다음이 포함됩니다:
+- 기간
+- VU 수
+- iteration 수
+- 테스트 중 stage를 포함한 부하 프로필
 
-Each of these parameters influences the amount and type of load that is simulated.
+이 매개변수 각각은 시뮬레이션되는 부하의 양과 유형에 영향을 미칩니다.
 
-Check out [k6 Load Test Options](../II-k6-Foundations/06-k6-Load-Test-Options.md) for more information on these parameters, or [Setting load profiles with executors](08-Setting-load-profiles-with-executors.md) for instructions on how to implement these in k6.
+이러한 매개변수에 대한 자세한 정보는 [k6 부하 테스트 옵션](../II-k6-Foundations/06-k6-Load-Test-Options.md)을 확인하거나, k6에서 구현하는 방법에 대한 지침은 [executor로 부하 프로필 설정하기](08-Setting-load-profiles-with-executors.md)를 참조하세요.
 
-### Think time and pacing
+### 생각 시간과 페이싱
 
-Think time and pacing are both types of delays in the script that simulate the pauses a real user is likely to take while accessing an application. Think time, often called sleep, can be added before or after actions within the script, while pacing is typically added between iterations.
+생각 시간(think time)과 페이싱(pacing)은 모두 스크립트에서 애플리케이션에 접근하는 실제 사용자가 취할 가능성이 있는 일시 중지를 시뮬레이션하는 지연의 유형입니다. sleep이라고도 부르는 생각 시간(think time)은 스크립트 내의 동작 전후에 추가할 수 있으며, 페이싱(pacing)은 일반적으로 iteration 사이에 추가됩니다.
 
-Longer delays mean fewer requests, given a fixed duration, and shorter delays mean more requests. The number of requests and how quickly they are sent may change how your system responds. We also recommend using dynamic delays if you'd like to make the generated load look a little less regular and uniform.
+고정된 기간 동안 더 긴 지연은 더 적은 요청을 의미하고, 더 짧은 지연은 더 많은 요청을 의미합니다. 요청 수와 요청 전송 속도는 시스템이 응답하는 방식을 변경할 수 있습니다. 생성된 부하가 조금 덜 규칙적이고 균일하게 보이도록 하려면 동적 지연을 사용하는 것도 권장합니다.
 
-See [Adding think time using sleep](../II-k6-Foundations/05-Adding-think-time-using-sleep.md) for how to implement delays in k6.
+k6에서 지연을 구현하는 방법은 [sleep을 사용하여 생각 시간 추가하기](../II-k6-Foundations/05-Adding-think-time-using-sleep.md)를 참조하세요.
 
-### Adding static resources
+### 정적 리소스 추가
 
-In web applications, static resources refer to images, client-side scripts, fonts, and other files embedded onto a page. If you want your script to access that page, you have to decide whether you want the script to also download those resources.
+웹 애플리케이션에서 정적 리소스는 페이지에 포함된 이미지, 클라이언트 측 스크립트, 폰트 및 기타 파일을 말합니다. 스크립트가 해당 페이지에 접근하도록 하려면, 스크립트가 그 리소스도 다운로드할지 여부를 결정해야 합니다.
 
-Downloading static resources makes the script more realistic if you want to simulate an end-user behavior, because web browsers automatically download them. However, if you want to download only the HTML of the page (for example, perhaps because the images are served by a CDN (Content Delivery Network) that you don't want to test), it may be more prudent *not* to download the static resources.
+정적 리소스를 다운로드하면 웹 브라우저가 자동으로 다운로드하기 때문에 최종 사용자 행동을 시뮬레이션하려는 경우 스크립트가 더 현실적이 됩니다. 그러나 페이지의 HTML만 다운로드하고 싶은 경우(예: 이미지가 테스트하고 싶지 않은 CDN(Content Delivery Network)에서 제공되는 경우), 정적 리소스를 다운로드하지 *않는* 것이 더 현명할 수 있습니다.
 
-### Parallel requests
+### 병렬 요청
 
-Parallel requests are requests that are sent concurrently. Modern browsers request a certain number of static resources at the same time, so if your script requests them sequentially, that can change the load applied on your system.
+병렬 요청은 동시에 전송되는 요청입니다. 현대 브라우저는 동시에 일정 수의 정적 리소스를 요청하므로, 스크립트가 순차적으로 요청하면 시스템에 가해지는 부하가 달라질 수 있습니다.
 
-Refer to [Parallel requests in k6](05-Parallel-requests-in-k6.md) for instructions on use batching to implement parallel requests.
+병렬 요청을 구현하기 위해 배치(batching)를 사용하는 방법은 [k6에서의 병렬 요청](05-Parallel-requests-in-k6.md)을 참조하세요.
 
-### Cache and cookie behavior
+### 캐시 및 쿠키 동작
 
-When users visit a website, some resources may be saved in a cache so that subsequent requests don't require those resources to be downloaded anew. Cookies are small bits of information about previous user activities (such as the last time they visited a site) that are saved for functional, analytical, or marketing purposes.
+사용자가 웹사이트를 방문할 때, 일부 리소스는 캐시에 저장되어 후속 요청이 해당 리소스를 새로 다운로드할 필요가 없을 수 있습니다. 쿠키는 기능적, 분석적 또는 마케팅 목적으로 저장되는 이전 사용자 활동(예: 마지막으로 사이트를 방문한 시간)에 대한 작은 정보 조각입니다.
 
-Both caches and cookies add to the overall load that a script generates and should be tailored to the test objectives. First-time visitors to a site won't have resources cached locally, but repeat visitors may be retrieving resources from the cache.
+캐시와 쿠키 모두 스크립트가 생성하는 전체 부하에 더해지며, 테스트 목표에 맞게 조정되어야 합니다. 사이트를 처음 방문하는 사용자는 로컬에 리소스가 캐시되어 있지 않겠지만, 재방문 사용자는 캐시에서 리소스를 검색할 수 있습니다.
 
-In k6, you can set cache options [using headers](https://k6.io/docs/using-k6/http-requests/#making-http-requests) and [manage cookies in a few ways](https://k6.io/docs/examples/cookies-example/).
+k6에서는 [헤더를 사용하여](https://k6.io/docs/using-k6/http-requests/#making-http-requests) 캐시 옵션을 설정하고 [몇 가지 방법으로 쿠키를 관리](https://k6.io/docs/examples/cookies-example/)할 수 있습니다.
 
-### Test data
+### 테스트 데이터
 
-Requesting the same resources over and over again in your script can lead to some problems. It can trigger caching on the server side, cause security errors if your script logs in with the same user repeatedly, and limit the scope of your tests as other resources are not requested.
+스크립트에서 동일한 리소스를 반복해서 요청하면 몇 가지 문제가 발생할 수 있습니다. 서버 측 캐싱을 트리거하거나, 스크립트가 동일한 사용자로 반복해서 로그인하는 경우 보안 오류를 유발하고, 다른 리소스가 요청되지 않아 테스트 범위가 제한될 수 있습니다.
 
-## Test your knowledge
+## 지식 확인
 
 ### Question 1
 
-Which of the following issues could have been caused by incomplete or inaccurate workload modeling?
+다음 중 어떤 문제가 불완전하거나 부정확한 워크로드 모델링으로 인해 발생했을 수 있습니까?
 
-A: The load testing tool selected cannot generate the load required and scripts must be rewritten in another tool.
+A: 선택된 부하 테스트 도구가 필요한 부하를 생성할 수 없어 스크립트를 다른 도구로 다시 작성해야 합니다.
 
-B: Performance-related production incidents occur despite previous successful load tests.
+B: 이전의 성공적인 부하 테스트에도 불구하고 성능 관련 프로덕션 인시던트가 발생합니다.
 
-C: Development effort is wasted on features that users do not want.
+C: 사용자가 원하지 않는 기능에 개발 노력이 낭비됩니다.
 
 ### Question 2
 
-Which of the following facts about a hypothetical application are not relevant when building a workload model?
+다음 중 가상의 애플리케이션에 대한 사실 중 워크로드 모델을 구축할 때 관련이 없는 것은 무엇입니까?
 
-A: Most end users live in Australia.
+A: 대부분의 최종 사용자가 호주에 살고 있습니다.
 
-B: Most end users are single mothers.
+B: 대부분의 최종 사용자가 싱글맘입니다.
 
-C: Most end users access the application on their mobiles, using 3G/4G networks.
+C: 대부분의 최종 사용자가 3G/4G 네트워크를 사용하는 모바일로 애플리케이션에 접근합니다.
 
 ### Question 3
 
-Which of the following changes would increase the load on an application server?
+다음 중 애플리케이션 서버의 부하를 증가시키는 변경 사항은 무엇입니까?
 
-A: Decreasing think time
+A: 생각 시간(think time) 감소
 
-B: Enabling caching
+B: 캐싱 활성화
 
-C: Disabling downloading of static resources
+C: 정적 리소스 다운로드 비활성화
 
-### Answers
+### 정답
 
-1. B. Production incidents despite performance testing is a classic symptom that the situation during a load test did not match the situation during production. This may be due to many factors, one of which is workload modeling.
-2. B. Users' geographical locations are relevant because Content Distribution Networks (CDNs) do not have servers in every country, and their absence may affect overall user response time. Users' network speeds may similarly affect response times. B is the correct answer because whether or not a user is a single mother is relevant for business demographics, but not response times.
-3. A. Decreasing think time will cause a script to be executed more rapidly, and in some cases may contribute to increased resource utilization on both load generators and application servers. Enabling caching and disabling static resources have the opposite effect.
+1. B. 성능 테스트에도 불구하고 프로덕션 인시던트가 발생하는 것은 부하 테스트 중의 상황이 프로덕션 상황과 일치하지 않는 전형적인 증상입니다. 이는 워크로드 모델링을 포함한 여러 요인 때문일 수 있습니다.
+2. B. 사용자의 지리적 위치는 Content Distribution Networks(CDN)가 모든 국가에 서버를 가지고 있지 않으며, 그 부재가 전체 사용자 응답 시간에 영향을 줄 수 있기 때문에 관련이 있습니다. 사용자의 네트워크 속도도 마찬가지로 응답 시간에 영향을 줄 수 있습니다. B가 정답인 이유는 사용자가 싱글맘인지 여부는 비즈니스 인구 통계에는 관련이 있지만, 응답 시간에는 관련이 없기 때문입니다.
+3. A. 생각 시간(think time)을 줄이면 스크립트가 더 빠르게 실행되고, 경우에 따라 부하 생성기와 애플리케이션 서버 모두의 리소스 사용률 증가에 기여할 수 있습니다. 캐싱을 활성화하고 정적 리소스를 비활성화하면 반대 효과가 있습니다.

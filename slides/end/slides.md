@@ -1,8 +1,8 @@
-# The End 🎉
+# 끝 🎉
 
 ---
 
-## Further learning
+## 추가 학습
 
 - [k6.io](https://k6.io/) 
 - [k6.io/docs](https://k6.io/docs/)
@@ -11,6 +11,6 @@
  
 ---
 
-## Thank you!
+## 감사합니다!
 
 ![Bert relaxing](../../images/bert-relaxing.png)

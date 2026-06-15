@@ -1,6 +1,6 @@
-There are multiple other ways to test with k6, relying more or less on the HTTP protocol. However, these additional use cases are, with the exception of websockets and gRPC, not included in the default k6 binary but has to be added to a bespoke binary created with the xk6 tool.
+k6로 테스트하는 데 있어 HTTP 프로토콜에 어느 정도 의존하는 다양한 방법이 있습니다. 그러나 이러한 추가 사용 사례들은 websocket과 gRPC를 제외하고는 기본 k6 바이너리에 포함되어 있지 않으며, xk6 도구로 생성된 맞춤형 바이너리에 추가해야 합니다.
 
-Some additional clients available as xk6 extension are:
+xk6 확장으로 사용 가능한 추가 클라이언트 일부:
 
 - [Kafka]()
 - [SQL]()

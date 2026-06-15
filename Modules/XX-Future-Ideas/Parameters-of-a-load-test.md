@@ -1,146 +1,146 @@
-A test parameter describes the situation under which traffic is generated during the load test. Below are some common test parameters:
+테스트 매개변수는 부하 테스트 중 트래픽이 생성되는 상황을 설명합니다. 다음은 일반적인 테스트 매개변수들입니다:
 
-- Transaction distribution
-- User flows
-- Ramp-up and ramp-down periods
-- Steady state
+- 트랜잭션 분포
+- 사용자 흐름
+- Ramp-up 및 ramp-down 기간
+- 정상 상태(Steady state)
 - Duration
-- Concurrency
-- Throughput
-- Load profile
+- 동시성(Concurrency)
+- 처리량(Throughput)
+- 부하 프로필(Load profile)
 
-We'll discuss each one in more detail below.
+아래에서 각각에 대해 자세히 설명하겠습니다.
 
-## Transaction distribution
+## 트랜잭션 분포
 
-A [transaction](Performance-Testing-Terminology.md#Transaction) is a grouping of requests or steps that are triggered by a single user action. For example, a login transaction might consist of the following steps:
-- Type in username
-- Type in password
-- Click LOG IN button.
+[트랜잭션](Performance-Testing-Terminology.md#Transaction)은 단일 사용자 동작에 의해 트리거되는 요청 또는 단계의 그룹입니다. 예를 들어, 로그인 트랜잭션은 다음 단계로 구성될 수 있습니다:
+- 사용자 이름 입력
+- 비밀번호 입력
+- 로그인 버튼 클릭
 
-The same transaction might consist of the following underlying requests:
-- HTTP POST to the authentication server with the login credentials
-- A redirect to the authenticated user's account page
-- HTTP GET for the HTML and embedded resources for the user's account page
+동일한 트랜잭션은 다음과 같은 기본 요청으로 구성될 수 있습니다:
+- 로그인 자격 증명과 함께 인증 서버로 HTTP POST
+- 인증된 사용자 계정 페이지로 리다이렉트
+- 사용자 계정 페이지의 HTML 및 포함된 리소스에 대한 HTTP GET
 
-In load testing, transactions are used to organize scripts in a user-oriented way, where one transaction corresponds to one user action.
+부하 테스팅에서 트랜잭션은 스크립트를 사용자 지향적인 방식으로 구성하는 데 사용되며, 하나의 트랜잭션이 하나의 사용자 동작에 해당합니다.
 
-A load test typically consists of multiple transactions, depending on the situation that you want to simulate. During test execution, you can set how often each transaction is executed, usually using the number of transactions per second or percentages. For example, consider a theoretical transaction distribution for an ecommerce site:
+부하 테스트는 일반적으로 시뮬레이션하려는 상황에 따라 여러 트랜잭션으로 구성됩니다. 테스트 실행 중 각 트랜잭션이 실행되는 빈도를 설정할 수 있으며, 보통 초당 트랜잭션 수 또는 백분율을 사용합니다. 예를 들어, 이커머스 사이트의 이론적인 트랜잭션 분포를 생각해보겠습니다:
 
-- Home page: 100%
-	- View Product List: 50%
-		- View Product Page: 25%
-			- Add to Cart: 15%
-				- Checkout: 10%
-	- Contact Us Page: 3%
-	- (exit) 47%
+- 홈 페이지: 100%
+	- 제품 목록 보기: 50%
+		- 제품 페이지 보기: 25%
+			- 장바구니에 추가: 15%
+				- 결제: 10%
+	- 문의 페이지: 3%
+	- (이탈) 47%
 
-In this example, all of the users accessing a site go to the home page, but only 10% of them end up purchasing a product. Each line above (except for the 47% that exited the application after viewing the home page) is a transaction.
+이 예시에서 사이트에 접속하는 모든 사용자는 홈 페이지로 이동하지만 그 중 10%만 제품을 구매합니다. 위의 각 줄(홈 페이지를 본 후 애플리케이션을 이탈한 47%는 제외)은 하나의 트랜잭션입니다.
 
-The transaction distribution for a load test describes:
-- which transactions are included in the test
-- how often the included transactions are executed
+부하 테스트의 트랜잭션 분포는 다음을 설명합니다:
+- 테스트에 포함되는 트랜잭션
+- 포함된 트랜잭션이 얼마나 자주 실행되는가
 
-In k6, the best way to represent transactions is by using [groups](https://k6.io/docs/using-k6/tags-and-groups#groups). Groups combine multiple requests together and calculate a combined response time for those requests as well.
+k6에서 트랜잭션을 표현하는 가장 좋은 방법은 [groups](https://k6.io/docs/using-k6/tags-and-groups#groups)을 사용하는 것입니다. Groups는 여러 요청을 함께 결합하고 해당 요청들의 결합된 응답 시간을 계산합니다.
 
-## User flows
+## 사용자 흐름
 
-A user flow is the description of the path through an application that you're trying to test. Here are some examples of user flows you could create based on the list of transactions above:
+사용자 흐름은 테스트하려는 애플리케이션을 통한 경로에 대한 설명입니다. 위의 트랜잭션 목록을 기반으로 생성할 수 있는 사용자 흐름의 몇 가지 예시입니다:
 
-- Just browsing: Home Page > View Product List > View Product Page > View Product List > View Product Page
-- Clicking product link in email: View Product Page > Add to Cart > Checkout
-- Returning to checkout: Home Page > View Cart > Checkout
+- 단순 탐색: 홈 페이지 > 제품 목록 보기 > 제품 페이지 보기 > 제품 목록 보기 > 제품 페이지 보기
+- 이메일의 제품 링크 클릭: 제품 페이지 보기 > 장바구니에 추가 > 결제
+- 결제로 돌아가기: 홈 페이지 > 장바구니 보기 > 결제
 
-User flows are sequences of transactions that represent actions a user might take as they use your application. In k6, you can [create multiple user flows as part of scenarios and run them in the same script](https://k6.io/docs/using-k6/scenarios/).
+사용자 흐름은 사용자가 애플리케이션을 사용하면서 취할 수 있는 동작을 나타내는 트랜잭션의 시퀀스입니다. k6에서 [시나리오의 일부로 여러 사용자 흐름을 생성하고 동일한 스크립트에서 실행](https://k6.io/docs/using-k6/scenarios/)할 수 있습니다.
 
-## Ramp-up and ramp-down periods
+## Ramp-up 및 ramp-down 기간
 
-Ramp-up is the amount of time it takes for a load test to go from 0 users to the desired number of users, and is found at the beginning of a test. Ramp-down is the time it takes for a load test to go from the desired number of users back down to 0, and is found at the end of a test. Ramp-up and ramp-down periods simulate real traffic against an application. In many production environments, users do not start accessing a site simultaneously, and instead gradually trickle into the application, and away from it, over some time.
+Ramp-up은 부하 테스트가 0 사용자에서 원하는 사용자 수에 도달하는 데 걸리는 시간으로, 테스트 시작 부분에서 발생합니다. Ramp-down은 원하는 사용자 수에서 다시 0으로 돌아가는 시간으로, 테스트 종료 부분에서 발생합니다. Ramp-up 및 ramp-down 기간은 애플리케이션에 대한 실제 트래픽을 시뮬레이션합니다. 많은 프로덕션 환경에서 사용자들은 동시에 사이트에 접속하기 시작하는 것이 아니라, 시간이 지남에 따라 점진적으로 들어오고 나갑니다.
 
 ![](load_profile-ramp-up.png.png)
-_Load test with ramp-up period highlighted_
+_Ramp-up 기간이 강조 표시된 부하 테스트_
 
-In the load test above, the highlighted portions show the ramp-up period, which is 5 minutes. During the first 5 minutes of the test, the script gradually increases the number of virtual users from 0 to 20.
+위의 부하 테스트에서 강조 표시된 부분은 5분의 ramp-up 기간을 보여줍니다. 테스트 첫 5분 동안 스크립트는 virtual user 수를 0에서 20으로 점진적으로 증가시킵니다.
 
-The same test also has a ramp-down period, but it is significantly shorter, at 1 minute. Ramp-up periods and ramp-down periods do not have to be the same length, and it is valid to have one, none, or both.
+동일한 테스트에는 ramp-down 기간도 있지만 1분으로 상당히 짧습니다. Ramp-up 기간과 ramp-down 기간은 같은 길이일 필요가 없으며, 둘 중 하나만 있거나 둘 다 없는 것도 유효합니다.
 
 ```ad-tip
-Ramp-up and ramp-down periods are best used for applications that do not have a hard start or hard end to production traffic. In some situations, such as when simulating traffic for a sale that begins at a specific time, it may be more realistic to remove ramp-up and/or ramp-down periods.
+Ramp-up 및 ramp-down 기간은 프로덕션 트래픽에 명확한 시작이나 종료가 없는 애플리케이션에 가장 적합합니다. 특정 시간에 시작되는 세일 트래픽을 시뮬레이션하는 것과 같이, 일부 상황에서는 ramp-up 및/또는 ramp-down 기간을 제거하는 것이 더 현실적일 수 있습니다.
 ```
 
-## Steady state
+## 정상 상태(Steady state)
 
-The steady state is any period of time during the load test where the number of virtual users is constant. The steady state does not include ramp-up or ramp-down periods. The unchanging load during a steady state makes it an ideal time period for analyzing how well an application responds to the conditions created by a load test.
+정상 상태는 부하 테스트 중 virtual user 수가 일정하게 유지되는 기간입니다. 정상 상태에는 ramp-up 또는 ramp-down 기간이 포함되지 않습니다. 정상 상태 동안 변하지 않는 부하는 애플리케이션이 부하 테스트에서 생성된 조건에 어떻게 반응하는지 분석하기에 이상적인 시간입니다.
 
-![Steady state in a load test](images/load_profile-steady_state.png)
-_Steady state during a load test_
+![부하 테스트에서의 정상 상태](images/load_profile-steady_state.png)
+_부하 테스트 중 정상 상태_
 
 ## Duration
 
-The duration of a load test is how long it takes to complete, from beginning to end. It includes the ramp-up, ramp-down, and steady state portions of a load test.
+부하 테스트의 duration은 처음부터 끝까지 완료하는 데 걸리는 시간입니다. 여기에는 부하 테스트의 ramp-up, ramp-down, 정상 상태 부분이 포함됩니다.
 
-## Concurrency
+## 동시성(Concurrency)
 
-User concurrency is the number of users that are accessing an application at a given point in time. In load tests, this is measured in terms of the total virtual users.
+사용자 동시성은 특정 시점에 애플리케이션에 접속하는 사용자 수입니다. 부하 테스트에서는 총 virtual user 수로 측정됩니다.
 
-## Throughput
+## 처리량(Throughput)
 
-Throughput is a general term for the rate at which something is produced or processed. In the context of load testing, it is often used to refer to the rate at which requests are sent to the application server. A common measure of throughput is requests per second (rps), which is also what k6 measures. The higher the throughput of a test, the more concurrent requests the application server needs to process at any given time.
+처리량은 무언가가 생성되거나 처리되는 속도를 나타내는 일반적인 용어입니다. 부하 테스팅 맥락에서 이는 애플리케이션 서버에 전송되는 요청의 속도를 가리키는 데 자주 사용됩니다. 처리량의 일반적인 측정 단위는 초당 요청 수(rps)이며, 이것이 k6가 측정하는 것입니다. 테스트의 처리량이 높을수록 애플리케이션 서버가 특정 시점에 처리해야 하는 동시 요청이 더 많습니다.
 
-## Load profile
+## 부하 프로필(Load profile)
 
-A load profile describes the shape of the traffic generated over a certain amount of time. The load profile you decide on for your test is determined by the scenario you're trying to recreate.
+부하 프로필은 일정 시간 동안 생성된 트래픽의 형태를 설명합니다. 테스트에 대해 결정하는 부하 프로필은 재현하려는 시나리오에 의해 결정됩니다.
 
-Load profiles are typically described by plotting the number of virtual users over time.
+부하 프로필은 일반적으로 시간에 따른 virtual user 수를 플로팅하여 설명됩니다.
 
-### Simple load profile
+### 단순 부하 프로필
 
-![Simple load profile for a load test](images/load_profile-no_ramp-up_or_ramp-down.png)
-_Simple load profile for a load test_
+![부하 테스트를 위한 단순 부하 프로필](images/load_profile-no_ramp-up_or_ramp-down.png)
+_부하 테스트를 위한 단순 부하 프로필_
 
-The simplest load profile for a load test involves the script executing a given number of virtual users and iterating on the script over a period of time. 
+부하 테스트의 가장 단순한 부하 프로필은 일정 기간 동안 주어진 수의 virtual user를 실행하고 스크립트를 반복하는 것입니다.
 
-For example, in the screenshot above, the script started 20 VUs. When the end of the script is executed, each VU goes back to the beginning of the script and executes it again. The test ran in this way for 35 minutes, after which k6 terminated all the users. 
+예를 들어, 위 스크린샷에서 스크립트는 20개의 VU를 시작했습니다. 스크립트의 끝이 실행되면 각 VU는 스크립트의 시작으로 돌아가 다시 실행합니다. 테스트는 35분 동안 이 방식으로 실행된 후 k6가 모든 사용자를 종료했습니다.
 
 ```ad-note
-In k6, the `default` function is the part that is repeated throughout the test. You can nest other functions within this function or choose to iterate a different function instead by using [the exec option within a scenario](https://k6.io/docs/using-k6/scenarios/#common-options).
+k6에서 `default` 함수는 테스트 전반에 걸쳐 반복되는 부분입니다. 이 함수 내에 다른 함수를 중첩하거나 [시나리오 내에서 exec 옵션](https://k6.io/docs/using-k6/scenarios/#common-options)을 사용하여 다른 함수를 반복하도록 선택할 수 있습니다.
 ```
 
-### Constant load profile with ramps
+### Ramp이 포함된 일정한 부하 프로필
 
-Sometimes, the load profile above may be too simple. If you are running thousands of VUs, it may not be realistic to start all of those VUs at the same time. Doing so may cause your application to respond in strange ways. Similarly, a hard stop for all VUs at the end of the test may not be realistic either.
+때로는 위의 부하 프로필이 너무 단순할 수 있습니다. 수천 개의 VU를 실행하는 경우 모든 VU를 동시에 시작하는 것이 현실적이지 않을 수 있습니다. 그렇게 하면 애플리케이션이 이상하게 반응할 수 있습니다. 마찬가지로, 테스트 종료 시 모든 VU를 갑자기 종료하는 것도 현실적이지 않을 수 있습니다.
 
-Below is another common load profile that includes a gradual ramp-up period at the beginning, a steady state in the middle, and a ramp-down at the end.
+아래는 시작 시 점진적인 ramp-up 기간, 중간에 정상 상태, 끝에 ramp-down을 포함하는 또 다른 일반적인 부하 프로필입니다.
 
 ![](load_profile-constant.png.png)
-_Constant load profile with ramp-up and ramp-down_
+_Ramp-up 및 ramp-down이 포함된 일정한 부하 프로필_
 
-You can also have more complex load profiles than those shown here. For example, you might want to design a stepped load profile where the number of VUs increases every 30 minutes. You can also define a load profile for every [scenario](https://k6.io/docs/using-k6/scenarios/).
+여기에 표시된 것보다 더 복잡한 부하 프로필을 가질 수도 있습니다. 예를 들어, 30분마다 VU 수가 증가하는 단계적 부하 프로필을 설계할 수 있습니다. 모든 [시나리오](https://k6.io/docs/using-k6/scenarios/)에 대해 부하 프로필을 정의할 수도 있습니다.
 
-## Test your knowledge
+## 지식 테스트
 
-### Question 1
+### 질문 1
 
-What is the purpose of a ramp-up or ramp-down?
+Ramp-up 또는 ramp-down의 목적은 무엇인가요?
 
-A: It makes the increase or decrease in VUs more gradual, improving how realistic the test script is.
-B: It gives the operations team time to prepare for the high load generated by the load test.
-C: It is a shakeout period that can be used to spot any issues with the load test script or execution.
-D: All of the above.
+A: VU의 증가 또는 감소를 더 점진적으로 만들어 테스트 스크립트의 현실성을 향상시킵니다.
+B: 운영팀이 부하 테스트로 생성된 높은 부하를 준비할 시간을 줍니다.
+C: 부하 테스트 스크립트나 실행의 문제를 발견하는 데 사용할 수 있는 셰이크아웃 기간입니다.
+D: 위의 모든 것.
 
-### Question 2
+### 질문 2
 
-Which of the following is an example of concurrency?
+다음 중 동시성의 예는 무엇인가요?
 
-A: 300 requests/second
-B: Number of account credentials in test data used during the test
+A: 300 요청/초
+B: 테스트 중 사용된 테스트 데이터의 계정 자격 증명 수
 C: 300 VUs
-D: A or C
+D: A 또는 C
 
-### Question 3
+### 질문 3
 
-Which test parameter best describes a load test exhibiting a gradually increasing load, and then a sudden spike in VUs in the middle of the test?
+점진적으로 증가하는 부하를 나타내고 테스트 중간에 갑작스러운 VU 급증을 보이는 부하 테스트를 가장 잘 설명하는 테스트 매개변수는 무엇인가요?
 
-A: Concurrency
-B: Transaction
-C: Load profile
+A: 동시성(Concurrency)
+B: 트랜잭션(Transaction)
+C: 부하 프로필(Load profile)

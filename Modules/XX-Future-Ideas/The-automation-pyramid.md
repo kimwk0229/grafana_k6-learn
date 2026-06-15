@@ -1,8 +1,8 @@
-- What is the pyramid?  
-- Past and present (Monolyth, ice-cream, modern)  
-- Tiers  
-- Unit  
-- Service  
-- Front end  
-- How tools map on tiers  
-- How perf tests map on tiers
+- 피라미드란 무엇인가?  
+- 과거와 현재 (모노리스, 아이스크림, 모던)  
+- 계층  
+- 단위  
+- 서비스  
+- 프론트엔드  
+- 도구가 계층에 어떻게 매핑되는가  
+- 성능 테스트가 계층에 어떻게 매핑되는가

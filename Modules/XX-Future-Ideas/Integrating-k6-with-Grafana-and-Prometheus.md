@@ -1,6 +1,6 @@
 
 
-# Integrating k6 with Grafana and Prometheus
+# k6와 Grafana 및 Prometheus 통합
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/tFsIgbqXbxM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
@@ -10,4 +10,3 @@
 <iframe width="560" height="315" src="https://www.youtube.com/embed/Xyq6GItCAvY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Prometheus Remote Write
-

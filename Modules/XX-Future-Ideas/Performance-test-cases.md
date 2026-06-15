@@ -1,3 +1,3 @@
-- What is a performance test case  
-- Types of performance test cases  
-- Differences with other test cases
+- 성능 테스트 케이스란 무엇인가  
+- 성능 테스트 케이스의 유형  
+- 다른 테스트 케이스와의 차이점

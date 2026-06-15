@@ -1,144 +1,144 @@
-# Setting Load Profiles with Executors
+# Executor를 사용하여 부하 프로필 설정하기
 
-One of the more complicated aspects of testing is modeling your desired load profile. These profiles define the volume and velocity of requests coming into the system being tested. k6 provides a set of [executors](https://k6.io/docs/using-k6/scenarios/executors/) to shape the execution patterns for your tests.
+테스트의 더 복잡한 측면 중 하나는 원하는 부하 프로필을 모델링하는 것입니다. 이 프로필들은 테스트 중인 시스템으로 들어오는 요청의 양과 속도를 정의합니다. k6는 테스트의 실행 패턴을 형성하기 위한 [executor](https://k6.io/docs/using-k6/scenarios/executors/) 세트를 제공합니다.
 
-> :point_up: An important point to keep in mind is that each executor controls the number of VUs and/or the number--or even rate--of iterations per testing cycle.
+> :point_up: 각 executor는 VU 수 및/또는 테스트 사이클당 iteration 수나 심지어 속도를 제어한다는 점을 기억하는 것이 중요합니다.
 
-We've provided example exercises to walk through the details when working with each of the available executors. 
+사용 가능한 각 executor로 작업할 때 세부 사항을 살펴볼 수 있는 예제 연습을 제공했습니다.
 
 ### Shared Iterations
-_Shared Iterations_ is the most basic of the executors. As can be inferred from the name, the primary focus will be the number of _iterations_ for your test; this is the number of times your test function will be run.
+_Shared Iterations_는 executor 중 가장 기본적인 것입니다. 이름에서 유추할 수 있듯이, 주요 초점은 테스트의 _iteration_ 수, 즉 테스트 함수가 실행되는 횟수입니다.
 
-| Option        | Description                                                   | Default |
+| 옵션          | 설명                                                          | 기본값  |
 |---------------|---------------------------------------------------------------|---------|
-| `iterations`  | How many times should your test execute?                      | `1`     |
-| `maxDuration` | Forcibly stop your test if not finished within this timeframe | `"10m"` |
-| `vus`         | Number of virtual users to run concurrently                   | `1`     |
+| `iterations`  | 테스트가 몇 번 실행되어야 합니까?                              | `1`     |
+| `maxDuration` | 이 시간 내에 완료되지 않으면 테스트를 강제로 중지합니다       | `"10m"` |
+| `vus`         | 동시에 실행할 가상 사용자 수                                  | `1`     |
 
-As noted previously, the primary objective is to perform your test `iterations` number of times, over a time period not to exceed `maxDuration`. At any time during the test scenario, there should be `vus` iteration(s) happening unless the total desired iterations have been reached. In this scenario, it is possible for some VUs to perform more work than others.
+앞서 언급했듯이, 주요 목표는 `maxDuration`을 초과하지 않는 시간 동안 `iterations` 횟수만큼 테스트를 수행하는 것입니다. 테스트 scenario 동안 어느 시점에서도 원하는 총 iteration 수에 도달하지 않는 한 `vus` 횟수의 iteration이 진행되어야 합니다. 이 scenario에서는 일부 VU가 다른 VU보다 더 많은 작업을 수행할 수 있습니다.
 
-[Experiment with _Shared Iterations_ for yourself!](./08-Setting-load-profiles-with-executors/Shared-Iterations-Exercises.md)
+[_Shared Iterations_를 직접 실험해 보세요!](./08-Setting-load-profiles-with-executors/Shared-Iterations-Exercises.md)
 
 ### Per VU Iterations
-_Per VU Iterations_ is a slight evolution on the _Shared Iterations_ executor. With this executor, we're still focused on the number of _iterations_, however, this time we want **each _virtual user_** to execute the **same number** of iterations.
+_Per VU Iterations_는 _Shared Iterations_ executor의 약간 발전된 형태입니다. 이 executor를 사용하면 여전히 _iteration_ 수에 초점을 맞추지만, 이번에는 **각 _가상 사용자_**가 **동일한 수의** iteration을 실행하도록 합니다.
 
-| Option        | Description                                                   | Default |
+| 옵션          | 설명                                                          | 기본값  |
 |---------------|---------------------------------------------------------------|---------|
-| `iterations`  | For each VU, how many times should your test execute?         | `1`     |
-| `maxDuration` | Forcibly stop your test if not finished within this timeframe | `"10m"` |
-| `vus`         | Number of virtual users to run concurrently                   | `1`     |
+| `iterations`  | 각 VU에 대해 테스트가 몇 번 실행되어야 합니까?               | `1`     |
+| `maxDuration` | 이 시간 내에 완료되지 않으면 테스트를 강제로 중지합니다       | `"10m"` |
+| `vus`         | 동시에 실행할 가상 사용자 수                                  | `1`     |
 
-In this case, we're looking for each of the `vus` VU(s) to perform your test `iterations` number of times over a time period not to exceed `maxDuration`. This means that test iterations are _fairly_ distributed; no single VU performs more than another.
+이 경우, 각 `vus` VU가 `maxDuration`을 초과하지 않는 시간 동안 테스트를 `iterations` 횟수만큼 수행하도록 합니다. 이는 테스트 iteration이 _공정하게_ 분배됨을 의미합니다. 어떤 단일 VU도 다른 VU보다 더 많이 수행하지 않습니다.
 
-[Experiment with _Per VU Iterations_ for yourself!](./08-Setting-load-profiles-with-executors/Per-VU-Iterations-Exercises.md)
+[_Per VU Iterations_를 직접 실험해 보세요!](./08-Setting-load-profiles-with-executors/Per-VU-Iterations-Exercises.md)
 
 ### Constant VUs
-_Constant VUs_ focuses on continually performing your test over a specified amount of time. This allows each virtual user to perform as many requests as it can within the allowed timeframe.
+_Constant VUs_는 지정된 시간 동안 테스트를 지속적으로 수행하는 데 초점을 맞춥니다. 이를 통해 각 가상 사용자는 허용된 시간 내에 가능한 한 많은 요청을 수행할 수 있습니다.
 
-| Option          | Description                                | Default      |
-|-----------------|--------------------------------------------|--------------|
-| **`duration`** | Overall scenario duration                   | - (required) |
-| `vus`          | Number of virtual users to run concurrently | `1`          |
+| 옵션            | 설명                                      | 기본값        |
+|-----------------|-------------------------------------------|--------------|
+| **`duration`** | 전체 scenario 기간                         | - (필수)     |
+| `vus`          | 동시에 실행할 가상 사용자 수               | `1`          |
 
-As noted above, the primary objective is for each of the `vus` VU(s) to perform as many test iterations as possible for the required `duration` time-period, e.g. `"30s"`, `"1h"`, etc.
+위에서 언급했듯이, 주요 목표는 각 `vus` VU가 필요한 `duration` 기간 동안 가능한 한 많은 테스트 iteration을 수행하는 것입니다(예: `"30s"`, `"1h"` 등).
 
-[Experiment with _Constant VUs_ for yourself!](./08-Setting-load-profiles-with-executors/Constant-VUs-Exercises.md)
+[_Constant VUs_를 직접 실험해 보세요!](./08-Setting-load-profiles-with-executors/Constant-VUs-Exercises.md)
 
 ### Ramping VUs
-_Ramping VUs_ is an evolution of the _Constant VUs_ executor which introduces **_stages_**. This allows k6 to transition the number of desired VUs from one stage to another. Each stage defines its own timeframe for which all VUs will continually perform your test.
+_Ramping VUs_는 **_stages_**를 도입하는 _Constant VUs_ executor의 발전된 형태입니다. 이를 통해 k6는 원하는 VU 수를 한 stage에서 다른 stage로 전환할 수 있습니다. 각 stage는 모든 VU가 테스트를 지속적으로 수행할 자체 시간대를 정의합니다.
 
-| Option             | Description                                                                             | Default      |
-|--------------------|-----------------------------------------------------------------------------------------|--------------|
-| **`stages`**       | Consists of a time `duration` and `target` for the number of desired VUs                | - (required) |
-| `gracefulRampDown` | Grace period for a test iteration to finish before shutting down a VU when ramping down | `"30s"`      |
-| `startVUs`         | Number of virtual users at the beginning of test                                        | `1`          |
+| 옵션               | 설명                                                                             | 기본값        |
+|--------------------|----------------------------------------------------------------------------------|--------------|
+| **`stages`**       | 원하는 VU 수에 대한 시간 `duration`과 `target`으로 구성됩니다                    | - (필수)     |
+| `gracefulRampDown` | 램프 다운 시 VU를 종료하기 전에 테스트 iteration이 완료되기를 기다리는 유예 기간  | `"30s"`      |
+| `startVUs`         | 테스트 시작 시 가상 사용자 수                                                   | `1`          |
 
-As a time-based scenario, the total duration is equal to the sum of `duration` timeframe(s) from each `stage`. The first stage will begin with `startVUs` VU(s) and ramp up (or down) linearly over the configured `duration` to the `target` number of VUs specified within the stage. The next stage, if configured, will then ramp up or down from that point to the desired `target` VU(s) over the specified `duration` timeframe. This pattern continues for each remaining stage. As with _Constant VUs_, each running VU will continually perform test iterations until the scenario ends.
+시간 기반 scenario로서, 총 기간은 각 `stage`의 `duration` 시간대의 합과 같습니다. 첫 번째 stage는 `startVUs` VU로 시작하고 구성된 `duration` 동안 stage 내에 지정된 `target` VU 수까지 선형적으로 램프 업(또는 다운)합니다. 다음 stage가 구성되어 있으면, 지정된 `duration` 시간대 동안 해당 시점에서 원하는 `target` VU까지 램프 업하거나 다운합니다. 이 패턴은 나머지 각 stage에 대해 계속됩니다. _Constant VUs_와 마찬가지로, 실행 중인 각 VU는 scenario가 종료될 때까지 테스트 iteration을 지속적으로 수행합니다.
 
-[Experiment with _Ramping VUs_ for yourself!](./08-Setting-load-profiles-with-executors/Ramping-VUs-Exercises.md)
+[_Ramping VUs_를 직접 실험해 보세요!](./08-Setting-load-profiles-with-executors/Ramping-VUs-Exercises.md)
 
 ### Constant Arrival Rate
-With the _Constant Arrival Rate_, we now start to focus on the rate at which your test iterations are performed over a prescribed period of time. k6 will dynamically adjust the number of VUs to achieve the desired rate.
+_Constant Arrival Rate_를 사용하면 이제 특정 기간 동안 테스트 iteration이 수행되는 속도에 초점을 맞추기 시작합니다. k6는 원하는 속도를 달성하기 위해 VU 수를 동적으로 조정합니다.
 
-| Option                | Description                                                     | Default        |
-|-----------------------|-----------------------------------------------------------------|----------------|
-| **`duration`**        | Overall scenario duration                                       | - (required)   |
-| **`preAllocatedVUs`** | Number of virtual users at the beginning of test                | - (required)   |
-| **`rate`**            | Desired iterations per `timeUnit` to be achieved and maintained | - (required)   |
-| `maxVUs`              | Maximum number of virtual users allowed to scale                | - (no scaling) |
-| `timeUnit`            | Duration to which the desired `rate` applies                    | `"1s"`         |
+| 옵션                  | 설명                                                              | 기본값            |
+|-----------------------|-------------------------------------------------------------------|----------------|
+| **`duration`**        | 전체 scenario 기간                                                | - (필수)        |
+| **`preAllocatedVUs`** | 테스트 시작 시 가상 사용자 수                                      | - (필수)        |
+| **`rate`**            | 달성하고 유지할 `timeUnit`당 원하는 iteration                      | - (필수)        |
+| `maxVUs`              | 확장할 수 있는 최대 가상 사용자 수                                  | - (확장 없음)   |
+| `timeUnit`            | 원하는 `rate`가 적용되는 기간                                      | `"1s"`         |
 
-Our primary focus will be to achieve and maintain an _iteration rate_ of `rate` per `timeUnit` over the desired `duration`. The number of VUs to achieve the desired rate will be managed by k6, and will be anywhere from `preAllocatedVUs` to `maxVUs`. Note that there is time and resource overhead associated with VU creation, so defining a reasonable `preAllocatedVUs` will allow for more testing time at the desired rate. 
+주요 초점은 원하는 `duration` 동안 `timeUnit`당 `rate`의 _iteration 속도_를 달성하고 유지하는 것입니다. 원하는 속도를 달성하기 위한 VU 수는 k6에 의해 관리되며, `preAllocatedVUs`에서 `maxVUs`까지 어디든지 될 수 있습니다. VU 생성과 관련된 시간 및 리소스 오버헤드가 있으므로, 합리적인 `preAllocatedVUs`를 정의하면 원하는 속도에서 더 많은 테스트 시간을 허용할 것입니다.
 
-[Experiment with _Constant Arrival Rate_ for yourself!](./08-Setting-load-profiles-with-executors/Constant-Arrival-Rate-Exercises.md)
+[_Constant Arrival Rate_를 직접 실험해 보세요!](./08-Setting-load-profiles-with-executors/Constant-Arrival-Rate-Exercises.md)
 
 ### Ramping Arrival Rate
-_Ramping Arrival Rate_ is an evolution of the _Constant Arrival Rate_ executor which introduces **_stages_**. This is probably the best candidate for modeling real-world testing scenarios, allowing k6 to transition the desired _iteration rate_ from one stage to another. Each stage defines its own timeframe for which to achieve the desired rate.
+_Ramping Arrival Rate_는 **_stages_**를 도입하는 _Constant Arrival Rate_ executor의 발전된 형태입니다. 이것은 실제 세계 테스트 scenario를 모델링하는 데 아마도 가장 좋은 후보로, k6가 원하는 _iteration 속도_를 한 stage에서 다른 stage로 전환할 수 있습니다. 각 stage는 원하는 속도를 달성하기 위한 자체 시간대를 정의합니다.
 
-| Option                | Description                                                                          | Default        |
-|-----------------------|--------------------------------------------------------------------------------------|----------------|
-| **`preAllocatedVUs`** | Number of virtual users at the beginning of test                                     | - (required)   |
-| **`stages`**          | Consists of a time `duration` and `target` for the desired iterations per `timeUnit` | - (required)   |
-| `maxVUs`              | Maximum number of virtual users allowed to scale                                     | - (no scaling) |
-| `startRate`           | Desired iterations per `timeUnit` to be achieved and maintained                      | `0`            |
-| `timeUnit`            | Duration to which the desired `rate` applies                                         | `"1s"`         |
+| 옵션                  | 설명                                                                           | 기본값            |
+|-----------------------|--------------------------------------------------------------------------------|----------------|
+| **`preAllocatedVUs`** | 테스트 시작 시 가상 사용자 수                                                   | - (필수)        |
+| **`stages`**          | `timeUnit`당 원하는 iteration에 대한 시간 `duration`과 `target`으로 구성됩니다  | - (필수)        |
+| `maxVUs`              | 확장할 수 있는 최대 가상 사용자 수                                               | - (확장 없음)   |
+| `startRate`           | 달성하고 유지할 `timeUnit`당 원하는 iteration                                   | `0`            |
+| `timeUnit`            | 원하는 `rate`가 적용되는 기간                                                   | `"1s"`         |
 
-Similar to the _Constant Arrival Rate_, the main focus is achieving a target _iteration rate_. The primary difference being the desired rate is achieved within each defined `stage`. The overall duration will be equal to the sum of `duration` timeframe(s) from each `stage`. The first stage will begin with an _iteration rate_ of `startRate` per `timeUnit` performed by `preAllocatedVUs` virtual user(s). The _iteration rate_ will ramp up (or down) linearly over the configured `duration` to the `target` rate specified for the stage. The next stage, if configured, will then ramp up or down from that point to the desired `target` rate over the specified `duration` timeframe. This pattern continues for each remaining stage. _Spikes_, _valleys_, and _plateaus_ can be simulated with these stages.
+_Constant Arrival Rate_와 유사하게, 주요 초점은 대상 _iteration 속도_를 달성하는 것입니다. 주요 차이점은 원하는 속도가 정의된 각 `stage` 내에서 달성된다는 것입니다. 전체 기간은 각 `stage`의 `duration` 시간대의 합과 같습니다. 첫 번째 stage는 `preAllocatedVUs` 가상 사용자가 수행하는 `timeUnit`당 `startRate`의 _iteration 속도_로 시작합니다. _iteration 속도_는 stage에 지정된 `target` 속도까지 구성된 `duration` 동안 선형적으로 램프 업(또는 다운)합니다. 다음 stage가 구성되어 있으면, 지정된 `duration` 시간대 동안 해당 시점에서 원하는 `target` 속도까지 램프 업하거나 다운합니다. 이 패턴은 나머지 각 stage에 대해 계속됩니다. 이 stage들로 _스파이크_, _밸리_, _플래토_를 시뮬레이션할 수 있습니다.
 
-[Experiment with _Ramping Arrival Rate_ for yourself!](./08-Setting-load-profiles-with-executors/Ramping-Arrival-Rate-Exercises.md)
+[_Ramping Arrival Rate_를 직접 실험해 보세요!](./08-Setting-load-profiles-with-executors/Ramping-Arrival-Rate-Exercises.md)
 
 ### Externally Controlled
-_Externally Controlled_ is a completely different executor in that it does not alter the number of virtual users beyond starting the test and setting limits on VUs and duration. This is expected to be provided by external processes using either the k6 REST API or the k6 CLI.
+_Externally Controlled_는 테스트를 시작하고 VU 및 기간에 대한 제한을 설정하는 것 외에는 가상 사용자 수를 변경하지 않는 완전히 다른 executor입니다. 이는 k6 REST API 또는 k6 CLI를 사용하는 외부 프로세스에서 제공될 것으로 예상됩니다.
 
-| Option         | Description                                            | Default      |
-|----------------|--------------------------------------------------------|--------------|
-| **`duration`** | Overall scenario duration                              | - (required) |
-| `maxVUs`       | Maximum number of virtual users allowed to be utilized | `0`          |
-| `vus`          | Number of virtual users to run concurrently            | `0`          |
+| 옵션           | 설명                                               | 기본값        |
+|----------------|---------------------------------------------------|--------------|
+| **`duration`** | 전체 scenario 기간                                  | - (필수)     |
+| `maxVUs`       | 활용할 수 있는 최대 가상 사용자 수                   | `0`          |
+| `vus`          | 동시에 실행할 가상 사용자 수                         | `0`          |
 
-The primary objective for this executor is to define the `duration` timeframe of the test. If nothing else is provided, k6 will essentially be in a state of waiting for commands. If none are given, k6 will simply exit once the duration has been reached. If `vus` are specified with a non-zero value, the executor will run similarly to the _Constant VUs_ until acted upon by an external actor. The `maxVUs` setting will put in place a limit to be enforced when receiving external requests to scale up.
+이 executor의 주요 목표는 테스트의 `duration` 시간대를 정의하는 것입니다. 다른 것이 제공되지 않으면 k6는 본질적으로 명령을 기다리는 상태가 됩니다. 명령이 없으면, 기간에 도달하면 k6는 단순히 종료합니다. `vus`가 0이 아닌 값으로 지정되면, executor는 외부 액터에 의해 작동될 때까지 _Constant VUs_와 유사하게 실행됩니다. `maxVUs` 설정은 스케일 업 요청을 받을 때 적용될 제한을 설정합니다.
 
-[Experiment with _Externally Controlled_ for yourself!](./08-Setting-load-profiles-with-executors/Externally-Controlled-Exercises.md)
+[_Externally Controlled_를 직접 실험해 보세요!](./08-Setting-load-profiles-with-executors/Externally-Controlled-Exercises.md)
 
-## Test your knowledge
+## 지식 확인
 
-See how well you understand the executors with the following quiz. Check your answers with the [answer key](#Answers) toward the bottom of the page.
+다음 퀴즈로 executor에 대한 이해도를 확인해 보세요. 페이지 하단의 [정답 키](#Answers)로 답을 확인하세요.
 
 ### Question 1
 
-A system runs with approximately 80 concurrent users and encounters occasional spikes of 50 additional users. How would this best be modelled?
+시스템은 약 80명의 동시 사용자로 실행되며 50명의 추가 사용자가 가끔 스파이크를 일으킵니다. 이것을 가장 잘 모델링하는 방법은 무엇입니까?
 
-A: Use the `ramping-arrival-rate` with multiple stages. Start with 80 VUs with a stage to maintain for a short period, then another stage to target 130 users within a short duration, then another to bring back to 80 users.
+A: `ramping-arrival-rate`를 여러 stage와 함께 사용합니다. 80 VU로 시작하여 짧은 기간 동안 유지하는 stage, 그다음 짧은 기간 내에 130명의 사용자를 목표로 하는 stage, 그다음 80명의 사용자로 돌아오는 stage를 추가합니다.
 
-B: Use the `constant-vus` having the 130 virtual users. Have this run with a 5-minute duration.
+B: `constant-vus`를 사용하여 130명의 가상 사용자를 설정합니다. 이를 5분 기간으로 실행합니다.
 
-C: Use the `ramping-vus` with multiple stages. Start with 80 VUs with a stage to maintain for a short period, then another stage to target 130 users within a short duration, then another to bring back to 80 users.
+C: `ramping-vus`를 여러 stage와 함께 사용합니다. 80 VU로 시작하여 짧은 기간 동안 유지하는 stage, 그다음 짧은 기간 내에 130명의 사용자를 목표로 하는 stage, 그다음 80명의 사용자로 돌아오는 stage를 추가합니다.
 
 ### Question 2
 
-We're looking to establish some baseline metrics to define an SLA for an existing service, what is the quickest way to achieve this?
+기존 서비스에 대한 SLA를 정의하기 위한 기준 메트릭을 설정하려고 합니다. 이를 달성하는 가장 빠른 방법은 무엇입니까?
 
-A: Use the `shared-iterations` executor to run through 1,000 requests.
+A: `shared-iterations` executor를 사용하여 1,000개의 요청을 처리합니다.
 
-B: Use the `constant-arrival-rate` to see how many virtual users it takes to maintain a constant 50 requests per second (RPS).
+B: `constant-arrival-rate`를 사용하여 초당 50개 요청(RPS)을 일정하게 유지하는 데 필요한 가상 사용자 수를 확인합니다.
 
-C: Use the `externally-controlled` executor to start k6 in server mode to have your _sweet_ Bash script ramp up virtual users.
+C: `externally-controlled` executor를 사용하여 k6를 서버 모드로 시작하여 _멋진_ Bash 스크립트로 가상 사용자를 램프 업합니다.
 
 ### Question 3
 
-Your SRE team has been seeing issues with your service hitting a garbage collection pause once an instance starts exceeding 30 RPS. You're not on Kubernetes yet, so scaling isn't an easy option. How can your developers simulate the load locally in order to test their json marshaling code? 
+SRE 팀이 인스턴스가 30 RPS를 초과하기 시작하면 가비지 수집 일시 중지가 발생하는 서비스 문제를 발견했습니다. 아직 Kubernetes가 없어 스케일링이 쉬운 옵션이 아닙니다. 개발자들은 json 마샬링 코드를 테스트하기 위해 로컬에서 부하를 어떻게 시뮬레이션할 수 있습니까?
 
-A: Use the `constant-vus` to simulte 30 virtual users performing requests as quickly as possible.
+A: `constant-vus`를 사용하여 30명의 가상 사용자가 가능한 한 빠르게 요청을 수행하도록 시뮬레이션합니다.
 
-B: Use the `constant-arrival-rate` to maintain a constant 30 requests per second (RPS).
+B: `constant-arrival-rate`를 사용하여 초당 30개 요청(RPS)을 일정하게 유지합니다.
 
-C: Use the `per-vu-iterations` executor to have 30 virutal users run 1,000 requests each.
+C: `per-vu-iterations` executor를 사용하여 30명의 가상 사용자가 각각 1,000개의 요청을 실행하도록 합니다.
 
-> :rocket: **Want more** Check out the [k6 Office Hours](https://www.youtube.com/playlist?list=PLJdv3RhAQXNE1TFXn2pp9h_Ul1q_kJrEZ) session where we talked in depth about *Executors in k6*!
+> :rocket: **더 원하신다면** *k6의 Executor*에 대해 심층적으로 이야기한 [k6 Office Hours](https://www.youtube.com/playlist?list=PLJdv3RhAQXNE1TFXn2pp9h_Ul1q_kJrEZ) 세션을 확인해 보세요!
 
 [![k6 Office Hours](../../images/office-hours-executors-k6.png)](https://www.youtube.com/playlist?list=PLJdv3RhAQXNE1TFXn2pp9h_Ul1q_kJrEZ)
 
-#### Answers
-1. C. `ramping-vus` allows you to model spikes in concurrent _virtual users_.
-2. A. With `shared-iterations` we can easily run through a fixed number of test iterations, with or without concurrency. We're after simple service-levels to establish a baseline, so probably won't need anything overly complex.
-3. B. With the `constant-arrival-rate` executor, you can have your script achieve and maintain the targeted request rate to monitor your memory heap.
+#### 정답
+1. C. `ramping-vus`는 동시 _가상 사용자_의 스파이크를 모델링할 수 있습니다.
+2. A. `shared-iterations`를 사용하면 동시성 유무에 관계없이 고정된 수의 테스트 iteration을 쉽게 실행할 수 있습니다. 기준을 설정하기 위한 간단한 서비스 수준을 원하므로 지나치게 복잡한 것은 필요하지 않을 것입니다.
+3. B. `constant-arrival-rate` executor를 사용하면 스크립트가 목표 요청 속도를 달성하고 유지하여 메모리 힙을 모니터링할 수 있습니다.

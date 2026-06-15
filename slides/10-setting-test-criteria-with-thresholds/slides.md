@@ -1,8 +1,8 @@
-# k6 Thresholds
+# k6 Threshold
 
 ---
 
-## Add thresholds to your script
+## 스크립트에 threshold 추가하기
 
 ```js [7-10]
 export let options = {
@@ -20,21 +20,21 @@ export let options = {
 
 ---
 
-> 💡 Thresholds are **always** based on metrics.
+> 💡 Threshold는 **항상** 메트릭을 기반으로 합니다.
 
 ---
 
-## Types of thresholds
+## Threshold 유형
 
-- Error rate
-- Response time
-- Checks
+- 오류율
+- 응답 시간
+- Check
 
-> 💡 Recommended: Use error rate, response time, and checks thresholds in your tests where possible.
+> 💡 권장 사항: 가능한 경우 테스트에 오류율, 응답 시간, check threshold를 사용하세요.
 
 ---
 
-### Error rate
+### 오류율
 
 ```js
 thresholds: {
@@ -44,7 +44,7 @@ thresholds: {
 
 ---
 
-### Response time
+### 응답 시간
 
 ```js
 thresholds: {
@@ -52,11 +52,11 @@ thresholds: {
 },
 ```
 
-> 💡 Recommended: Start with the 95th percentile response time. 
+> 💡 권장 사항: 95번째 퍼센타일 응답 시간부터 시작하세요.
 
 ---
 
-#### Using multiple response time thresholds
+#### 여러 응답 시간 threshold 사용
 
 ```js
 thresholds: {
@@ -66,7 +66,7 @@ thresholds: {
 
 ---
 
-### Checks
+### Check
 
 ```js
 thresholds: {
@@ -76,7 +76,7 @@ thresholds: {
 
 ---
 
-## Aborting test on fail
+## 실패 시 테스트 중단
 
 ```js
 thresholds: {
@@ -89,7 +89,7 @@ thresholds: {
 
 ---
 
-## The full script
+## 전체 스크립트
 
 ```js
 import http from 'k6/http';
@@ -124,6 +124,6 @@ export default function() {
 
 ---
 
-## Output k6 results in different ways
+## 다양한 방법으로 k6 결과 출력하기
 
-- Move to [11-k6-results-output-options](?p=11-k6-results-output-options)
+- 이동 [11-k6-results-output-options](?p=11-k6-results-output-options)

@@ -1,18 +1,18 @@
 # Externally Controlled Executor
 
-As noted in [Setting load profiles with executors](../08-Setting-load-profiles-with-executors.md#Externally-Controlled), this particular executor delegates the control of VUs and the running state of tests to external processes. Feel free to use Bash, Python, or some automation component; the source of these processes is of no consequence to the executor.
+[executor로 부하 프로필 설정하기](../08-Setting-load-profiles-with-executors.md#Externally-Controlled)에서 언급한 바와 같이, 이 특정 executor는 VU 제어와 테스트의 실행 상태를 외부 프로세스에 위임합니다. Bash, Python 또는 어떤 자동화 컴포넌트든 자유롭게 사용할 수 있습니다. 이러한 프로세스의 출처는 executor에 관계없습니다.
 
-The focus of the executor will be to set up the test scenario and provide constraints on the overall duration and an allowable number of virtual users. From this point, a running test will be in somewhat of a _holding pattern_ waiting for further instructions.
+executor의 초점은 테스트 시나리오를 설정하고 전체 duration 및 허용 가능한 virtual user 수에 대한 제약을 제공하는 것입니다. 이 시점부터 실행 중인 테스트는 추가 명령을 기다리는 _대기 상태_에 있게 됩니다.
 
-Interaction with the running test utilizes either the [REST APIs](https://k6.io/docs/misc/k6-rest-api/) exposed by the k6 process, or by using the `k6` command line interface ([CLI](https://k6.io/blog/how-to-control-a-live-k6-test/)).
+실행 중인 테스트와의 상호 작용은 k6 프로세스가 노출하는 [REST API](https://k6.io/docs/misc/k6-rest-api/)나 `k6` 명령줄 인터페이스([CLI](https://k6.io/blog/how-to-control-a-live-k6-test/))를 사용하여 이루어집니다.
 
-## Exercises
-For our exercises, we're going to start by using a very basic script that simply performs an HTTP request and then waits three seconds before completing the test iteration. We're providing some console output as things change. 
+## 연습 문제
+이번 연습에서는 HTTP 요청을 수행한 뒤 테스트 iteration이 완료되기 전 3초를 대기하는 매우 기본적인 스크립트를 사용하여 시작합니다. 변경 사항에 따른 콘솔 출력도 확인할 수 있습니다.
 
-The configured `options` will be the absolute minimum required for the `externally-controlled` executor.
+설정된 `options`는 `externally-controlled` executor에 필요한 절대 최소한의 것입니다.
 
-### Create our test script
-Create a file named _test.js_ with the following content:
+### 테스트 스크립트 작성
+다음 내용으로 _test.js_ 파일을 생성하세요:
 ```js
 import http from 'k6/http';
 import { sleep } from 'k6';
@@ -33,28 +33,28 @@ export default function () {
 }
 ```
 
-### Initial test run
-Open a _terminal_ window within the same directory as the `test.js` script. We're now going to execute our script using the k6 binary:
+### 초기 테스트 실행
+`test.js` 스크립트가 있는 동일한 디렉토리 내에서 _터미널_ 창을 엽니다. 이제 k6 바이너리를 사용하여 스크립트를 실행합니다:
 ```bash
 k6 run test.js
 ```
-k6 should now start. You should see a timer counting up as the test is running, but nothing much is happening. We're not seeing our expected console message included in our script! We'll stay in this holding pattern until the timer reaches the configured `duration` from the script options.
+이제 k6가 시작되어야 합니다. 타이머가 테스트 실행 중에 계속 올라가는 것이 보이지만, 실제로는 아무 일도 일어나지 않습니다. 스크립트에 포함된 예상 콘솔 메시지가 표시되지 않습니다! 타이머가 스크립트 options에서 설정된 `duration`에 도달할 때까지 이 대기 상태가 계속됩니다.
 
-### Scaling up VUs
-No tests were actually performed due to there being `0` virtual users (VUs) started by the script. k6 waits for the external process to _scale up_ VUs. To scale up, we're going to use the 'k6' command line.
+### VU 확장
+스크립트에 의해 시작된 virtual user (VU)가 `0`이기 때문에 실제 테스트가 수행되지 않았습니다. k6는 외부 프로세스가 VU를 _확장_하기를 기다립니다. 확장하기 위해 'k6' 명령줄을 사용합니다.
 
-Let's open another _terminal_ window. This time, however, the directory should not matter. If your script timed out in the meantime, start it back up again using `k6 run test.js`.
+다른 _터미널_ 창을 엽니다. 이번에는 디렉토리가 중요하지 않습니다. 그 사이에 스크립트가 시간 초과되었다면 `k6 run test.js`를 사용하여 다시 시작합니다.
 ```bash
 k6 scale --vus 2 --max 10
 ```
-> :point_up: If you don't specify the `maxVUs` in your script options, any request to scale up will fail unless you provide a `--max` with the scale request!
+> :point_up: 스크립트 options에 `maxVUs`를 지정하지 않으면, 확장 요청이 `--max`와 함께 제공되지 않는 한 모든 확장 요청이 실패합니다!
 
-Now that VUs have been scaled up, you should now see console output showing that each virtual user is now executing the test code.
+이제 VU가 확장되었으므로 각 virtual user가 테스트 코드를 실행하고 있음을 보여주는 콘솔 출력이 표시되어야 합니다.
 
-### Controlling the execution engine
-Continuing with the currently running test from the previous step, let's play with other options available to control the overall test execution.
+### 실행 엔진 제어
+이전 단계에서 현재 실행 중인 테스트를 계속하면서, 전체 테스트 실행을 제어하는 데 사용 가능한 다른 옵션들을 살펴보겠습니다.
 
-Using an idle _terminal_ window (one not currently running the k6 test), we'll issue the following commands:
+유휴 상태의 _터미널_ 창(현재 k6 테스트를 실행하지 않는 창)을 사용하여 다음 명령을 실행합니다:
 ```bash
 # Halt the currently running test; console output should stop
 k6 pause
@@ -66,8 +66,8 @@ k6 scale --vus 5
 k6 resume
 ```
  
-### Inspecting state
-At any time, you can use the `k6` command to inquire as to the state of a running instance:
+### 상태 확인
+언제든지 `k6` 명령을 사용하여 실행 중인 인스턴스의 상태를 조회할 수 있습니다:
 
 ```bash
 $ k6 status
@@ -80,8 +80,8 @@ running: true
 tainted: false
 ```
 
-### Gather a metrics snapshot
-While your script is running, whether paused or active, you can poll the current metrics from the running script. This will dump the current metrics in YAML format to your console which can be _piped_ to an output file.
+### 메트릭 스냅샷 수집
+스크립트가 실행 중일 때, 일시 중지되었든 활성화되었든 실행 중인 스크립트에서 현재 메트릭을 폴링할 수 있습니다. 이는 현재 메트릭을 YAML 형식으로 콘솔에 덤프하며, 출력 파일로 _파이프_할 수 있습니다.
 
 ```bash
 $ k6 stats
@@ -104,8 +104,8 @@ $ k6 stats
 ...
 ```
 
-### Ending your test
-If you wish to complete a test before the `duration` timeframe has been met, you will have to use the `Ctrl+C` keyboard command in the _terminal_ running your test or use the REST API:
+### 테스트 종료
+`duration` 기간이 종료되기 전에 테스트를 완료하려면 테스트를 실행하는 _터미널_에서 `Ctrl+C` 키보드 명령을 사용하거나 REST API를 사용해야 합니다:
 ```bash
 curl -X PATCH \
   http://localhost:6565/v1/status \
@@ -121,16 +121,16 @@ curl -X PATCH \
 }'
 ```
 
-> The `k6` CLI does not provide an equivalent `k6 stop` command. Simply use `Ctrl+C` to end a test.
+> `k6` CLI는 동등한 `k6 stop` 명령을 제공하지 않습니다. 테스트를 종료하려면 단순히 `Ctrl+C`를 사용하세요.
 
-### Script options
-Our initial script provides the bare minimum to begin your test. 
+### 스크립트 options
+초기 스크립트는 테스트를 시작하는 데 필요한 최소한의 것을 제공합니다.
 
-Consider specifying your `maxVUs` . As noted previously, the `maxVUs` is not required. However, any attempt to scale will be met with an error unless a `--max` is specified with the initial scaling request. The `maxVUs` value may be overridden using the `--max` argument if deemed necessary.
+`maxVUs` 지정을 고려하세요. 앞서 언급한 바와 같이 `maxVUs`는 필수가 아닙니다. 그러나 초기 확장 요청에 `--max`가 지정되지 않으면 모든 확장 시도가 오류로 응답받게 됩니다. `maxVUs` 값은 필요하다고 판단될 경우 `--max` 인수를 사용하여 재정의할 수 있습니다.
 
-The final script option is the `vus` setting. When provided, this number of VUs will begin processing once the script is started thereby eliminating the need for an initial scale-up.
+마지막 스크립트 옵션은 `vus` 설정입니다. 제공하면 스크립트가 시작되자마자 이 수의 VU가 처리를 시작하여 초기 확장 필요성을 없애줍니다.
 
-Let's update the _options_ declaration in our _test.js_ script to include these additional settings:
+_test.js_ 스크립트의 _options_ 선언을 업데이트하여 이러한 추가 설정을 포함해 보겠습니다:
 ```js
 export const options = {
     scenarios: {
@@ -144,7 +144,7 @@ export const options = {
 };
 ```
 
-Running our script now will immediately show that our tests are being executed by 2 virtual users:
+이제 스크립트를 실행하면 즉시 2개의 virtual user에 의해 테스트가 실행되고 있음을 보여줍니다:
 ```bash
 $ k6 run test.js
 
@@ -169,5 +169,5 @@ INFO[0006] [VU: 1, iteration: 2] Starting iteration...   source=console
 INFO[0006] [VU: 4, iteration: 2] Starting iteration...   source=console
 ```
 
-### Wrapping up
-So that's it! Hopefully, you see the additional power in being able to control your k6 load test from an external source! 
+### 마무리
+이상입니다! 외부 소스에서 k6 부하 테스트를 제어하는 추가적인 힘을 확인할 수 있기를 바랍니다!
