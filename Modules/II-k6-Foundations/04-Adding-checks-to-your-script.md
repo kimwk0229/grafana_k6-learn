@@ -1,14 +1,14 @@
-Checks are a type of testing criteria that can be used to verify the response returned by a request.
+check는 요청에서 반환된 응답을 검증하는 데 사용할 수 있는 테스트 기준의 한 유형입니다.
 
-Up until now, you've been using `console.log()` to print the response body to the terminal. This approach is useful for debugging, but it can quickly get out of hand if the response body is large or if you decide to run the test with more than one VU. Instead, in this section, you'll learn how to use checks.
+지금까지 `console.log()`를 사용하여 응답 본문을 터미널에 출력해왔습니다. 이 접근 방식은 디버깅에 유용하지만, 응답 본문이 크거나 1명 이상의 VU로 테스트를 실행하기로 결정한 경우 금세 걷잡을 수 없게 됩니다. 대신 이 섹션에서는 check를 사용하는 방법을 배웁니다.
 
-## How to add checks to your script
+## 스크립트에 check 추가하는 방법
 
-Back to the script!
+다시 스크립트로 돌아가봅시다!
 
-You already know the expected response of the target server to the request the script is sending: it should send back whatever the script sends to it. In this case, that's `Hello world!`
+스크립트가 보내는 요청에 대한 대상 서버의 예상 응답은 이미 알고 있습니다: 스크립트가 보낸 것을 그대로 되돌려 보내야 합니다. 이 경우 그것은 `Hello world!`입니다.
 
-So, remove the `console.log()` statement and add a check by copying this code snippet:
+따라서 `console.log()` 문을 제거하고 이 코드 스니펫을 복사하여 check를 추가하세요:
 
 ```js
 import http from 'k6/http';
@@ -23,13 +23,13 @@ export default function() {
 }
 ```
 
-Note that you need to import the `check` from the k6 library:
+k6 라이브러리에서 `check`를 임포트해야 합니다:
 
 ```js
 import { check } from 'k6';
 ```
 
-And you need to put the actual check in the default function:
+그리고 실제 check를 default 함수에 넣어야 합니다:
 
 ```js
 check(response, {
@@ -38,17 +38,17 @@ check(response, {
 }
 ```
 
-The check you've just added looks for the string `Hello world!` in the body of the response of *every* request.
+방금 추가한 check는 *모든* 요청의 응답 본문에서 `Hello world!` 문자열을 찾습니다.
 
-### Running the script
+### 스크립트 실행
 
-What does it look like in the end-of-test summary? Save your script and run:
+테스트 종료 요약에서 어떻게 보일까요? 스크립트를 저장하고 다음을 실행하세요:
 
 ```plain
 k6 run test.js
 ```
 
-and you should see output similar to this:
+다음과 유사한 출력을 볼 수 있습니다:
 
 ```plain
           /\      |‾‾| /‾‾/   /‾‾/   
@@ -87,7 +87,7 @@ default ✓ [======================================] 1 VUs  00m00.7s/10m0s  1/1 
      iterations.....................: 1       1.419825/s
 ```
 
-The new check is displayed in the lines:
+새 check는 다음 줄에 표시됩니다:
 
 ```plain
 	✓ Application says hello
@@ -95,13 +95,13 @@ The new check is displayed in the lines:
      checks.........................: 100.00% ✓ 1        ✗ 0
 ```
 
-and the `✓` means that all the requests executed (just one in this test run) passed the check. This test run had a 100% pass rate for checks.
+`✓`는 실행된 모든 요청(이 테스트 실행에서는 단 하나)이 check를 통과했음을 의미합니다. 이 테스트 실행의 check 통과율은 100%였습니다.
 
-### Failed checks
+### 실패한 check
 
-What does it look like when the check fails?
+check가 실패하면 어떻게 보일까요?
 
-Modify the script to search for text that shouldn't be found in the response, like so:
+다음과 같이 응답에서 찾을 수 없는 텍스트를 검색하도록 스크립트를 수정하세요:
 
 ```js
 import http from 'k6/http';
@@ -116,7 +116,7 @@ export default function() {
 }
 ```
 
-Run that, and you should get the following result:
+그것을 실행하면 다음 결과를 얻어야 합니다:
 
 ```plain
      ✗ Application says hello
@@ -125,49 +125,49 @@ Run that, and you should get the following result:
      checks.........................: 0.00%  ✓ 0        ✗ 1
 ```
 
-This time, the `✗ 1` indicates that one check failed.
+이번에는 `✗ 1`이 하나의 check가 실패했음을 나타냅니다.
 
-### Failed checks are not errors
+### 실패한 check는 오류가 아닙니다
 
-You may have noticed that in the last example, `http_req_failed`, or the HTTP error rate, was not affected by the failing check. This is because checks do not stop a script from executing successfully, and they do not return a failed exit status.
+마지막 예시에서 `http_req_failed`, 즉 HTTP 오류율이 실패한 check에 영향을 받지 않은 것을 알아챘을 것입니다. 이는 check가 스크립트를 성공적으로 실행하는 것을 중단하지 않으며, 실패한 종료 상태를 반환하지도 않기 때문입니다.
 
-> :bulb: To make failing checks stop your test, you can [combine them with thresholds](https://k6.io/docs/using-k6/thresholds/#failing-a-load-test-using-checks).
+> :bulb: 실패한 check가 테스트를 중단하게 하려면 [thresholds와 결합](https://k6.io/docs/using-k6/thresholds/#failing-a-load-test-using-checks)할 수 있습니다.
 
-## Other types of checks
+## 다른 유형의 check
 
-The [checks](https://k6.io/docs/using-k6/checks/) page contains other types of checks you can do, including the HTTP response code and the response body size. You can also include multiple checks for a single response.
+[checks](https://k6.io/docs/using-k6/checks/) 페이지에는 HTTP 응답 코드 및 응답 본문 크기를 포함하여 수행할 수 있는 다른 유형의 check가 있습니다. 단일 응답에 대해 여러 check를 포함할 수도 있습니다.
 
-## Next up
+## 다음 단계
 
-You're almost ready to scale up your test to multiple users! Before you do so, the next section discusses how to make your test realistic with think time.
+이제 테스트를 여러 사용자로 확장할 준비가 거의 되었습니다! 그 전에 다음 섹션에서 think time을 사용하여 테스트를 현실적으로 만드는 방법에 대해 설명합니다.
 
-## Test your knowledge
+## 지식 확인
 
-### Question 1
+### 문제 1
 
-Which of the following can you use a check to verify?
+다음 중 check로 검증할 수 있는 것은?
 
-A: Whether the 95th percentage response time of the request was greater than 1s
+A: 요청의 95번째 백분위수 응답 시간이 1초 이상인지 여부
 
-B: The size of the response body returned
+B: 반환된 응답 본문의 크기
 
-C: The error rate of the test
-
-
-### Question 2
-
-What part of the test do checks assess?
-
-A: The response time of a request
-
-B: The syntax of the request sent to the application
-
-C: The application server's response
+C: 테스트의 오류율
 
 
-### Question 3
+### 문제 2
 
-In the following snippet from the end-of-test summary, how many checks failed?
+check는 테스트의 어떤 부분을 평가합니까?
+
+A: 요청의 응답 시간
+
+B: 애플리케이션에 전송된 요청의 구문
+
+C: 애플리케이션 서버의 응답
+
+
+### 문제 3
+
+테스트 종료 요약의 다음 스니펫에서 몇 개의 check가 실패했나요?
 
 ```plain
      ✗ Application says hello
@@ -182,8 +182,8 @@ B: 1215
 
 C: 1144
 
-### Answer
+### 정답
 
-1. B. The 95th percentile of the response time is an aggregated metric: it relies on measurements from all requests up to that point. This is not something you can create a check for, although you can certainly include this as a [threshold](https://k6.io/docs/using-k6/thresholds/) in your script. The error rate of a test is similarly aggregated. B, the size of the response body, is the correct answer.
-2. C. Checks parse the responses from the application server, not the request sent by k6.
-3. C. The number of checks that failed is displayed in  `✗ 1144`. This request's checks passed 51.50% of the time.
+1. B. 응답 시간의 95번째 백분위수는 집계된 메트릭으로, 해당 시점까지의 모든 요청 측정에 의존합니다. 이것은 check를 만들 수 있는 것이 아니지만, 스크립트에 [threshold](https://k6.io/docs/using-k6/thresholds/)로 포함할 수는 있습니다. 테스트의 오류율도 마찬가지로 집계됩니다. B, 즉 응답 본문의 크기가 정답입니다.
+2. C. check는 k6가 보낸 요청이 아닌 애플리케이션 서버의 응답을 파싱합니다.
+3. C. 실패한 check 수는 `✗ 1144`에 표시됩니다. 이 요청의 check는 51.50%의 시간 동안 통과했습니다.
