@@ -9,9 +9,9 @@
   }
 </style>
 
-## Frontend performance testing 
+## 프론트엔드 성능 테스팅 
 
-![An example website with the title crocs r cool](../../images/frontend-performance.png)
+![예시 웹사이트 제목 'crocs r cool'](../../images/frontend-performance.png)
 <!-- .element class="stretch" -->
 
 ---
@@ -19,66 +19,65 @@
 <div class="container">
   <div class="col">
 
-  ### Why isn't frontend performance testing enough?
+  ### 프론트엔드 성능 테스팅만으로는 충분하지 않은 이유?
 
-  - Frontend performance does not look under the hood
-  - Without load, it does not test under traffic conditions
-  - Browser-level load testing is resource intensive and costly
+  - 프론트엔드 성능은 내부를 들여다보지 않습니다
+  - 부하 없이는 트래픽 조건에서 테스트하지 않습니다
+  - 브라우저 수준의 부하 테스팅은 리소스 집약적이며 비용이 많이 듭니다
 
   </div>
 
   <div class="col">
 
-  ![A graphic showing that browser load testing is costly and resource intensive](../../images/frontend-limitations.png)
+  ![브라우저 부하 테스팅이 비용이 많이 들고 리소스 집약적임을 보여주는 그래픽](../../images/frontend-limitations.png)
 
   </div>
 </div>
 
 ---
 
-![A chart aggregating front and backend response times. As concurrency increases, backend response time becomes much longer.](../../images/frontend-backend.png)
+![프론트엔드와 백엔드 응답 시간을 집계한 차트. 동시성이 증가할수록 백엔드 응답 시간이 훨씬 더 길어집니다.](../../images/frontend-backend.png)
 
 ---
 
-## Backend performance testing
+## 백엔드 성능 테스팅
 
-![A component of a backend system](../../images/backend-component.png)
+![백엔드 시스템의 컴포넌트](../../images/backend-component.png)
 <!-- .element class="stretch" -->
 
 ---
 
-## What does backend performance verifies?
+## 백엔드 성능 테스팅이 검증하는 것
 
-- **Scalability**
-- **Elasticity**
-- **Availability** 
-- **Reliability** 
-- **Resiliency**
-- **Latency**
+- **확장성(Scalability)**
+- **탄력성(Elasticity)**
+- **가용성(Availability)** 
+- **신뢰성(Reliability)** 
+- **복원력(Resiliency)**
+- **지연 시간(Latency)**
 
 ---
 
 <div class="container">
   <div class="col">
 
-  ### Why isn't backend performance testing enough?
+  ### 백엔드 성능 테스팅만으로는 충분하지 않은 이유?
 
-  - Ignores user experience
-  - Scripts can get lengthy to create 
-  - More difficult to maintain
+  - 사용자 경험을 무시합니다
+  - 스크립트 작성이 길어질 수 있습니다
+  - 유지 관리가 더 어렵습니다
 
   </div>
 
   <div class="col">
 
-  ![A graphic showing that browser load testing is costly and resource intensive](../../images/frontend-limitations.png)
+  ![브라우저 부하 테스팅이 비용이 많이 들고 리소스 집약적임을 보여주는 그래픽](../../images/frontend-limitations.png)
 
   </div>
 </div>
 
 ---
 
-## Load testing
+## 부하 테스팅
 
-- Move to: [03-load-testing](?p=03-load-testing)
-
+- 이동: [03-load-testing](?p=03-load-testing)

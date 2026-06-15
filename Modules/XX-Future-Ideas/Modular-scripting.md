@@ -2,19 +2,9 @@
 
 
 
-## Test your knowledge
+## 지식 테스트
 
-### Question 1
-
-
-
-A: 
-
-B: 
-
-C: 
-
-### Question 2
+### 질문 1
 
 
 
@@ -24,7 +14,7 @@ B:
 
 C: 
 
-### Question 3
+### 질문 2
 
 
 
@@ -34,5 +24,15 @@ B:
 
 C: 
 
-### Answers
+### 질문 3
+
+
+
+A: 
+
+B: 
+
+C: 
+
+### 정답
 

@@ -1,28 +1,28 @@
-k6 doesn't natively have a way to graph load-testing results. However, it does have a lot of options to save the output in different formats. This [blog](https://k6.io/blog/ways-to-visualize-k6-results/) is a good starting point. And you can find the full list of results visualization integrations or tutorials [here](https://k6.io/docs/integrations/#result-store-and-visualization).
+k6는 부하 테스트 결과를 기본적으로 그래프로 표시하는 방법이 없습니다. 하지만 결과를 다양한 형식으로 저장하는 많은 옵션이 있습니다. 이 [블로그](https://k6.io/blog/ways-to-visualize-k6-results/)가 좋은 출발점입니다. 결과 시각화 통합 또는 튜토리얼의 전체 목록은 [여기](https://k6.io/docs/integrations/#result-store-and-visualization)에서 찾을 수 있습니다.
 
-In this section, we'll discuss two common test-result formats: CSV and JSON.
+이 섹션에서는 두 가지 일반적인 테스트 결과 형식인 CSV와 JSON에 대해 설명합니다.
 
-Note: For both CSV and JSON formats, you'll need your own visualization tool. This could be anything from [Google Sheets](https://sheets.google.com), to [Grafana](https://grafana.com), to [Tableau](https://tableau.com).
+참고: CSV와 JSON 형식 모두 자체 시각화 도구가 필요합니다. [Google Sheets](https://sheets.google.com), [Grafana](https://grafana.com), [Tableau](https://tableau.com) 등 어떤 것이든 사용할 수 있습니다.
 
-## What's the difference between end-of-test results and time-series results?
+## 테스트 종료 결과와 시계열 결과의 차이점은?
 
 ## CSV
 
-### Saving k6 results as a CSV
+### k6 결과를 CSV로 저장하기
 
-Saving k6 results into a CSV file is good for further analysis in your data visualization software of choice. The CSV can be opened as a spreadsheet or used to generate graphs and summary tables.
+k6 결과를 CSV 파일로 저장하면 선택한 데이터 시각화 소프트웨어에서 추가 분석하기에 좋습니다. CSV는 스프레드시트로 열거나 그래프 및 요약 테이블을 생성하는 데 사용할 수 있습니다.
 
-To output k6 test results to a CSV file, use this command when running the test:
+k6 테스트 결과를 CSV 파일로 출력하려면 테스트를 실행할 때 다음 명령을 사용하세요:
 
 ```plain
 k6 run test.js -o csv=results.csv
 ```
 
-You can also use `--out` instead of `-o`.
+`-o` 대신 `--out`을 사용할 수도 있습니다.
 
-### CSV results output format
+### CSV 결과 출력 형식
 
-The command above will save k6 results as a CSV in the following format:
+위의 명령은 k6 결과를 다음 형식의 CSV로 저장합니다:
 
 ```csv
 metric_name,timestamp,metric_value,check,error,error_code,expected_response,group,method,name,proto,scenario,service,status,subproto,tls_version,url,extra_tags
@@ -40,14 +40,14 @@ vus,1641298536,2.000000,,,,,,,,,,,,,,,
 vus_max,1641298536,100.000000,,,,,,,,,,,,,,,
 ```
 
-Each line in the file is a single measurement that was taken during the test execution.
+파일의 각 줄은 테스트 실행 중 기록된 단일 측정값입니다.
 
-The results file uses the following columns:
+결과 파일은 다음 열을 사용합니다:
 
-- **`metric_name`**: The name of the metric for which a value is recorded. By default, k6 comes with [these built-in metrics](https://k6.io/docs/using-k6/metrics/#built-in-metrics). All values for all metrics are put in the same results file for easier analysis.
-- **`timestamp`**: The local date and time that each measurement was taken, [in Epoch time](https://www.epochconverter.com/).
-- **`metric_value`**: The reading for the given metric at the timestamp provided. The unit of measurement for this value differs depending on the metric. For example, `http_req_duration` values are in milliseconds.
-- **`check`**: The unique name given to the check being verified. In the check example below, the check name is `Application says hello`:
+- **`metric_name`**: 값이 기록되는 메트릭의 이름입니다. 기본적으로 k6에는 [이러한 내장 메트릭](https://k6.io/docs/using-k6/metrics/#built-in-metrics)이 포함되어 있습니다. 모든 메트릭의 모든 값은 더 쉬운 분석을 위해 동일한 결과 파일에 저장됩니다.
+- **`timestamp`**: 각 측정이 이루어진 로컬 날짜 및 시간으로, [Epoch 시간](https://www.epochconverter.com/)으로 표시됩니다.
+- **`metric_value`**: 제공된 타임스탬프에서 주어진 메트릭의 측정값입니다. 이 값의 측정 단위는 메트릭에 따라 다릅니다. 예를 들어 `http_req_duration` 값은 밀리초 단위입니다.
+- **`check`**: 검증되는 check에 부여된 고유한 이름입니다. 아래 check 예시에서 check 이름은 `Application says hello`입니다:
 
   ```js
   check(response, {
@@ -55,33 +55,33 @@ The results file uses the following columns:
   });
   ```
       
-- **`error`**: The text of any non-HTTP errors encountered, such as network or DNS errors. This value is empty if there were no errors.
-- **`error_code`**: A k6 error code. This value is empty if there were no errors. [Here is a full list](https://k6.io/docs/javascript-api/error-codes) of possible error codes.
-- **`expected_response`**: A boolean (`true` or `false`) indicating whether the response returned was as expected (an HTTP code less than 400 by default).
-- **`group`**: The name of a [request group](https://k6.io/docs/using-k6/tags-and-groups/#groups) that the metric belongs to.
-- **`method`**: The name of the HTTP method used, such as `GET` or `POST`, or the RPC method name for gRPC.
-- **`name`**: The name of the request sent. This defaults to the URL, but can be [changed using tags](https://k6.io/docs/using-k6/http-requests#url-grouping).
-- **`proto`**: The name of the protocol being used, such as `HTTP/1.1`.
-- **`scenario`**: The name of the test scenario within which the measurement was taken. The standard scenario is `default`.
-- **`service`**: For gRPC, the RPC service name.
-- **`subproto`**: For websockets, the subprotocol name.
-- **`tls_version`**: The type of Transport Layer Security (TLS) used to encrypt the connection.
-- **`url`**: The URL of the request sent. Unless the name is changed, this is the same as `name`.
-- **`extra_tags`**: Tags that apply to this measurement. Empty unless [tags](https://k6.io/docs/using-k6/tags-and-groups/) are used within the script.
+- **`error`**: 네트워크 또는 DNS 오류와 같이 비 HTTP 오류가 발생한 경우 오류 텍스트입니다. 오류가 없으면 이 값은 비어 있습니다.
+- **`error_code`**: k6 오류 코드입니다. 오류가 없으면 이 값은 비어 있습니다. 가능한 오류 코드의 [전체 목록](https://k6.io/docs/javascript-api/error-codes)이 있습니다.
+- **`expected_response`**: 반환된 응답이 예상한 것인지(기본적으로 400 미만의 HTTP 코드)를 나타내는 불리언(`true` 또는 `false`)입니다.
+- **`group`**: 메트릭이 속하는 [요청 그룹](https://k6.io/docs/using-k6/tags-and-groups/#groups)의 이름입니다.
+- **`method`**: 사용된 HTTP 메서드의 이름(예: `GET` 또는 `POST`) 또는 gRPC의 RPC 메서드 이름입니다.
+- **`name`**: 전송된 요청의 이름입니다. 기본값은 URL이지만, [태그를 사용하여 변경](https://k6.io/docs/using-k6/http-requests#url-grouping)할 수 있습니다.
+- **`proto`**: 사용되는 프로토콜의 이름(예: `HTTP/1.1`)입니다.
+- **`scenario`**: 측정이 이루어진 테스트 시나리오의 이름입니다. 표준 시나리오는 `default`입니다.
+- **`service`**: gRPC의 경우 RPC 서비스 이름입니다.
+- **`subproto`**: 웹소켓의 경우 서브프로토콜 이름입니다.
+- **`tls_version`**: 연결을 암호화하는 데 사용된 전송 계층 보안(TLS)의 유형입니다.
+- **`url`**: 전송된 요청의 URL입니다. 이름이 변경되지 않는 한 `name`과 동일합니다.
+- **`extra_tags`**: 이 측정에 적용되는 태그입니다. 스크립트 내에서 [태그](https://k6.io/docs/using-k6/tags-and-groups/)가 사용되지 않으면 비어 있습니다.
 
 ## JSON
 
-### Saving k6 results as a JSON
+### k6 결과를 JSON으로 저장하기
 
-To output k6 results to a JSON file, run the test with this command:
+k6 결과를 JSON 파일로 출력하려면 다음 명령으로 테스트를 실행하세요:
 
 ```plain
 k6 run test.js -o json=results.json
 ```
 
-### JSON results output format
+### JSON 결과 출력 형식
 
-The JSON file will look something like this:
+JSON 파일은 다음과 같이 보입니다:
 
 ```plain
 {"type":"Metric","data":{"name":"http_reqs","type":"counter","contains":"default","tainted":null,"thresholds":[],"submetrics":null,"sub":{"name":"","parent":"","suffix":"","tags":null}},"metric":"http_reqs"}
@@ -91,39 +91,39 @@ The JSON file will look something like this:
 {"type":"Metric","data":{"name":"http_req_blocked","type":"trend","contains":"time","tainted":null,"thresholds":[],"submetrics":null,"sub":{"name":"","parent":"","suffix":"","tags":null}},"metric":"http_req_blocked"}
 ```
 
-Each line is either a metric or a point. A **metric** defines either [built-in metrics](https://k6.io/docs/using-k6/metrics/#built-in-metrics) or custom metrics in terms of their type, thresholds related to them, or whether they have caused any thresholds to fail. A **point** is a measurement for a metric, and contains the actual value of the metric at a given timestamp.
+각 줄은 메트릭 또는 포인트입니다. **메트릭(metric)**은 [내장 메트릭](https://k6.io/docs/using-k6/metrics/#built-in-metrics) 또는 커스텀 메트릭을 유형, 관련 thresholds, 또는 어떤 thresholds가 실패했는지의 관점에서 정의합니다. **포인트(point)**는 메트릭에 대한 측정값으로, 특정 타임스탬프에서의 메트릭 실제 값을 포함합니다.
 
-## Test your knowledge
+## 지식 확인
 
-### Question 1
+### 문제 1
 
-Which of the following statements about the default k6 CSV results format is true?
+기본 k6 CSV 결과 형식에 대한 다음 진술 중 참인 것은?
 
-A: To graph the response time, you must take the number in the `metric_value` column from every line in the CSV file.
+A: 응답 시간을 그래프로 그리려면 CSV 파일의 모든 줄에서 `metric_value` 열의 숫자를 가져와야 합니다.
 
-B: Each line contains a metric and a value for that metric at a specific timestamp.
+B: 각 줄에는 특정 타임스탬프에서의 메트릭과 해당 메트릭의 값이 포함됩니다.
 
-C: The `metric_name` column in the CSV file refers to the URL of the HTTP request that was sent.
+C: CSV 파일의 `metric_name` 열은 전송된 HTTP 요청의 URL을 가리킵니다.
 
-### Question 2
+### 문제 2
 
-Below is a line from a JSON containing k6 test results:
+다음은 k6 테스트 결과가 포함된 JSON의 한 줄입니다:
 
 ```plain
 {"type":"Point","data":{"time":"2022-01-05T12:46:26.893633+01:00","value":100,"tags":null},"metric":"vus_max"}
 ```
 
-What can we determine from this line?
+이 줄에서 무엇을 알 수 있나요?
 
-A: The maximum number of VUs at the time was 100.
+A: 그 시점의 최대 VU 수는 100이었습니다.
 
-B: This measurement is for the `http_req_duration` metric.
+B: 이 측정값은 `http_req_duration` 메트릭에 대한 것입니다.
 
-C: The test reached the maximum number of VUs at 12:46 on January 5th, 2022.
+C: 테스트는 2022년 1월 5일 12:46에 최대 VU 수에 도달했습니다.
 
-### Question 3
+### 문제 3
 
-Which of the following is the correct command for outputting k6 results to different formats? 
+다음 중 k6 결과를 다른 형식으로 출력하는 올바른 명령은?
 
 A: `k6 run test.js --out json=myresults.json`
 
@@ -133,14 +133,14 @@ C: `k6 output csv=results.csv`
 
 ## k6 Cloud
 
-The previous two options let you output k6 results in different formats, but they still require some setup as you do the analysis in a separate results visualization software.
+이전 두 가지 옵션은 k6 결과를 다른 형식으로 출력할 수 있게 해주지만, 별도의 결과 시각화 소프트웨어에서 분석을 수행해야 합니다.
 
-An alternative to this is to use k6 Cloud. k6 Cloud is a paid SaaS platform built around k6 OSS. You can use k6 without using k6 Cloud, but k6 Cloud does provide some added functionalities that are quite useful, and one of them is results visualization.
+이에 대한 대안은 k6 Cloud를 사용하는 것입니다. k6 Cloud는 k6 OSS를 기반으로 구축된 유료 SaaS 플랫폼입니다. k6 Cloud를 사용하지 않고도 k6를 사용할 수 있지만, k6 Cloud는 꽤 유용한 추가 기능을 제공하며, 그 중 하나가 결과 시각화입니다.
 
-The next section talks about k6 Cloud, how to use it in conjunction with k6 OSS, and how it could help you analyze results.
+다음 섹션에서는 k6 Cloud, k6 OSS와 함께 사용하는 방법, 그리고 결과 분석에 어떻게 도움이 될 수 있는지에 대해 설명합니다.
 
-### Answers
+### 정답
 
-1. B. A is incorrect because the CSV output includes multiple metrics, not just `http_req_duration`. C is incorrect because `url` is the column that contains the URL for the request.
-2. A. The metric is `vus_max`, which is the number of virtual users that were running at that time (100, in this case). However, this does not necessarily correspond to the maximum number of VUs for the test, since the test could have ramped up further beyond this point.
-3. A. Only A has the correct syntax for outputting results.
+1. B. A는 CSV 출력에 `http_req_duration`만이 아닌 여러 메트릭이 포함되어 있기 때문에 틀립니다. C는 `url`이 요청의 URL을 포함하는 열이기 때문에 틀립니다.
+2. A. 메트릭은 그 시점에 실행 중인 가상 사용자 수(이 경우 100)인 `vus_max`입니다. 그러나 이것이 반드시 테스트의 최대 VU 수에 해당하는 것은 아닙니다. 테스트가 이 시점을 넘어 더 많이 램프업될 수 있기 때문입니다.
+3. A. A만이 결과를 출력하기 위한 올바른 구문을 가지고 있습니다.

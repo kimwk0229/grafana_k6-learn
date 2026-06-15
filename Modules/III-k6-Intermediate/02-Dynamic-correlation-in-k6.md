@@ -1,27 +1,27 @@
-# Dynamic correlation in k6
+# k6에서의 동적 상관관계
 
-In the previous section, you learned [different approaches to debugging a script in k6](01-How-to-debug-k6-load-testing-scripts.md), and ended up encountering an issue that every load tester faces: correlation.
+이전 섹션에서 [k6에서 스크립트를 디버깅하는 다양한 방법](01-How-to-debug-k6-load-testing-scripts.md)을 배웠고, 모든 부하 테스터가 직면하는 문제인 상관관계(correlation)를 만났습니다.
 
-## What is correlation?
+## 상관관계란 무엇인가요?
 
-Data correlation is the process of extracting a value from a previous HTTP response and using that value in the next HTTP request.
+데이터 상관관계(correlation)는 이전 HTTP 응답에서 값을 추출하고 그 값을 다음 HTTP 요청에 사용하는 프로세스입니다.
 
-The request flow of a user accessing an application might look like this:
-- Step 1. HTTP GET request for *My Messages* page.
-- Step 2. HTTP POST request with username and password
+애플리케이션에 접근하는 사용자의 요청 흐름은 다음과 같을 수 있습니다:
+- 1단계. *내 메시지* 페이지에 대한 HTTP GET 요청.
+- 2단계. 사용자 이름과 비밀번호를 포함한 HTTP POST 요청
 
-In the [previous section](./01-How-to-debug-k6-load-testing-scripts.md), the script attempted to log in immediately (skipping Step 1 and going straight to Step 2), but after applying some debugging techniques, you discovered that the response code is an HTTP 403 Forbidden, with `error: invalid csrf token` in the response body.
+[이전 섹션](./01-How-to-debug-k6-load-testing-scripts.md)에서 스크립트가 즉시 로그인을 시도했지만(1단계를 건너뛰고 바로 2단계로 이동), 일부 디버깅 기법을 적용한 후, 응답 코드가 HTTP 403 Forbidden이고 응답 바디에 `error: invalid csrf token`이 포함되어 있다는 것을 발견했습니다.
 
-To correct this error and accurately mimic user behavior, the script must:
-- Save the response to the request in Step 1.
-- Extract the [Cross-Site Request Forgery (CSFR)](https://owasp.org/www-community/attacks/csrf) token from Step 1.
-- Pass the CSFR token when requesting Step 2.
+이 오류를 수정하고 사용자 행동을 정확하게 모방하려면, 스크립트가 다음을 수행해야 합니다:
+- 1단계의 요청에 대한 응답을 저장합니다.
+- 1단계에서 [Cross-Site Request Forgery (CSFR)](https://owasp.org/www-community/attacks/csrf) 토큰을 추출합니다.
+- 2단계를 요청할 때 CSFR 토큰을 전달합니다.
 
-Since the script starts with Step 2, you need to add another request for Step 1.
+스크립트가 2단계에서 시작하기 때문에, 1단계에 대한 요청을 추가해야 합니다.
 
-## Scripting the previous request
+## 이전 요청 스크립팅
 
-Comment out everything in the `default` function for now and paste this code in:
+지금은 `default` 함수 안의 모든 것을 주석 처리하고 이 코드를 붙여 넣으세요:
 
 ```js
 let response = http.get('https://test.k6.io/my_messages.php');
@@ -30,13 +30,13 @@ let response = http.get('https://test.k6.io/my_messages.php');
     })
 ```
 
-This snippet requests the *My Messages* page and verifies whether it contains the word "Unauthorized" in the body. To see that in action, run the script with full HTTP debugging:
+이 스니펫은 *내 메시지* 페이지를 요청하고 바디에 "Unauthorized"라는 단어가 포함되어 있는지 확인합니다. 실제로 작동하는 것을 보려면 전체 HTTP 디버깅으로 스크립트를 실행하세요:
 
 ```shell
 k6 run test.js --http-debug=full
 ```
 
-Your output should look something like this:
+출력은 다음과 비슷하게 보여야 합니다:
 
 ```shell
 
@@ -135,52 +135,52 @@ default ✓ [======================================] 1 VUs  00m00.6s/10m0s  1/1 
      iterations.....................: 1       1.646844/s
 ```
 
-Now we're getting somewhere! The entire HTML body of the response is saved in the variable [`response`](https://k6.io/docs/javascript-api/k6-http/response/).
+이제 뭔가 진전이 있습니다! 응답의 전체 HTML 바디가 변수 [`response`](https://k6.io/docs/javascript-api/k6-http/response/)에 저장됩니다.
 
-## Extracting the value from the response
+## 응답에서 값 추출하기
 
-The HTML for the login form from the previous output includes the CSRF token:
+이전 출력의 로그인 폼 HTML에는 CSRF 토큰이 포함되어 있습니다:
 
 ```html
 <input type="hidden" name="csrftoken" value="NjI1NjkwOTkw">
 ```
 
-This value is dynamic, so the script needs to extract it based on the format it is presented in.
+이 값은 동적이므로, 스크립트는 제시된 형식에 따라 이 값을 추출해야 합니다.
 
-Add the following lines to your script:
+스크립트에 다음 줄을 추가하세요:
 
 ```js
 let csrfToken = response.html().find("input[name=csrftoken]").attr("value");
 console.log(csrfToken);
 ```
 
-The first line parses the HTML response body and looks for the value of an `input` element with a `name` equal to `csrftoken`. Run the script to see if the value of `csrfToken` looks right. You should get something like this:
+첫 번째 줄은 HTML 응답 바디를 파싱하고 `name`이 `csrftoken`과 같은 `input` 요소의 값을 찾습니다. 스크립트를 실행하여 `csrfToken`의 값이 올바른지 확인하세요. 다음과 비슷한 결과가 나와야 합니다:
 
 ```js
 INFO[0001] NDExODkxOTcz                                  source=console
 ```
 
-That looks like it's working! Try to get your script working:
-- Uncomment the login request and modify it so that the extracted CSRF token is passed along with the request
-- Add a check on the phrase "successfully authorized" after the login request, to verify that the script user has logged in.
+작동하는 것 같습니다! 스크립트가 작동하도록 노력해 보세요:
+- 로그인 요청의 주석을 해제하고 추출된 CSRF 토큰이 요청과 함께 전달되도록 수정하세요
+- 로그인 요청 후 "successfully authorized" 문구에 대한 check를 추가하여 스크립트 사용자가 로그인했는지 확인하세요.
 
-If you're stuck, compare your script against the script at the end of this section.
+막히면, 이 섹션 끝의 스크립트와 비교해 보세요.
 
-## Test your knowledge
+## 지식 확인
 
 ### Question 1
 
-You suspect there may be a dynamic value that you need to correlate from a previous response and send with your request. What's the best way to confirm this suspicion?
+이전 응답에서 동적 값을 상관관계(correlation)로 처리하여 요청과 함께 보내야 할 수도 있다고 의심됩니다. 이 의심을 확인하는 가장 좋은 방법은 무엇입니까?
 
-A: Use DevTools to look at the network traffic as you perform the action, then look at the parameters being passed with the successful request.
+A: DevTools를 사용하여 작업을 수행하면서 네트워크 트래픽을 살펴보고, 성공적인 요청과 함께 전달되는 매개변수를 확인합니다.
 
-B: Record the script and run it using k6.
+B: 스크립트를 기록하고 k6로 실행합니다.
 
-C: Add a check for the word `csrftoken` to see if there are any being returned in the response.
+C: `csrftoken`이라는 단어에 대한 check를 추가하여 응답에서 반환되는 것이 있는지 확인합니다.
 
 ### Question 2
 
-Which of the following might help you identify when correlation is required?
+다음 중 상관관계(correlation)가 필요한 경우를 식별하는 데 도움이 될 수 있는 것은 무엇입니까?
 
 A: 
 ```js
@@ -194,15 +194,15 @@ C: `--http-debug=full`
 
 ### Question 3
 
-Why might replaying a recorded script yield errors?
+기록된 스크립트를 재생하면 오류가 발생할 수 있는 이유는 무엇입니까?
 
-A: Some steps may require dynamic values extracted from earlier responses.
+A: 일부 단계에서 이전 응답에서 추출된 동적 값이 필요할 수 있습니다.
 
-B: There were no checks defined in the script.
+B: 스크립트에 check가 정의되어 있지 않습니다.
 
-C: Running with multiple users may exert unnecessary load on the application server.
+C: 여러 사용자로 실행하면 애플리케이션 서버에 불필요한 부하를 줄 수 있습니다.
 
-## The script
+## 스크립트
 ```js
 import http from 'k6/http';
 import { check } from 'k6';
@@ -233,8 +233,8 @@ export default function() {
 }
 ```
 
-### Answers
+### 정답
 
-1. A. DevTools is a great way to run through the request and response pairs of a web application, step by step. B would likely not give much useful information beyond errors, and C is too specific-- there are other dynamic parameters beyond tokens that may cause errors if not properly handled.
-2. C. Using the `http-debug` flag may be useful because it prints out all the response and request information. If there is too much information to be useful, consider using DevTools or [a proxy](https://k6.io/blog/k6-load-testing-debugging-using-a-web-proxy/) instead.
+1. A. DevTools는 웹 애플리케이션의 요청 및 응답 쌍을 단계별로 살펴보는 훌륭한 방법입니다. B는 오류 외에는 유용한 정보를 제공하지 않을 가능성이 높으며, C는 너무 구체적입니다. 올바르게 처리되지 않으면 오류를 일으킬 수 있는 토큰 외에도 다른 동적 매개변수가 있습니다.
+2. C. `http-debug` 플래그를 사용하면 모든 응답 및 요청 정보가 출력되어 유용할 수 있습니다. 정보가 너무 많아 유용하지 않은 경우, DevTools 또는 [프록시](https://k6.io/blog/k6-load-testing-debugging-using-a-web-proxy/)를 사용하는 것을 고려하세요.
 3. A.

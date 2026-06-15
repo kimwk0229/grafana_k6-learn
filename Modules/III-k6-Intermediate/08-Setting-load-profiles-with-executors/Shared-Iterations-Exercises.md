@@ -1,12 +1,12 @@
 # Shared Iterations Executor
 
-As noted in [Setting load profiles with executors](../08-Setting-load-profiles-with-executors.md#Shared-Iterations), _Shared Iterations_ is the most basic of the executors. As can be inferred from the name, the primary focus will be the number of _iterations_ for your test; this is the number of times your test function will be run.
+[executor로 부하 프로필 설정하기](../08-Setting-load-profiles-with-executors.md#Shared-Iterations)에서 언급한 바와 같이, _Shared Iterations_는 executor 중 가장 기본적인 것입니다. 이름에서 유추할 수 있듯이, 주된 초점은 테스트의 _iteration_ 횟수에 맞춰져 있습니다. 이는 테스트 함수가 실행되는 횟수를 의미합니다.
 
-## Exercises
-For our exercises, we're going to start by using a very basic script which simply performs an HTTP request then waits one second before completing the test iteration. We're providing some console output as things change.
+## 연습 문제
+이번 연습에서는 HTTP 요청을 수행한 뒤 테스트 iteration이 완료되기 전 1초를 대기하는 매우 기본적인 스크립트를 사용하여 시작합니다. 변경 사항에 따른 콘솔 출력도 확인할 수 있습니다.
 
-### Creating our script
-Let's begin by implementing our test script. Create a file named _test.js_ with the following content:
+### 스크립트 작성
+테스트 스크립트를 구현하는 것부터 시작하겠습니다. 다음 내용으로 _test.js_ 파일을 생성하세요:
 ```js
 import http from 'k6/http';
 import { sleep } from 'k6';
@@ -26,14 +26,14 @@ export default function () {
 }
 ```
 
-### Initial test run
-We're starting with the bare-minimum to use the executor, which only requires that we specify the `executor` itself. Now that we've defined our basic script, we'll go ahead and run k6:
+### 초기 테스트 실행
+executor를 사용하는 데 필요한 최소한의 설정으로 시작합니다. `executor` 자체만 지정하면 됩니다. 기본 스크립트를 작성했으니, k6를 실행해 보겠습니다:
 
 ```bash
 k6 run test.js
 ```
 
-Looking at our results, you should see confirmation that we truly ran a single test iteration.
+결과를 보면 실제로 단 하나의 테스트 iteration이 실행되었음을 확인할 수 있습니다.
 
 ```bash
 INFO[0000] [VU: 1, iteration: 0] Starting iteration...   source=console
@@ -42,8 +42,8 @@ running (00m02.3s), 0/1 VUs, 1 complete and 0 interrupted iterations
 k6_workshop ✓ [======================================] 1 VUs  00m02.3s/10m0s  1/1 shared iters
 ```
 
-### Change the iterations
-A test of one request doesn't provide for much, so let's fix that. Let's bump up the number of `iterations` our test will perform by modifying the `options` for the test.
+### iteration 횟수 변경
+요청 하나만으로는 충분하지 않으므로, 수정해 보겠습니다. 테스트의 `options`를 수정하여 테스트에서 수행할 `iterations` 수를 늘려보겠습니다.
 ```js
 export const options = {
   scenarios: {
@@ -54,21 +54,21 @@ export const options = {
   },
 };
 ```
-Once again, we'll execute the script with k6:
+다시 k6로 스크립트를 실행합니다:
 ```bash
 k6 run test.js
 ```
 
-Wow...this is taking some time. Is something wrong? No. Let's go ahead and interrupt this test by using `Ctrl+C` if it hasn't already finished.
+시간이 꽤 걸립니다. 뭔가 잘못된 건 아닐까요? 아닙니다. 아직 완료되지 않았다면 `Ctrl+C`를 사용하여 테스트를 중단해 봅시다.
 
-We're artificially adding time to our tests, e.g. `sleep(1)`, for illustrative purposes. Because we did not specify the number of `vus`, or virtual users (VUs), k6 is running as a single user performing the test one after another. For 200 iterations; with the artificial delay, our test would take over 3 minutes!
+`sleep(1)` 등을 통해 테스트에 인위적으로 지연을 추가하고 있습니다. 이는 설명을 위한 것입니다. `vus` (virtual user, VU) 수를 지정하지 않았기 때문에 k6는 단일 사용자로 테스트를 순차적으로 수행합니다. 200번의 iteration 동안 인위적인 지연을 포함하면, 테스트를 완료하는 데 3분 이상이 걸릴 수 있습니다!
 
-### Add a time limit
-When running a script locally, it's easy to see if something is taking longer than you expected then terminate the process. In an automated pipeline, the system may gladly wait for the process to complete without regard to the necessity of waiting or the cost it may present.
+### 시간 제한 추가
+로컬에서 스크립트를 실행할 때는 예상보다 오래 걸리는 경우 쉽게 알아차리고 프로세스를 종료할 수 있습니다. 하지만 자동화된 파이프라인에서는 시스템이 대기의 필요성이나 비용에 관계없이 프로세스가 완료될 때까지 기꺼이 대기할 수 있습니다.
 
-For this, the executor does provide a `maxDuration` option to set a time limit on the test. If none is specified, the executor will use a 10-minute timeout by default, which may be too much, or too little. A best practice would be to specify the `maxDuration` based upon your best guess or based upon previous testing.
+이를 위해 executor에는 테스트에 시간 제한을 설정하는 `maxDuration` 옵션이 있습니다. 지정하지 않으면 executor는 기본적으로 10분 제한 시간을 사용하는데, 이는 너무 많을 수도 있고 너무 적을 수도 있습니다. 가장 좋은 방법은 최선의 추정값이나 이전 테스트 결과를 기반으로 `maxDuration`을 지정하는 것입니다.
 
-We'll update our test script to include a `maxDuration` of 30 seconds:
+테스트 스크립트를 업데이트하여 `maxDuration`을 30초로 설정합니다:
 ```js
 export const options = {
   scenarios: {
@@ -80,11 +80,11 @@ export const options = {
   },
 };
 ```
-> :point_up: Durations are configured as string values comprised of a positive integer and a suffix representing the time unit. For example, "s" for seconds, "m" for minutes.
+> :point_up: duration은 양의 정수와 시간 단위를 나타내는 접미사로 구성된 문자열 값으로 설정합니다. 예를 들어 초에는 "s", 분에는 "m"을 사용합니다.
 
-As before, run the script with `k6 run test.js`.
+이전과 같이 `k6 run test.js`로 스크립트를 실행합니다.
 
-Allowing the script to run, we see that our script was not able to complete all iterations due to reaching the time limit.
+스크립트를 실행하면 시간 제한에 도달하여 모든 iteration을 완료하지 못한 것을 확인할 수 있습니다.
 ```bash
 INFO[0029] [VU: 1, iteration: 25] Starting iteration...  source=console
 INFO[0030] [VU: 1, iteration: 26] Starting iteration...  source=console
@@ -92,10 +92,10 @@ INFO[0030] [VU: 1, iteration: 26] Starting iteration...  source=console
 running (0m30.9s), 0/1 VUs, 27 complete and 0 interrupted iterations
 k6_workshop ✗ [====>---------------------------------] 1 VUs  30.9s/30s  027/200 shared iters
 ```
-Our script was only able to complete 27 iterations within the allowable 30-second timeframe.
+스크립트는 허용된 30초 내에 27번의 iteration만 완료할 수 있었습니다.
 
-### Change the concurrency
-So far, our test has only utilized a single virtual user, or VU. We can update the `vus` option to increase the number of requests being performed simultaneously. Let's change the `vus` to simulate 10 users. Once again, we'll update the `options` section of our test script:
+### 동시성 변경
+지금까지 테스트는 단 하나의 virtual user, 즉 VU만 사용했습니다. `vus` 옵션을 업데이트하여 동시에 수행되는 요청 수를 늘릴 수 있습니다. 10명의 사용자를 시뮬레이션하도록 `vus`를 변경해 보겠습니다. 테스트 스크립트의 `options` 섹션을 다시 업데이트합니다:
 ```js
 export const options = {
   scenarios: {
@@ -108,11 +108,11 @@ export const options = {
   },
 };
 ```
-Run the script again:
+스크립트를 다시 실행합니다:
 ```bash
 k6 run test.js
 ```
-The test should now perform the same number of iterations, but in much less time due to the number of concurrent requests.
+이제 테스트는 동시 요청 수가 증가했으므로 훨씬 짧은 시간에 동일한 수의 iteration을 수행해야 합니다.
 ```bash
 INFO[0020] [VU: 7, iteration: 17] Starting iteration...  source=console
 ...
@@ -130,11 +130,11 @@ INFO[0021] [VU: 10, iteration: 20] Starting iteration...  source=console
 running (0m22.6s), 00/10 VUs, 200 complete and 0 interrupted iterations
 k6_workshop ✓ [======================================] 10 VUs  22.6s/30s  200/200 shared iters
 ```
-Let's look at these results a bit more closely. The above results (trimmed for brevity) shows the final report for each of the running VUs. 
+이 결과를 좀 더 자세히 살펴보겠습니다. 위의 결과(간결함을 위해 일부 생략)는 실행 중인 각 VU의 최종 보고서를 보여줍니다.
 
-> :point_up: The iteration counter is 0-based, meaning a count of 20 is _actually_ 21 iterations.
+> :point_up: iteration 카운터는 0부터 시작하므로, 카운트가 20이면 실제로는 21번의 iteration을 의미합니다.
 
-The behavior of the `shared-iterations` executor may become apparent: _some VUs performed more tests than others_. This is the "shared" aspect in the executor name. As each VU completes a test iteration, they immediately reserve another while there are iterations remaining. If a VU continually gets quick responses from the service being tested, it's possible, as in this case, that the VU gets more than its _fair share_.
+`shared-iterations` executor의 동작이 분명해 질 것입니다: _일부 VU는 다른 VU보다 더 많은 테스트를 수행했습니다_. 이것이 executor 이름의 "shared"(공유) 측면입니다. 각 VU가 테스트 iteration을 완료하면, 남아 있는 iteration이 있는 동안 즉시 다음 iteration을 예약합니다. VU가 테스트 중인 서비스에서 빠른 응답을 계속 받는 경우, 이 예시처럼 VU가 _공정한 몫_ 이상을 가져갈 수 있습니다.
 
-### Wrapping up
-With this exercise, you should see how to run a very basic test and how you can control the number of iterations, concurrency, and even setting time limits. Additionally, you see that the distribution of tests amongst VUs may not be _fair_.
+### 마무리
+이 연습을 통해 매우 기본적인 테스트를 실행하는 방법과 iteration 수, 동시성, 심지어 시간 제한을 설정하는 방법을 확인했습니다. 또한 VU 간 테스트 분배가 _공평하지_ 않을 수 있다는 것도 알 수 있었습니다.

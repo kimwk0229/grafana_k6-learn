@@ -1,8 +1,8 @@
-# k6 Load Test Options
+# k6 부하 테스트 옵션
 
 ---
 
-## Script options
+## 스크립트 options
 
 ```js
 export let options = {
@@ -13,7 +13,7 @@ export let options = {
 
 ---
 
-> 💡 If you only define VUs and no other test options, you may get the following error:
+> 💡 VU만 정의하고 다른 테스트 옵션을 정의하지 않으면 다음과 같은 오류가 발생할 수 있습니다:
 
 ```shell
           /\      |‾‾| /‾‾/   /‾‾/   
@@ -37,7 +37,7 @@ WARN[0000] the `vus=10` option will be ignored, it only works in conjunction wit
   iterations: 40,
 ```
 
-> Setting the number of iterations in test options defines it for **all** users.
+> 테스트 options에서 iteration 수를 설정하면 **모든** 사용자에 대해 정의됩니다.
 
 ---
 
@@ -48,11 +48,11 @@ WARN[0000] the `vus=10` option will be ignored, it only works in conjunction wit
   duration: '2m'
 ```
 
-> Setting the duration instructs k6 to repeat the script for each of the VUs until the duration is reached.
+> duration을 설정하면 k6에게 duration이 도달할 때까지 각 VU에 대해 스크립트를 반복하도록 지시합니다.
 
 ---
 
-## Iterations and durations
+## Iterations와 duration
 
 ```js
   vus: 10,
@@ -60,29 +60,29 @@ WARN[0000] the `vus=10` option will be ignored, it only works in conjunction wit
   iterations: 40,
 ```
 
-> If you set the duration in conjunction with setting the number of iterations, the value that ends earlier is used.
+> duration과 함께 iteration 수를 설정하면 먼저 종료되는 값이 사용됩니다.
 
 ---
 
 ## Stages
 
-Defining iterations and duration creates a _simple load profile_
+iterations와 duration을 정의하면 _단순한 부하 프로필_이 생성됩니다
 
-![A simple load profile](../../images/load_profile-no_ramp-up_or_ramp-down.png)
+![단순한 부하 프로필](../../images/load_profile-no_ramp-up_or_ramp-down.png)
 <!-- .element class="stretch" -->
 
 ---
 
-## Constand load profile
+## 일정한 부하 프로필
 
-What if you want to add a ramp-up or ramp-down, so that the profile looks more like this?
+ramp-up이나 ramp-down을 추가하여 프로필이 더 이렇게 보이도록 하려면 어떻게 할까요?
 
-![Constant load profile, with ramps](../../images/load_profile-constant.png.png)
+![ramp이 포함된 일정한 부하 프로필](../../images/load_profile-constant.png.png)
 <!-- .element class="stretch" -->
 
 ---
 
-In that case, you may want to use [stages](https://k6.io/docs/using-k6/options/#stages).
+그 경우 [stages](https://k6.io/docs/using-k6/options/#stages)를 사용하는 것이 좋습니다.
 
 ```js
 export let options = {
@@ -96,9 +96,9 @@ export let options = {
 
 ---
 
-## The full script so far
+## 지금까지의 전체 스크립트
 
-If you're using stages, here's what your script should look like so far:
+stages를 사용하는 경우 지금까지의 스크립트는 다음과 같아야 합니다:
 
 ```js
 import http from 'k6/http';
@@ -125,6 +125,6 @@ export default function() {
 
 ---
 
-## Let's set some thresholds
+## threshold를 설정해 봅시다
 
-- Move to [10-setting-test-criteria-with-thresholds](?p=10-setting-test-criteria-with-thresholds)
+- 이동 [10-setting-test-criteria-with-thresholds](?p=10-setting-test-criteria-with-thresholds)

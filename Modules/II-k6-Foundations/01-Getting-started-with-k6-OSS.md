@@ -1,46 +1,46 @@
-# Getting Started with k6 OSS
+# k6 OSS 시작하기
 
-There are many ways to start scripting with k6, but we're starting with [k6 OSS](https://github.com/grafana/k6) for a few reasons:
-- It is a fully-fledged load testing tool on its own, and it doesn't require a subscription or any payment to use.
-- k6 Cloud, the SaaS platform, also uses k6 OSS, so the skills you learn in this section will apply even if you decide to use k6 Cloud later.
-- You can add advanced scenarios and features to your k6 OSS scripts. The other methods of script generation that we'll discuss later are limited in functionality.
+k6로 스크립팅을 시작하는 방법은 여러 가지가 있지만, 몇 가지 이유로 [k6 OSS](https://github.com/grafana/k6)부터 시작합니다:
+- 그 자체로 완전한 기능을 갖춘 부하 테스트 도구이며, 구독이나 결제 없이 사용할 수 있습니다.
+- SaaS 플랫폼인 k6 Cloud도 k6 OSS를 사용하므로, 이 섹션에서 배운 기술은 나중에 k6 Cloud를 사용하기로 결정하더라도 적용됩니다.
+- k6 OSS 스크립트에 고급 시나리오와 기능을 추가할 수 있습니다. 나중에 다룰 다른 스크립트 생성 방법은 기능이 제한적입니다.
 
-Let's get started!
+시작해봅시다!
 
-## Installation
+## 설치
 
-First, install k6 by [following the instructions here](https://k6.io/docs/getting-started/installation/) for your operating system.
+먼저, 운영 체제에 맞는 [설치 지침](https://k6.io/docs/getting-started/installation/)을 따라 k6를 설치하세요.
 
-Next, pick your favorite IDE or text editor. Many of us use and recommend [VS Code](https://code.visualstudio.com/), but you can also use [Sublime Text](https://www.sublimetext.com/), [Atom](https://atom.io/), or anything else you're already using that can create text files.
+다음으로, 좋아하는 IDE나 텍스트 편집기를 선택하세요. 많은 분들이 [VS Code](https://code.visualstudio.com/)를 사용하고 권장하지만, [Sublime Text](https://www.sublimetext.com/), [Atom](https://atom.io/), 또는 텍스트 파일을 생성할 수 있는 이미 사용 중인 다른 편집기도 사용할 수 있습니다.
 
-## Writing your first k6 script
+## 첫 번째 k6 스크립트 작성하기
 
-Time to write the script!
+이제 스크립트를 작성할 시간입니다!
 
-k6 supports multiple protocols, but for now, let's stick to HTTP. Your first script will do a basic HTTP POST request against a test API that will echo back whatever you send to it.
+k6는 여러 프로토콜을 지원하지만, 지금은 HTTP에 집중하겠습니다. 첫 번째 스크립트는 보낸 내용을 그대로 되돌려 주는 테스트 API에 기본 HTTP POST 요청을 수행합니다.
 
-The fastest way to create a k6 test is to use the `k6 new [filename]` command introduced in k6 version 0.48.0. This will automatically create a file with the basic boilerplate you need to get you up and running quickly. 
+k6 테스트를 만드는 가장 빠른 방법은 k6 버전 0.48.0에서 도입된 `k6 new [filename]` 명령을 사용하는 것입니다. 이 명령은 빠르게 시작하는 데 필요한 기본 보일러플레이트가 포함된 파일을 자동으로 생성합니다.
 
-But, as part of your k6 learning, we will also teach you how to create a test manually.
+그러나 k6 학습의 일환으로, 테스트를 수동으로 만드는 방법도 가르쳐 드립니다.
 
-Create a new file named `test.js`, and open it in your favorite IDE. This file is our test script. k6 scripts are always written in JavaScript, even though k6 itself is written in Go. We're going to create the script together, step by step. Copy and paste the code snippets as necessary, so that your script looks like the one here. 
+`test.js`라는 새 파일을 만들고, 좋아하는 IDE에서 열어보세요. 이 파일이 바로 테스트 스크립트입니다. k6 자체는 Go로 작성되었지만, k6 스크립트는 항상 JavaScript로 작성됩니다. 여기서 단계별로 스크립트를 함께 만들겠습니다. 코드 스니펫을 필요에 따라 복사하여 붙여넣어 스크립트가 이와 같이 보이도록 하세요.
 
-Import the HTTP Client from the built-in module `k6/http`:
+내장 모듈 `k6/http`에서 HTTP Client를 임포트합니다:
 
 ```js
 import http from 'k6/http';
 ```
 
-Now, create and export a default function:
+이제 default 함수를 만들고 내보냅니다:
 
 ```js
 export default function() {
 }
 ```
 
-Any code in the `default` function is executed by each k6 virtual user when the test runs.
+`default` 함수 내의 코드는 테스트가 실행될 때 각 k6 가상 사용자에 의해 실행됩니다.
 
-Add the logic for making the actual HTTP call:
+실제 HTTP 호출을 위한 로직을 추가합니다:
 
 ```js
 import http from 'k6/http';
@@ -51,9 +51,9 @@ export default function() {
 }
 ```
 
-Here, you're instructing k6 to send an HTTP POST request to the API endpoint `https://httpbin.test.k6.io/post` with the body `Hello world!`
+여기서 `Hello world!`라는 본문과 함께 API 엔드포인트 `https://httpbin.test.k6.io/post`에 HTTP POST 요청을 보내도록 k6에 지시합니다.
 
-You could actually run this script already, and k6 would make the HTTP POST request, but how would you know if it worked? Here's how to log the response to the console:
+이 스크립트를 실제로 이미 실행할 수 있지만, 제대로 작동했는지 어떻게 알 수 있을까요? 응답을 콘솔에 기록하는 방법은 다음과 같습니다:
 
 ```js
 import http from 'k6/http';
@@ -66,17 +66,17 @@ export default function() {
 }
 ```
 
-You'll learn more ways to verify the results of your tests later, but for now, go ahead and run your first test!
+나중에 테스트 결과를 확인하는 더 많은 방법을 배울 것이지만, 지금은 첫 번째 테스트를 실행해봅시다!
 
-## Hello World: running your k6 script
+## Hello World: k6 스크립트 실행하기
 
-Save your script in your editor. Then, open up your terminal and go to the directory where you saved your k6 script. Now, run the test:
+편집기에서 스크립트를 저장하세요. 그런 다음 터미널을 열고 k6 스크립트를 저장한 디렉토리로 이동하세요. 이제 테스트를 실행하세요:
 
 ```js
 k6 run test.js
 ```
 
-You should get something like this:
+다음과 같은 결과가 나와야 합니다:
 
 ```plain
 $ k6 run test.js
@@ -116,17 +116,17 @@ default ✓ [======================================] 1 VUs  00m00.7s/10m0s  1/1 
 
 ```
 
-That's a lot of metrics! In the next section, we'll go over what each of these lines mean.
+많은 메트릭이 있네요! 다음 섹션에서 각 줄이 의미하는 바를 살펴보겠습니다.
 
-## Other resources
+## 기타 리소스
 
 [![Week of Load testing day 3: Installing k6 and running load test](../../images/week-of-testing-youtube.png)](https://www.youtube.com/embed/y5tteMKZUqk)
 
-## Test your knowledge
+## 지식 확인
 
-### Question 1
+### 문제 1
 
-What's the best way to access the JSON body of an HTTP response?
+HTTP 응답의 JSON 본문에 접근하는 가장 좋은 방법은?
 
 A: `response.json()`
 
@@ -134,9 +134,9 @@ B: `response.body()`
 
 C: `response.content`
 
-### Question 2
+### 문제 2
 
-What is the name of the built-in module that contains the HTTP client?
+HTTP 클라이언트가 포함된 내장 모듈의 이름은?
 
 A: `http`
 
@@ -144,18 +144,18 @@ B: `k6/http-client`
 
 C: `k6/http`
 
-### Question 3
+### 문제 3
 
-Where in a test script should we place HTTP calls to have them executed by a virtual user?
+가상 사용자가 실행하게 하려면 HTTP 호출을 테스트 스크립트의 어느 곳에 배치해야 하는가?
 
-A: In the global scope
+A: 전역 스코프
 
-B: In an exported default function
+B: export된 default 함수 안
 
-C: In a function called `exec()`
+C: `exec()`라는 함수 안
 
-### Answers
+### 정답
 
-1. A. Using `response.json()` will not only get the response body but also parse the JSON.
-2. C. `k6/http` is the module that needs to be imported in a k6 script if you want to use HTTP. The other two options do not exist.
-3. B. Only code placed within an exported function (either the default one or one that is named in the `exec` option [of a scenario](https://k6.io/docs/using-k6/scenarios/#common-options)) will be executed by a virtual user.
+1. A. `response.json()`을 사용하면 응답 본문을 가져올 뿐만 아니라 JSON도 파싱합니다.
+2. C. `k6/http`는 HTTP를 사용하려면 k6 스크립트에서 임포트해야 하는 모듈입니다. 다른 두 옵션은 존재하지 않습니다.
+3. B. export된 함수(default 함수 또는 [시나리오](https://k6.io/docs/using-k6/scenarios/#common-options)의 `exec` 옵션에 명명된 함수) 내에 배치된 코드만 가상 사용자에 의해 실행됩니다.

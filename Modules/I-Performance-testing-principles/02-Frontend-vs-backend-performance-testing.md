@@ -1,83 +1,83 @@
-For a holistic view of performance, testers need to test both the front and back ends of an application. Though there is some overlap in the tools and techniques, the approach and focus differs when testing different application parts.
+성능을 전체적으로 파악하려면 테스터가 애플리케이션의 프론트엔드와 백엔드 모두를 테스트해야 합니다. 도구와 기법이 일부 겹치기는 하지만, 애플리케이션의 각 부분을 테스트할 때 접근 방식과 초점이 달라집니다.
 
-## Frontend performance testing
+## 프론트엔드 성능 테스트
 
-Frontend performance testing verifies application performance on the interface level, measuring round-trip metrics that consider how and when page elements appear on the screen. It is concerned with the end-user experience of an application, usually involving a browser.
+프론트엔드 성능 테스트는 인터페이스 수준에서 애플리케이션 성능을 검증하며, 페이지 요소가 화면에 표시되는 방식과 시점을 고려한 왕복 메트릭을 측정합니다. 이는 애플리케이션에 대한 최종 사용자 경험에 관한 것으로, 보통 브라우저를 포함합니다.
 
-Frontend performance testing excels at identifying issues on a micro level but does not expose issues in the underlying architecture of a system.
+프론트엔드 성능 테스트는 마이크로 수준의 문제를 식별하는 데 뛰어나지만, 시스템의 기반 아키텍처 문제는 드러내지 못합니다.
 
-Because it primarily measures a single user's experience of the system, frontend performance testing tends to be easier to carry out on a small scale.
-Frontend performance testing has metrics that are distinct from backend performance testing. Frontend performance tests for things like:
-- Whether the pages of the application are optimized to render quickly on a user's screen
-- How long it takes a user to interact with the UI elements of the application.
+주로 단일 사용자의 시스템 경험을 측정하기 때문에, 프론트엔드 성능 테스트는 소규모로 수행하기가 더 쉽습니다.
+프론트엔드 성능 테스트는 백엔드 성능 테스트와 구별되는 메트릭을 가집니다. 프론트엔드 성능 테스트는 다음과 같은 항목을 테스트합니다:
+- 애플리케이션의 페이지가 사용자 화면에서 빠르게 렌더링되도록 최적화되어 있는지 여부
+- 사용자가 애플리케이션의 UI 요소와 상호작용하는 데 걸리는 시간
 
-Some concerns when doing this type of performance testing are its dependency on fully integrated environments and the cost of scaling. You can test frontend performance only once the application code and infrastructure have been integrated with a user interface. Tools to automate frontend testing are also inherently more resource-intensive, so they can be costly to run at scale and are not suitable for high load tests.
-
-
-### Why isn't frontend performance testing enough?
-
-Since frontend performance testing already measures end-user experience, why do we even need backend performance testing?
-
-Frontend testing tools are executed on the client side and are limited in scope. They do not provide enough information about backend components for fine-tuning beyond the user interface.
-
-This limitation can lead to false confidence in overall application performance when the amount of traffic against an application increases. While the frontend component of response time remains more or less constant, the backend component of response time increases exponentially with the number of concurrent users:
-
-![A chart aggregating front and backend response times. As concurrency increases, backend response time becomes much longer.](../../images/frontend-backend.png)
-
-Testing only frontend performance ignores a large part of the application, one more susceptible to increased failures and performance bottlenecks at higher levels of load.
+이 유형의 성능 테스트를 수행할 때 주의할 점은 완전히 통합된 환경에 대한 의존성과 확장 비용입니다. 애플리케이션 코드와 인프라가 사용자 인터페이스와 통합된 후에야 프론트엔드 성능을 테스트할 수 있습니다. 프론트엔드 테스트를 자동화하는 도구들은 본질적으로 리소스 집약적이어서, 대규모로 실행하는 데 비용이 많이 들 수 있으며 고부하 테스트에는 적합하지 않습니다.
 
 
-## Backend performance testing
+### 왜 프론트엔드 성능 테스트만으로는 충분하지 않은가?
 
-Backend performance testing targets the underlying application servers to verify the scalability, elasticity, availability, reliability, and responsiveness of a system as a whole.
+프론트엔드 성능 테스트가 이미 최종 사용자 경험을 측정하는데, 왜 백엔드 성능 테스트가 필요한 걸까요?
 
-- *Scalability*: Can the system adjust to steadily increasing levels of demand?
-- *Elasticity*: Can the system conserve resources during periods of lower demand?
-- *Availability*: What is the uptime of each of the components in the system?
-- *Reliability*: Does the system respond consistently in different environmental conditions?
-- *Resiliency*: Can the system gracefully withstand unexpected events?
-- *Latency*: How quickly does the system process and respond to requests?
+프론트엔드 테스트 도구는 클라이언트 측에서 실행되며 범위가 제한되어 있습니다. 사용자 인터페이스 이상의 미세 조정을 위한 백엔드 구성 요소에 대한 충분한 정보를 제공하지 못합니다.
 
-Backend testing is broader in scope than frontend performance testing. API testing can be used to target specific components or integrated components, meaning that application teams have more flexibility and higher chances of finding performance issues earlier. Backend testing is less resource-intensive than frontend performance testing and is thus more suitable for generating high load.
+이 한계는 애플리케이션에 대한 트래픽이 증가할 때 전반적인 애플리케이션 성능에 대한 잘못된 자신감으로 이어질 수 있습니다. 응답 시간의 프론트엔드 구성 요소는 거의 일정하게 유지되는 반면, 응답 시간의 백엔드 구성 요소는 동시 사용자 수에 따라 기하급수적으로 증가합니다:
 
-Some concerns when doing this type of testing are its inability to test "the first mile" of user experience and breadth. Backend testing involves messaging at the protocol level rather than interacting with page elements. It verifies the foundation of an application rather than the highest layer of it that a user ultimately sees. Depending on the complexity of the application architecture, backend testing may also be more expansive in scope.
+![프론트엔드와 백엔드 응답 시간을 집계한 차트. 동시성이 증가할수록 백엔드 응답 시간이 훨씬 길어집니다.](../../images/frontend-backend.png)
 
-## Test your knowledge
+프론트엔드 성능만 테스트하면 애플리케이션의 상당 부분이 무시되는데, 이 부분은 높은 부하 수준에서 더 많은 장애와 성능 병목 현상에 취약합니다.
 
-### Question 1
 
-Which type of testing does k6 excel in?
+## 백엔드 성능 테스트
 
-A: Backend testing
+백엔드 성능 테스트는 기반 애플리케이션 서버를 대상으로 하여 시스템 전반의 확장성, 탄력성, 가용성, 신뢰성, 응답성을 검증합니다.
 
-B: Manual testing
+- *확장성(Scalability)*: 시스템이 꾸준히 증가하는 수요 수준에 맞게 조정될 수 있는가?
+- *탄력성(Elasticity)*: 시스템이 수요가 낮은 기간 동안 리소스를 절약할 수 있는가?
+- *가용성(Availability)*: 시스템의 각 구성 요소의 가동 시간은 어떠한가?
+- *신뢰성(Reliability)*: 시스템이 다양한 환경 조건에서 일관되게 응답하는가?
+- *복원성(Resiliency)*: 시스템이 예상치 못한 이벤트를 우아하게 견딜 수 있는가?
+- *지연 시간(Latency)*: 시스템이 요청을 얼마나 빨리 처리하고 응답하는가?
 
-C: Accessibility testing
+백엔드 테스트는 프론트엔드 성능 테스트보다 범위가 넓습니다. API 테스트를 통해 특정 구성 요소나 통합된 구성 요소를 대상으로 할 수 있어, 애플리케이션 팀이 더 많은 유연성을 가지고 성능 문제를 더 일찍 발견할 가능성이 높아집니다. 백엔드 테스트는 프론트엔드 성능 테스트보다 리소스 집약도가 낮아 높은 부하를 생성하는 데 더 적합합니다.
 
-### Question 2
+이 유형의 테스트를 수행할 때 주의할 점은 사용자 경험의 "첫 번째 마일"을 테스트할 수 없다는 것과 범위의 광범위성입니다. 백엔드 테스트는 페이지 요소와 상호작용하는 것이 아니라 프로토콜 수준에서 메시징을 수행합니다. 사용자가 궁극적으로 보는 최상위 레이어가 아닌 애플리케이션의 기반을 검증합니다. 애플리케이션 아키텍처의 복잡성에 따라 백엔드 테스트의 범위도 더 광범위해질 수 있습니다.
 
-Which of the following is an advantage of backend performance testing?
+## 지식 확인
 
-A: It provides metrics like Time To Interactive (TTI) that measure when users can first interact with the application.
+### 문제 1
 
-B: It simulates users by driving real browsers to test the application.
+k6가 뛰어난 테스트 유형은?
 
-C: It can target application components before they're integrated.
+A: 백엔드 테스트
 
-D: A and B.
+B: 수동 테스트
 
-### Question 3
+C: 접근성 테스트
 
-Which of the following statements is true?
+### 문제 2
 
-A: Frontend performance testing results are not affected by bottlenecks in the backend of an application.
+다음 중 백엔드 성능 테스트의 장점은?
 
-B: Frontend performance testing is always carried out with a single automated user.
+A: 사용자가 애플리케이션과 처음으로 상호작용할 수 있는 시점을 측정하는 TTI(Time To Interactive)와 같은 메트릭을 제공합니다.
 
-C: Frontend performance testing can verify user experience in ways that backend performance testing cannot.
+B: 실제 브라우저를 구동하여 애플리케이션을 테스트하는 방식으로 사용자를 시뮬레이션합니다.
 
-### Answers
+C: 통합되기 전의 애플리케이션 구성 요소를 대상으로 할 수 있습니다.
 
-1. A. k6 cannot do either manual or accessibility testing at this point.
-2. C. A and B are incorrect because they are referring to frontend performance testing. Backend performance testing does not provide frontend metrics like TTI and it does not interact with applications through a browser.
-3. C. A is incorrect because backend performance bottlenecks can also affect frontend performance. B is incorrect because frontend testing scripts can be executed as part of a load test. C is correct because frontend performance testing measures a real user's experience from the browser, which is not something backend testing can measure.
+D: A와 B.
+
+### 문제 3
+
+다음 중 참인 진술은?
+
+A: 프론트엔드 성능 테스트 결과는 애플리케이션 백엔드의 병목 현상에 영향을 받지 않습니다.
+
+B: 프론트엔드 성능 테스트는 항상 단일 자동화된 사용자로 수행됩니다.
+
+C: 프론트엔드 성능 테스트는 백엔드 성능 테스트로는 할 수 없는 방식으로 사용자 경험을 검증할 수 있습니다.
+
+### 정답
+
+1. A. k6는 현재 수동 테스트나 접근성 테스트를 수행할 수 없습니다.
+2. C. A와 B는 프론트엔드 성능 테스트를 설명하고 있어 틀렸습니다. 백엔드 성능 테스트는 TTI와 같은 프론트엔드 메트릭을 제공하지 않으며, 브라우저를 통해 애플리케이션과 상호작용하지 않습니다.
+3. C. A는 백엔드 성능 병목 현상도 프론트엔드 성능에 영향을 줄 수 있기 때문에 틀립니다. B는 프론트엔드 테스트 스크립트도 부하 테스트의 일부로 실행될 수 있기 때문에 틀립니다. C는 프론트엔드 성능 테스트가 브라우저에서 실제 사용자의 경험을 측정하는데, 이는 백엔드 테스트가 측정할 수 없는 것이기 때문에 맞습니다.

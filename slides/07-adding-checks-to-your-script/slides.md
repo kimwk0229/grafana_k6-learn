@@ -1,8 +1,8 @@
-# k6 checks
+# k6 check
 
 ---
 
-## Our script
+## 우리의 스크립트
 
 ```js
 import http from 'k6/http';
@@ -17,7 +17,7 @@ export default function() {
 
 ---
 
-## Add checks to your script
+## 스크립트에 check 추가하기
 
 ```js [1|3-6]
 import { check } from 'k6';
@@ -30,9 +30,9 @@ check(response, {
 
 ---
 
-## Let's run our test again!
+## 테스트를 다시 실행해 봅시다!
 
-Do you remember the command to run the test? 👀
+테스트를 실행하는 명령어를 기억하시나요? 👀
 
 ```shell
 	✓ Application says hello
@@ -42,7 +42,7 @@ Do you remember the command to run the test? 👀
 
 ---
 
-## Failed checks
+## 실패한 check
 
 ```js
 check(response, {
@@ -53,7 +53,7 @@ check(response, {
 
 ---
 
-## Let's run our test again!
+## 테스트를 다시 실행해 봅시다!
 
 ```shell
      ✗ Application says hello
@@ -64,12 +64,12 @@ check(response, {
 
 ---
 
-## Failed checks are not errors!
+## 실패한 check는 오류가 아닙니다!
 
-> 💡 To make failing checks stop your test, you can [combine them with thresholds](https://k6.io/docs/using-k6/thresholds/#failing-a-load-test-using-checks).
+> 💡 실패한 check로 테스트를 중지하려면 [threshold와 결합](https://k6.io/docs/using-k6/thresholds/#failing-a-load-test-using-checks)할 수 있습니다.
 
 ---
 
-## Making your scripts realistic with think time
+## think time으로 스크립트를 현실적으로 만들기
 
-- Move to: [08-adding-think-time](?p=08-adding-think-time)
+- 이동: [08-adding-think-time](?p=08-adding-think-time)

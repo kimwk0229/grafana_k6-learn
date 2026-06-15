@@ -1,4 +1,4 @@
-# How to use the k6 operator for Kubernetes
+# Kubernetes용 k6 operator 사용 방법
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/KPyI8rM3LvE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 

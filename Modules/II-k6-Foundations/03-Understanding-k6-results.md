@@ -1,10 +1,10 @@
-In the last section, you ran your first k6 test&mdash;but how do you know what happened in the test?
+이전 섹션에서 첫 번째 k6 테스트를 실행했습니다&mdash;그런데 테스트에서 무슨 일이 일어났는지 어떻게 알 수 있을까요?
 
-In this section, you'll learn how to understand the default output of k6 and determine whether your script did as intended.
+이 섹션에서는 k6의 기본 출력을 이해하고 스크립트가 의도한 대로 실행되었는지 확인하는 방법을 배웁니다.
 
-## The End-of-test summary report
+## 테스트 종료 요약 보고서
 
-Here's that output again:
+다시 한번 그 출력을 살펴봅시다:
 
 ```plain
 $ k6 run test.js
@@ -44,79 +44,79 @@ default ✓ [======================================] 1 VUs  00m00.7s/10m0s  1/1 
 
 ```
 
-This is the end-of-test summary report. It's the default way that k6 displays test results.
+이것이 테스트 종료 요약 보고서입니다. k6가 테스트 결과를 표시하는 기본 방식입니다.
 
-Let's go through it, line by line.
+한 줄씩 살펴보겠습니다.
 
-### Execution parameters
+### 실행 파라미터
 
 ```plain
 execution: local
 ```
 
-You can use k6 OSS to run test scripts locally (`local`) or on k6 Cloud (`cloud`).
-In this test, the test script was executed on your local machine.
+k6 OSS를 사용하여 로컬(`local`)에서 또는 k6 Cloud(`cloud`)에서 테스트 스크립트를 실행할 수 있습니다.
+이 테스트에서는 로컬 머신에서 테스트 스크립트가 실행되었습니다.
 
 ```plain
 script: test.js`
 ```
 
-This is the filename of the script that was executed.
+이것은 실행된 스크립트의 파일명입니다.
 
 ```plain
 output: -`
 ```
 
-This indicates the default behavior: k6 printed your test results to standard output.
+이것은 기본 동작을 나타냅니다: k6가 테스트 결과를 표준 출력으로 출력했습니다.
 
-k6 can also [output results in other formats](https://k6.io/docs/getting-started/results-output/#external-outputs). These options, when used, are displayed in `output`.
+k6는 [다른 형식으로도 결과를 출력](https://k6.io/docs/getting-started/results-output/#external-outputs)할 수 있습니다. 이러한 옵션이 사용될 때 `output`에 표시됩니다.
 
 ```plain
 scenarios: (100.00%) 1 scenario, 1 max VUs, 10m30s max duration (incl. graceful stop):
 ```
 
-An execution [scenario](https://k6.io/docs/misc/glossary/#scenario) is a set of instructions about running a test: what code should run, when and how often it should run, and other configurable parameters. In this case, your first test was executed using default parameters: one scenario, one [virtual user (VU)](https://k6.io/docs/misc/glossary/#virtual-user), and a max duration of 10 minutes and 30 seconds.
+실행 [시나리오](https://k6.io/docs/misc/glossary/#scenario)는 테스트 실행에 관한 지침 집합입니다: 어떤 코드가 실행되어야 하는지, 언제 그리고 얼마나 자주 실행되어야 하는지, 그리고 다른 구성 가능한 파라미터들입니다. 이 경우 첫 번째 테스트는 기본 파라미터를 사용하여 실행되었습니다: 1개의 시나리오, 1개의 [가상 사용자(VU)](https://k6.io/docs/misc/glossary/#virtual-user), 그리고 최대 10분 30초의 duration.
 
-The max duration is the execution time limit; it is the time beyond which the test will be forcibly stopped. In this case, k6 received a response to the request in the script long before this time period elapsed.
+최대 duration은 실행 시간 제한입니다; 이 시간을 초과하면 테스트가 강제로 중단됩니다. 이 경우 k6는 이 시간이 경과하기 훨씬 전에 스크립트의 요청에 대한 응답을 받았습니다.
 
-A [graceful stop](https://k6.io/docs/misc/glossary/#graceful-stop) is a period at the end of the test when k6 finishes any running [iterations](https://k6.io/docs/misc/glossary/#iteration), if possible. By default, k6 includes a graceful stop of 30 seconds within the max duration of 10 minutes and 30 seconds.
+[graceful stop](https://k6.io/docs/misc/glossary/#graceful-stop)은 테스트 끝에 k6가 가능하면 실행 중인 [반복(iterations)](https://k6.io/docs/misc/glossary/#iteration)을 완료하는 기간입니다. 기본적으로 k6는 최대 duration인 10분 30초 내에 30초의 graceful stop을 포함합니다.
 
 ```plain
 * default: 1 iterations for each of 1 VUs (maxDuration: 10m0s, gracefulStop: 30s)
 ```
 
-`default` here refers to the scenario name. Since the test script did not have any explicitly set up, k6 used the default name.
+여기서 `default`는 시나리오 이름을 나타냅니다. 테스트 스크립트에 명시적으로 설정된 것이 없었기 때문에, k6는 기본 이름을 사용했습니다.
 
-An iteration is a single execution loop of the test. Load tests typically involve repeated execution loops within a certain amount of time so that requests are continuously made. Unless otherwise specified, k6 runs through the default function once.
+반복(iteration)은 테스트의 단일 실행 루프입니다. 부하 테스트는 일반적으로 요청이 지속적으로 이루어지도록 일정 시간 내에 반복 실행 루프를 포함합니다. 별도로 지정하지 않으면, k6는 default 함수를 한 번 실행합니다.
 
-Think of a virtual user as a single thread or instance that attempts to simulate a real end user of your application. In this case, k6 started one virtual user to run the test.
+가상 사용자는 애플리케이션의 실제 최종 사용자를 시뮬레이션하려는 단일 스레드 또는 인스턴스로 생각할 수 있습니다. 이 경우 k6는 테스트를 실행하기 위해 하나의 가상 사용자를 시작했습니다.
 
-### Console output
+### 콘솔 출력
 
-This section of the end-of-test summary is usually empty, but your test script included a line to save part of the response body to the console (`console.log(response.json().data);`). Here's what that looks like in the report:
+테스트 종료 요약의 이 섹션은 일반적으로 비어 있지만, 테스트 스크립트에는 응답 본문의 일부를 콘솔에 저장하는 줄(`console.log(response.json().data);`)이 포함되어 있었습니다. 보고서에서 어떻게 보이는지 살펴봅시다:
 
 ```plain
 INFO[0001] Hello world!                                  source=console`
 ```
 
-The test script's target endpoint, `https://httpbin.test.k6.io/post` returns whatever was sent in the POST body, so this is a good sign! The target endpoint received the `Hello world!` that you sent in your script and sent the same body back.
+테스트 스크립트의 대상 엔드포인트인 `https://httpbin.test.k6.io/post`는 POST 본문에 보낸 것을 그대로 반환하므로, 이것은 좋은 신호입니다! 대상 엔드포인트가 스크립트에서 보낸 `Hello world!`를 받고 같은 본문을 되돌려 보냈습니다.
 
-If you had used multiple `console.log()` statements in the test script, they would all appear in this section.
+테스트 스크립트에서 여러 `console.log()` 문을 사용했다면, 모두 이 섹션에 표시됩니다.
 
-### Execution summary
+### 실행 요약
 
-The execution summary shows an overview of what happened during the test run.
+실행 요약은 테스트 실행 중 일어난 일의 개요를 보여줍니다.
 
 ```plain
 running (00m00.7s), 0/1 VUs, 1 complete and 0 interrupted iterations
 default ✓ [======================================] 1 VUs  00m00.7s/10m0s  1/1 iters, 1 per VU
 ```
 
-In this case, the test ran for 0.7 seconds with 1 VU. A single iteration was executed and fully completed (i.e., it was not interrupted). 1 iteration per VU was executed (a total of 1).
+이 경우 테스트는 1개의 VU로 0.7초 동안 실행되었습니다. 단일 반복이 실행되어 완전히 완료되었습니다(즉, 중단되지 않았습니다). VU당 1번의 반복이 실행되었습니다(총 1번).
 
-### k6 built-in metrics
+### k6 내장 메트릭
 
-Now for the [metrics](https://k6.io/docs/misc/glossary/#metric)! k6 comes with [many built-in metrics](https://k6.io/docs/using-k6/metrics/#built-in-metrics).
+이제 [메트릭](https://k6.io/docs/misc/glossary/#metric)을 살펴봅시다! k6에는 [많은 내장 메트릭](https://k6.io/docs/using-k6/metrics/#built-in-metrics)이 포함되어 있습니다.
 
 ```plain
      data_received..................: 5.9 kB 9.0 kB/s
@@ -135,88 +135,88 @@ Now for the [metrics](https://k6.io/docs/misc/glossary/#metric)! k6 comes with [
      iterations.....................: 1      1.525116/s
 ```
 
-The following metrics are usually the most important for test analysis.
+다음 메트릭들은 일반적으로 테스트 분석에 가장 중요합니다.
 
-#### Response time
+#### 응답 시간
 
 ```plain
 http_req_duration..............: avg=130.19ms min=130.19ms med=130.19ms max=130.19ms p(90)=130.19ms p(95)=130.19ms
 ```
 
-"Response time" can be vague, because it can be broken down into multiple components. However, in most cases, `http_req_duration` is the metric you're looking for. It includes:
-- `http_req_sending` (the time it took to send data to the target host)
-- `http_req_waiting` (Time to First Byte or "TTFB"; the time it took before the target server began to respond to the request)
-- `http_req_receiving` (the time it took for the target server to process and fully respond to k6)
+"응답 시간"은 여러 구성 요소로 나눌 수 있어 모호할 수 있습니다. 그러나 대부분의 경우 `http_req_duration`이 원하는 메트릭입니다. 여기에 포함되는 항목:
+- `http_req_sending` (대상 호스트로 데이터를 보내는 데 걸린 시간)
+- `http_req_waiting` (TTFB 또는 "Time to First Byte"; 대상 서버가 요청에 응답하기 시작하기 전까지 걸린 시간)
+- `http_req_receiving` (대상 서버가 k6에 완전히 응답하는 데 걸린 시간)
 
-The response time in this line is reported as an average, minimum, median, maximum, 90th percentile, and 95th percentile, in milliseconds (ms). If you're not sure which to use, take the 95th percentile figure.
+이 줄의 응답 시간은 평균, 최솟값, 중앙값, 최댓값, 90번째 백분위수, 95번째 백분위수로 밀리초(ms) 단위로 보고됩니다. 어느 것을 사용해야 할지 모르겠다면 95번째 백분위수 값을 사용하세요.
 
-A 95th percentile response time of 130.19 ms means that 95% of the requests had a response time of 130.19 ms or less. In this particular situation, however, your test script only made a single request, so all the metrics in this line are reporting the same value: 130.19 ms. When you run tests with multiple requests, you'll see a variation in these values.
+95번째 백분위수 응답 시간이 130.19ms라는 것은 요청의 95%가 130.19ms 이하의 응답 시간을 가졌다는 의미입니다. 그러나 이 특정 상황에서는 테스트 스크립트가 단 하나의 요청만 했기 때문에, 이 줄의 모든 메트릭이 같은 값인 130.19ms를 보고합니다. 여러 요청으로 테스트를 실행하면 이 값들에 변화가 생깁니다.
 
-Something to keep in mind here is that `http_req_duration` is the value for *all* requests, whether or not they passed. This behavior can cause misunderstandings when interpreting response times, because failed requests can often have a shorter or longer response time than successful ones.
+여기서 주의해야 할 점은 `http_req_duration`이 통과 여부와 관계없이 *모든* 요청에 대한 값이라는 것입니다. 이 동작은 실패한 요청이 종종 성공한 것보다 짧거나 긴 응답 시간을 가질 수 있기 때문에 응답 시간을 해석할 때 오해를 일으킬 수 있습니다.
 
-The line below reports the response time for only the successful requests.
+아래 줄은 성공한 요청에 대한 응답 시간만 보고합니다.
 
 ```plain
   { expected_response:true }...: avg=130.19ms min=130.19ms med=130.19ms max=130.19ms p(90)=130.19ms p(95)=130.19ms
 ```
 
-To improve accuracy and prevent failed requests from skewing results, use the 95th percentile value of the successful requests as a response time.
+정확성을 높이고 실패한 요청이 결과를 왜곡하지 않도록 하려면, 성공한 요청의 95번째 백분위수 값을 응답 시간으로 사용하세요.
 
-#### Error rate
+#### 오류율
 
-The `http_req_failed` metric describes the error rate for the test. The error rate is the number of requests that failed during the test as a percentage of the total requests.
+`http_req_failed` 메트릭은 테스트의 오류율을 설명합니다. 오류율은 테스트 중 실패한 요청 수를 전체 요청의 비율로 나타낸 것입니다.
 
 ```plain
 http_req_failed................: 0.00%  ✓ 0        ✗ 1
 ```
 
-`http_req_failed` automatically marks HTTP response codes of between 200 and 399. This means that HTTP 4xx and HTTP 5xx response codes are considered errors by k6 by default. (Note: This behavior can be changed using [`setResponseCallback`](https://k6.io/docs/javascript-api/k6-http/setresponsecallback-callback).)
+`http_req_failed`는 200에서 399 사이의 HTTP 응답 코드를 자동으로 표시합니다. 이는 HTTP 4xx 및 HTTP 5xx 응답 코드가 k6에서 기본적으로 오류로 간주된다는 것을 의미합니다. (참고: 이 동작은 [`setResponseCallback`](https://k6.io/docs/javascript-api/k6-http/setresponsecallback-callback)을 사용하여 변경할 수 있습니다.)
 
-This test run had an error rate of `0.00%`, because the single request it ran succeeded. It may seem counter-intuitive, but the `✓` on this line actually means that no requests had `http_req_failed = true`, meaning that there were no failures. Conversely, the `✗` means that 1 request had `http_req_failed = false`, meaning that it was successful.
+이 테스트 실행에서는 오류율이 `0.00%`였는데, 실행한 단일 요청이 성공했기 때문입니다. 반직관적으로 보일 수 있지만, 이 줄의 `✓`는 실제로 `http_req_failed = true`인 요청이 없었다는 것을 의미합니다. 즉, 실패가 없었다는 뜻입니다. 반대로 `✗`는 1개의 요청이 `http_req_failed = false`를 가졌다는 것을 의미하며, 즉 성공했다는 뜻입니다.
 
-#### Number of requests
+#### 요청 수
 
-The number of total requests sent by all VUs during the test is described in the line below.
+테스트 중 모든 VU가 전송한 총 요청 수는 아래 줄에 설명되어 있습니다.
 
 ```plain
 http_reqs......................: 1      1.525116/s
 ```
 
-Additionally, the number `1.525116/s` is the number of **requests per second (rps)** that the test executed throughout the test. In some tools, this is described as "test throughput". This helps you further quantify how much load your application experienced during the test.
+또한 숫자 `1.525116/s`는 테스트 전체에 걸쳐 테스트가 실행한 **초당 요청 수(rps)**입니다. 일부 도구에서는 이를 "테스트 처리량"이라고 설명합니다. 이를 통해 테스트 중 애플리케이션이 얼마나 많은 부하를 경험했는지 더 잘 정량화할 수 있습니다.
 
-#### Iteration duration
+#### 반복 duration
 
-`http_req_duration` measures the time taken for an HTTP request within the script to get a response from the server. But what if you have multiple HTTP requests strung together in a user flow, and you'd like to know how the entire flow would take for a user?
+`http_req_duration`은 스크립트 내의 HTTP 요청이 서버에서 응답을 받는 데 걸리는 시간을 측정합니다. 그런데 사용자 흐름에 여러 HTTP 요청이 연결되어 있고, 전체 흐름이 사용자에게 얼마나 걸릴지 알고 싶다면 어떻게 해야 할까요?
 
-In that case, the iteration duration is the metric to look at.
+그런 경우에는 반복 duration이 살펴볼 메트릭입니다.
 
 ```plain
 iteration_duration.............: avg=654.72ms min=654.72ms med=654.72ms max=654.72ms p(90)=654.72ms p(95)=654.72ms
 ```
 
-The iteration duration is the amount of time it took for k6 to perform a single loop of your VU code. If your script included steps like logging in, browsing a product page, adding to a cart, and entering payment information, then the iteration duration gives you an idea of how long one of your application's users might take to purchase a product.
+반복 duration은 k6가 VU 코드의 단일 루프를 수행하는 데 걸린 시간입니다. 스크립트에 로그인, 제품 페이지 탐색, 장바구니 추가, 결제 정보 입력 같은 단계가 포함되어 있다면, 반복 duration은 애플리케이션 사용자 중 한 명이 제품을 구매하는 데 얼마나 걸릴지에 대한 아이디어를 줍니다.
 
-This metric could be useful when you're trying to decide on what is an acceptable response time for each HTTP request. For example, perhaps the payment request takes 2 seconds, but if the total iteration duration is still only 3 seconds, you might decide that's acceptable anyway.
+이 메트릭은 각 HTTP 요청에 대해 허용 가능한 응답 시간을 결정하려고 할 때 유용할 수 있습니다. 예를 들어, 결제 요청이 2초가 걸리더라도 총 반복 duration이 여전히 3초에 불과하다면 괜찮다고 판단할 수 있습니다.
 
-Like the other metrics, the iteration duration is expressed in terms of the average, minimum, median, maximum, 90th percentile, and 95th percentile times, in milliseconds.
+다른 메트릭과 마찬가지로, 반복 duration은 평균, 최솟값, 중앙값, 최댓값, 90번째 백분위수, 95번째 백분위수로 밀리초 단위로 표현됩니다.
 
-#### Number of iterations
+#### 반복 수
 
-The number of iterations describes how many times k6 looped through your script in total, including the iterations for all VUs. This metric can be useful when you want to verify some output associated with each iteration, such as an account signup.
+반복 수는 k6가 모든 VU에 대해 스크립트를 총 몇 번 루프했는지를 설명합니다. 이 메트릭은 계정 가입과 같은 각 반복과 관련된 출력을 확인하려는 경우 유용할 수 있습니다.
 
 ```plain
 iterations.....................: 1      1.525116/s
 ```
 
-The number `1.525116/s` on the same line is the **iterations per second**. It describes the rate at which k6 did full iterations through the script. This, like [requests per second](03-Understanding-k6-results.md#Number-of-requests), is a measure of the speed or rate at which k6 sent messages to the application server.
+같은 줄의 숫자 `1.525116/s`는 **초당 반복 수**입니다. k6가 스크립트를 완전히 반복한 속도를 나타냅니다. 이것은 [초당 요청 수](03-Understanding-k6-results.md#Number-of-requests)와 마찬가지로, k6가 애플리케이션 서버에 메시지를 보낸 속도 또는 비율의 측정입니다.
 
-## Next up
+## 다음 단계
 
-Logging the response bodies of requests to the console might be good when troubleshooting, but what if you just want to verify the response automatically, without having to check the log? In the next section, you'll learn about checks.
+요청 응답 본문을 콘솔에 로깅하는 것은 문제 해결 시 유용할 수 있지만, 로그를 확인하지 않고도 응답을 자동으로 확인하려면 어떻게 해야 할까요? 다음 섹션에서 check에 대해 배울 것입니다.
 
-## Test your knowledge
+## 지식 확인
 
-To answer the following questions, refer to the sample end-of-test summary report below.
+다음 질문에 답하려면 아래의 샘플 테스트 종료 요약 보고서를 참조하세요.
 
 ```plain
           /\      |‾‾| /‾‾/   /‾‾/
@@ -255,9 +255,9 @@ default ✓ [======================================] 10 VUs  2m0s
 ```
 
 
-### Question 1
+### 문제 1
 
-Which of the following is the best value to use as the response time for all HTTP requests?
+다음 중 모든 HTTP 요청의 응답 시간으로 사용하기에 가장 좋은 값은?
 
 A: 131.04 ms
 
@@ -265,9 +265,9 @@ B: 122.08 ms
 
 C: 4.46 ms
 
-### Question 2
+### 문제 2
 
-How many virtual users did this test execute?
+이 테스트는 몇 명의 가상 사용자로 실행되었나요?
 
 A: 9463
 
@@ -276,9 +276,9 @@ B: 1
 C: 10
 
 
-### Question 3
+### 문제 3
 
-How many requests failed?
+몇 개의 요청이 실패했나요?
 
 A: 0
 
@@ -286,8 +286,8 @@ B: 9463
 
 C: 10
 
-### Answers
+### 정답
 
-1. A. B refers to `http_req_waiting`, which is only a component of the response time. C refers to `http_req_blocked`, which refers to the time spent waiting for a TCP connection to be established before sending the request. A is the 95th percentile value for `http_req_duration`, which is the best metric to use for response time.
-2. C. The number of VUs is listed in the second to the last row in the results, and is 10 in this case.
-3. A. In the line with the metric `http_req_failed`, the `0.00%  ✓ 0` refers to the number of responses with errors. That is, how many of the requests had `http_req_failed` set to `true`. 9463 is the number of requests that passed, or had `http_req_failed` set to `false`. The correct answer is A, 0. None of the requests failed, and the test ha a 0% error rate.
+1. A. B는 응답 시간의 구성 요소일 뿐인 `http_req_waiting`을 가리킵니다. C는 요청을 보내기 전에 TCP 연결이 설정될 때까지 기다리는 시간을 나타내는 `http_req_blocked`를 가리킵니다. A는 응답 시간으로 사용하기에 가장 좋은 메트릭인 `http_req_duration`의 95번째 백분위수 값입니다.
+2. C. VU 수는 결과의 아래에서 두 번째 행에 나열되어 있으며, 이 경우 10입니다.
+3. A. `http_req_failed` 메트릭이 있는 줄에서 `0.00%  ✓ 0`은 오류가 있는 응답의 수를 나타냅니다. 즉, 요청 중 `http_req_failed`가 `true`로 설정된 것이 얼마나 되는지입니다. 9463은 통과한 요청, 즉 `http_req_failed`가 `false`로 설정된 요청의 수입니다. 정답은 A, 0입니다. 요청이 실패하지 않았으며 테스트의 오류율은 0%입니다.

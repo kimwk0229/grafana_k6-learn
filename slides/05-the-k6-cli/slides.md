@@ -1,39 +1,39 @@
-# The k6 CLI
+# k6 CLI
 
 ---
 
-## Commands
+## 명령어
 
-The three most common commands are:
+가장 일반적인 세 가지 명령어:
 
-| Command   | Description                    | Usage            |
+| 명령어    | 설명                    | 사용법            |
 | --------- | ------------------------------ | ---------------- |
-| `help`    | Displays all possible commands | `k6 help`        |
-| `run`     | Executes a k6 script           | `k6 run test.js` |
-| `version` | Displays installed k6 version  | `k6 version`     |
+| `help`    | 가능한 모든 명령어 표시 | `k6 help`        |
+| `run`     | k6 스크립트 실행           | `k6 run test.js` |
+| `version` | 설치된 k6 버전 표시  | `k6 version`     |
 
 ---
 
-## Flags
+## 플래그
 
-| Flag                   | Description                                                    | Usage                                    |
+| 플래그                   | 설명                                                    | 사용법                                    |
 | ---------------------- | -------------------------------------------------------------- | ---------------------------------------- |
-| `--help`               | Displays possible flags for the given command                  | `k6 run --help`                          |
-| `--vus` or `-u`        | Sets number of virtual users                                   | `k6 run test.js --vus 10 --duration 30s` |
-| `--duration`           | Sets the duration of the test                                  | `k6 run test.js --duration 10m`          |
+| `--help`               | 주어진 명령어에 대한 가능한 플래그 표시                  | `k6 run --help`                          |
+| `--vus` 또는 `-u`        | virtual user 수 설정                                   | `k6 run test.js --vus 10 --duration 30s` |
+| `--duration`           | 테스트 duration 설정                                  | `k6 run test.js --duration 10m`          |
 
 ---
 
-| Flag                   | Description                                                    | Usage                                    |
+| 플래그                   | 설명                                                    | 사용법                                    |
 | ---------------------- | -------------------------------------------------------------- | ---------------------------------------- |
-| `--iterations` or `-i` | Instructs k6 to iterate the default function a number of times | `k6 run test.js -i 3`                    |
-| `-e`                   | Sets an environment variable to pass to the script             | `k6 run test.js -e DOMAIN=test.k6.io`                           
+| `--iterations` 또는 `-i` | k6가 기본 함수를 지정 횟수만큼 반복하도록 지시 | `k6 run test.js -i 3`                    |
+| `-e`                   | 스크립트에 전달할 환경 변수 설정             | `k6 run test.js -e DOMAIN=test.k6.io`                           
 
 ---
 
-## Getting help: `help`
+## 도움말 가져오기: `help`
 
-Running `k6 help` returns the following:
+`k6 help` 실행 시 다음이 반환됩니다:
 
 ```shell
           /\      |‾‾| /‾‾/   /‾‾/
@@ -75,27 +75,27 @@ Use "k6 [command] --help" for more information about a command.
 
 ---
 
-## Execution and Execution Options: `run`
+## 실행 및 실행 옵션: `run`
 
-Another common k6 command is `k6 run [filename].js`.
+또 다른 일반적인 k6 명령어는 `k6 run [filename].js`입니다.
 
 ---
 
-### The duration flag
+### duration 플래그
 
-The duration specifies how long the test executes for. You can set this on the command line with the flag `--duration`:
+duration은 테스트가 실행되는 시간을 지정합니다. `--duration` 플래그로 명령줄에서 설정할 수 있습니다:
 
 ```shell
 k6 run test.js --duration 30s
 ```
 
-You can use `s`, `h`, and `m` to define the duration.
+`s`, `h`, `m`을 사용하여 duration을 정의할 수 있습니다.
 
 ---
 
-### The iterations flag
+### iterations 플래그
 
-You can set the number of iterations with the `--iterations` or `-i` flag, like this:
+`--iterations` 또는 `-i` 플래그로 iteration 횟수를 설정할 수 있습니다:
 
 ```shell
 k6 run test.js --iterations 100
@@ -104,9 +104,9 @@ k6 run test.js -i 100
 
 ---
 
-### Virtual user flags
+### virtual user 플래그
 
-You can adjust the number of virtual users with the `-u` or `--vus`s flag when running the test:
+테스트 실행 시 `-u` 또는 `--vus` 플래그로 virtual user 수를 조정할 수 있습니다:
 
 ```shell
 k6 run test.js --vus 10 --duration 1m
@@ -115,9 +115,9 @@ k6 run test.js -u 10 --iterations 100
 
 ---
 
-### Environment variables
+### 환경 변수
 
-To use an environment variable, define the variable in your script:
+환경 변수를 사용하려면 스크립트에서 변수를 정의합니다:
 
 ```js [3|5-7]
 import http from 'k6/http';
@@ -131,7 +131,7 @@ export default function () {
 
 ---
 
-Here's how to do define it during runtime:
+런타임에 정의하는 방법:
 
 ```shell
 k6 run test.js -e DOMAIN=test.k6.io
@@ -139,16 +139,15 @@ k6 run test.js -e DOMAIN=test.k6.io
 
 ---
 
-## Changing settings in k6
+## k6에서 설정 변경하기
 
-k6 always [prioritizes settings](https://k6.io/docs/using-k6/k6-options/how-to/#order-of-precedence) in this order:
+k6는 항상 이 순서로 [설정의 우선순위를 정합니다](https://k6.io/docs/using-k6/k6-options/how-to/#order-of-precedence):
 
-![Priority of configurations and settings in k6](../../images/k6-order-of-preference-settings.png)
+![k6에서 설정 및 설정의 우선순위](../../images/k6-order-of-preference-settings.png)
 <!-- .element class="stretch" -->
 
 ---
 
-## Understanding k6 results
+## k6 결과 이해하기
 
-- Move to: [06-understanding-k6-results](?p=06-understanding-k6-results)
-
+- 이동: [06-understanding-k6-results](?p=06-understanding-k6-results)

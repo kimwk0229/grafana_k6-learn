@@ -1,21 +1,21 @@
-# Get started with k6 OSS
+# k6 OSS 시작하기
 
 ---
 
-## Installation
+## 설치
 
 https://k6.io/docs/getting-started/installation/ 
 
-![k6 installation page](../../images/installation-page.png)
+![k6 설치 페이지](../../images/installation-page.png)
 <!-- .element class="stretch" -->
 
 ---
 
-## Writing your first k6 script
+## 첫 번째 k6 스크립트 작성하기
 
-- Create a new file named `test.js`, and open it in your favorite IDE.
-- Import the HTTP Client from the built-in module `k6/http`:
-- Create and export a default function.
+- `test.js`라는 새 파일을 만들고 즐겨 사용하는 IDE에서 엽니다.
+- 내장 모듈 `k6/http`에서 HTTP Client를 가져옵니다:
+- 기본 함수를 생성하고 내보냅니다.
 
 ```js [1|3-6]
 import http from 'k6/http';
@@ -28,9 +28,9 @@ export default function () {
 
 ---
 
-## Writing your first k6 script
+## 첫 번째 k6 스크립트 작성하기
 
-Add the logic for making the actual HTTP call:
+실제 HTTP 요청을 만드는 로직을 추가합니다:
 
 ```js
 import http from 'k6/http';
@@ -45,15 +45,15 @@ export default function() {
 
 ---
 
-## Writing your first k6 script
+## 첫 번째 k6 스크립트 작성하기
 
-Alternatively, you can also run `k6 new [filename]` to automatically create a file with the basic boilerplate to get you up and running quickly. 😉
+또는 `k6 new [filename]`을 실행하여 기본 보일러플레이트 파일을 자동으로 생성하고 빠르게 시작할 수 있습니다. 😉
 
 ---
 
-## Hello World: running your k6 script
+## Hello World: k6 스크립트 실행하기
 
-Run the command below on a terminal:
+터미널에서 아래 명령어를 실행합니다:
 
 ```js
 k6 run test.js
@@ -61,7 +61,7 @@ k6 run test.js
 
 ---
 
-You should get something like this:
+다음과 같은 결과가 나와야 합니다:
 
 ```shell
 $ k6 run test.js
@@ -105,4 +105,4 @@ default ✓ [======================================] 1 VUs  00m00.7s/10m0s  1/1 
 
 ## k6 CLI
 
-- Move to: [05-the-k6-cli](?p=05-the-k6-cli)
+- 이동: [05-the-k6-cli](?p=05-the-k6-cli)

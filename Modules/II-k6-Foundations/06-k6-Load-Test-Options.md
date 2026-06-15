@@ -1,21 +1,21 @@
-# k6 Load Test Options
+# k6 부하 테스트 옵션
 
-Up until now, you've been running the same script with a single VU and a single iteration. In this section, you'll learn how to scale that out and run a full-sized load test against your application.
+지금까지 단일 VU와 단일 반복으로 동일한 스크립트를 실행해왔습니다. 이 섹션에서는 이를 확장하여 애플리케이션에 대해 전체 규모의 부하 테스트를 실행하는 방법을 배웁니다.
 
-Test options are configuration values that affect how your test script is executed, such as the number of VUs or iterations, the duration of your test, and more. They are also sometimes called "test parameters".
+테스트 옵션은 VU 수 또는 반복 횟수, 테스트 duration 등 테스트 스크립트가 실행되는 방식에 영향을 미치는 구성 값입니다. "테스트 파라미터"라고도 부릅니다.
 
-k6 comes with some default test options, but there are four different ways to change the test parameters for a script:
-1. You can include command-line flags when running a k6 script (such as `k6 run --vus 10 --iterations 30`).
-2. You can define [environment variables](https://k6.io/docs/using-k6/environment-variables/) on the command-line that are passed to the script.
-3. You can define them within the test script itself.
-4. You can include a configuration file.
+k6에는 기본 테스트 옵션이 있지만, 스크립트의 테스트 파라미터를 변경하는 네 가지 다른 방법이 있습니다:
+1. k6 스크립트를 실행할 때 명령줄 플래그를 포함할 수 있습니다(예: `k6 run --vus 10 --iterations 30`).
+2. 스크립트에 전달되는 명령줄에서 [환경 변수](https://k6.io/docs/using-k6/environment-variables/)를 정의할 수 있습니다.
+3. 테스트 스크립트 내에서 직접 정의할 수 있습니다.
+4. 구성 파일을 포함할 수 있습니다.
 
-For now, you'll learn to do the third option: defining test parameters within the script itself. The advantages of this approach are:
-- Simplicity: no extra files or commands are required.
-- Repeatability: Adding these parameters to the script make it easier for a colleague to run tests you've written.
-- Version controllability: Changes to the test parameters can be tracked along with test code.
+지금은 세 번째 옵션인 스크립트 내에서 테스트 파라미터를 정의하는 방법을 배우겠습니다. 이 접근 방식의 장점은:
+- 단순성: 추가 파일이나 명령이 필요하지 않습니다.
+- 반복 가능성: 이러한 파라미터를 스크립트에 추가하면 동료가 작성한 테스트를 더 쉽게 실행할 수 있습니다.
+- 버전 관리 가능성: 테스트 파라미터의 변경 사항을 테스트 코드와 함께 추적할 수 있습니다.
 
-To use test options within a script, add the following lines to your script. By convention, it's best to add it after the import statements and before the default function, so that the options are easily read upon opening the script:
+스크립트 내에서 테스트 옵션을 사용하려면 스크립트에 다음 줄을 추가하세요. 관례상 스크립트를 열었을 때 옵션을 쉽게 읽을 수 있도록 import 문 뒤, default 함수 앞에 추가하는 것이 가장 좋습니다:
 
 ```js
 export let options = {
@@ -24,17 +24,17 @@ export let options = {
 };
 ```
 
-If you set multiple options, make sure you end each one with  `,`.
+여러 옵션을 설정하는 경우 각 옵션 끝에 `,`를 붙이세요.
 
-## VUs
+## VU
 
 ```js
 vus: 10,
 ```
 
-In this line, you can change the number of virtual users that k6 will run.
+이 줄에서 k6가 실행할 가상 사용자 수를 변경할 수 있습니다.
 
-Note that if you only define VUs and no other test options, you may get the following error:
+VU만 정의하고 다른 테스트 옵션을 정의하지 않으면 다음 오류가 발생할 수 있습니다:
 
 ```plain
           /\      |‾‾| /‾‾/   /‾‾/   
@@ -49,7 +49,7 @@ WARN[0000] the `vus=10` option will be ignored, it only works in conjunction wit
      output: -
 ```
 
-If you set the number of VUs, you need to additionally specify how long those users should be executed for, using one of the following options:
+VU 수를 설정한 경우, 해당 사용자를 실행할 기간을 다음 옵션 중 하나를 사용하여 추가로 지정해야 합니다:
 - iterations
 - durations
 - stages
@@ -61,7 +61,7 @@ If you set the number of VUs, you need to additionally specify how long those us
   iterations: 40,
 ```
 
-Setting the number of iterations in test options defines it for *all* users. In the example above, the test will run for a total of 40 iterations, with each of the 10 users executing the script exactly 4 times.
+테스트 옵션에서 반복 횟수를 설정하면 *모든* 사용자에 대해 정의됩니다. 위의 예시에서 테스트는 총 40번의 반복으로 실행되며, 10명의 사용자 각각이 스크립트를 정확히 4번 실행합니다.
 
 ## Duration
 
@@ -70,16 +70,16 @@ Setting the number of iterations in test options defines it for *all* users. In 
   duration: '2m'
 ```
 
-Setting the duration instructs k6 to repeat (iterate) the script for each of the specified number of users until the duration is reached.
+duration을 설정하면 k6가 지정된 사용자 수 각각에 대해 duration에 도달할 때까지 스크립트를 반복(iterate)하도록 지시합니다.
 
-Duration can be set using `h` for hours, `m` for minutes, and `s` for seconds, like these examples:
+Duration은 시간에 `h`, 분에 `m`, 초에 `s`를 사용하여 설정할 수 있습니다. 예시:
 - `duration: '1h30m'`
 - `duration: '30s'`
 - `duration: '5m30s'`
 
-If you set duration but don't specify a number of VUs, k6 will use the default VU number of 1.
+duration을 설정하되 VU 수를 지정하지 않으면, k6는 기본 VU 수인 1을 사용합니다.
 
-If you set the duration in conjunction with setting the number of iterations, the value that ends earlier is used. For example, given the following options:
+duration을 설정하고 반복 횟수도 함께 설정하면, 먼저 끝나는 값이 사용됩니다. 예를 들어, 다음과 같은 옵션이 있다면:
 
 ```js
   vus: 10,
@@ -87,23 +87,23 @@ If you set the duration in conjunction with setting the number of iterations, th
   iterations: 40,
 ```
 
-k6 will execute the test for 40 iterations or 5 minutes, *whichever ends earlier*. If it takes 1 minute to finish 40 total iterations, the test will end after 1 minute. If it takes 10 minutes to finish 40 total iterations, the test will end after 5 minutes.
+k6는 40번의 반복 또는 5분 중 *먼저 끝나는 것*까지 테스트를 실행합니다. 40번의 총 반복을 완료하는 데 1분이 걸린다면, 테스트는 1분 후에 종료됩니다. 40번의 총 반복을 완료하는 데 10분이 걸린다면, 테스트는 5분 후에 종료됩니다.
 
 ### Stages
 
-Defining iterations and durations both cause k6 to execute your test script using a [simple load profile](../XX-Future-Ideas/Parameters-of-a-load-test.md#Simple-load-profile): VUs are started, sustained for a certain time or number of iterations, and then ended.
+iterations와 durations를 모두 정의하면 k6가 [단순 부하 프로필](../XX-Future-Ideas/Parameters-of-a-load-test.md#Simple-load-profile)을 사용하여 테스트 스크립트를 실행하게 됩니다: VU가 시작되고, 일정 시간 또는 반복 횟수 동안 유지되다가 종료됩니다.
 
-![A simple load profile](../../images/load_profile-no_ramp-up_or_ramp-down.png)
+![단순 부하 프로필](../../images/load_profile-no_ramp-up_or_ramp-down.png)
 
-_Simple load profile_
+_단순 부하 프로필_
 
-What if you want to add a [ramp-up or ramp-down](../XX-Future-Ideas/Parameters-of-a-load-test.md#ramp-up-and-ramp-down-periods), so that the profile looks more like this?
+[램프업 또는 램프다운](../XX-Future-Ideas/Parameters-of-a-load-test.md#ramp-up-and-ramp-down-periods)을 추가하여 프로필이 다음과 같이 보이게 하려면 어떻게 해야 할까요?
 
-![Constant load profile, with ramps](../../images/load_profile-constant.png.png)
+![상수 부하 프로필, 램프 포함](../../images/load_profile-constant.png.png)
 
-_Constant load profile, with ramps_
+_상수 부하 프로필, 램프 포함_
 
-In that case, you may want to use [stages](https://k6.io/docs/using-k6/options/#stages).
+그런 경우 [stages](https://k6.io/docs/using-k6/options/#stages)를 사용할 수 있습니다.
 
 ```js
 export let options = {
@@ -115,17 +115,17 @@ export let options = {
 };
 ```
 
-The stages option lets you define different steps or phases for your load test, each of which can be configured with a number of VUs and duration. The example above consists of three steps (but you can add more if you'd like).
+stages 옵션을 사용하면 부하 테스트의 여러 단계나 단계를 정의할 수 있으며, 각각 VU 수와 duration으로 구성할 수 있습니다. 위의 예시는 세 단계로 구성됩니다(더 추가할 수 있습니다).
 
-1. The first step is a gradual ramp-up from 0 VUs to 100 VUs.
-2. The second step defines the [steady state](../XX-Future-Ideas/Parameters-of-a-load-test.md#Steady-state). The load is held constant at 100 VUs for 1 hour.
-3. Then, the third step is a gradual ramp-down from 100 VUs back to 0, at which point the test ends.
+1. 첫 번째 단계는 0 VU에서 100 VU로의 점진적인 램프업입니다.
+2. 두 번째 단계는 [정상 상태(steady state)](../XX-Future-Ideas/Parameters-of-a-load-test.md#Steady-state)를 정의합니다. 부하는 1시간 동안 100 VU로 일정하게 유지됩니다.
+3. 그런 다음 세 번째 단계는 100 VU에서 다시 0으로의 점진적인 램프다운이며, 이 시점에서 테스트가 종료됩니다.
 
-Stages are the most versatile way to define test parameters for a single scenario. They give you flexibility in shaping the load of your test to match the situation in production that you're trying to simulate.
+stages는 단일 시나리오에 대한 테스트 파라미터를 정의하는 가장 다양한 방법입니다. 시뮬레이션하려는 프로덕션의 상황과 일치하도록 테스트의 부하를 형성하는 데 유연성을 제공합니다.
 
-## The full script so far
+## 지금까지의 전체 스크립트
 
-If you're using stages, here's what your script should look like so far:
+stages를 사용하는 경우, 스크립트는 지금 다음과 같아야 합니다:
 
 ```js
 import http from 'k6/http';
@@ -150,11 +150,11 @@ export default function() {
 }
 ```
 
-## Test your knowledge
+## 지식 확인
 
-### Question 1
+### 문제 1
 
-You've been instructed to create a script that sends the same HTTP request exactly 100 times. Which of the following test options is the best way to accomplish this task?
+동일한 HTTP 요청을 정확히 100번 전송하는 스크립트를 만들도록 지시받았습니다. 이 작업을 수행하는 가장 좋은 방법은 다음 테스트 옵션 중 어느 것인가요?
 
 A: Iterations
 
@@ -163,9 +163,9 @@ B: Stages
 C: Duration
 
 
-### Question 2
+### 문제 2
 
-Given the test options as specified below, how long will the test be executed?
+아래에 지정된 테스트 옵션에 따라 테스트는 얼마 동안 실행될까요?
 
 ```js
 export let options = {
@@ -175,16 +175,16 @@ export let options = {
 };
 ```
 
-A: 10 hours
+A: 10시간
 
-B: As long as it takes to finish 3 iterations or 1h, whichever is shorter
+B: 3번의 반복을 완료하는 데 걸리는 시간 또는 1시간 중 짧은 쪽
 
-C: 1 hour plus as long as it takes to finish 3 iterations
+C: 1시간에 3번의 반복을 완료하는 데 걸리는 시간을 더한 시간
 
 
-### Question 3
+### 문제 3
 
-Which of the following test options will yield a stepped load pattern that adds 100 users within 10 minutes, holds that load steady for 30 minutes, and then continues that pattern until 300 VUs have been running for 30 minutes?
+다음 테스트 옵션 중 10분 내에 100명의 사용자를 추가하고, 30분 동안 그 부하를 유지하며, 300 VU가 30분 동안 실행될 때까지 이 패턴을 계속하는 단계적 부하 패턴을 생성하는 것은?
 
 A: 
 ```js
@@ -219,8 +219,8 @@ export let options = {
 ```
 
 
-### Answers
+### 정답
 
-1. A. Setting the number of iterations to 100 would be the best way to accomplish this task. Stages for [some executors](https://k6.io/docs/using-k6/scenarios/executors/ramping-arrival-rate) do allow you to do this as well, but not for all of them. Duration only changes how long the test will run for, not specifically how many times it iterates.
-2. B. In the case of contradicting parameters, k6 will run for the shorter amount of time. In this case, 3 iterations will likely take less time than 1 hour, so the test will finish in less time than an hour.
-3. A. B and C are incorrect because they both describe a test that will gradually and evenly add virtual users until there are 300 running. That is, the rate of increase is steady. A is the only correct one because it's the only one that includes a steady state (a period of no VU increases) between periods of ramp-up.
+1. A. 반복 횟수를 100으로 설정하는 것이 이 작업을 수행하는 가장 좋은 방법입니다. [일부 executor](https://k6.io/docs/using-k6/scenarios/executors/ramping-arrival-rate)의 stages도 이를 수행할 수 있지만 모든 executor에서는 그렇지 않습니다. Duration은 테스트가 실행되는 시간만 변경하며, 구체적으로 몇 번 반복되는지는 변경하지 않습니다.
+2. B. 모순되는 파라미터의 경우, k6는 더 짧은 시간 동안 실행됩니다. 이 경우 3번의 반복은 1시간보다 적은 시간이 걸릴 가능성이 높으므로, 테스트는 1시간보다 짧은 시간에 완료됩니다.
+3. A. B와 C는 둘 다 300 VU가 될 때까지 가상 사용자를 점진적이고 균등하게 추가하는 테스트를 설명하기 때문에 틀립니다. 즉, 증가 속도가 일정합니다. A만이 램프업 기간 사이에 정상 상태(VU 증가가 없는 기간)를 포함하는 유일한 것이기 때문에 올바릅니다.

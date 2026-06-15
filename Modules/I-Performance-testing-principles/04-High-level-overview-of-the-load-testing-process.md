@@ -1,129 +1,128 @@
-# High-level overview of the load testing process
+# 부하 테스트 프로세스의 개요
 
-In the last section, you learned what load testing is, how it differs from performance testing, and what its test scenario types are. In this section, you'll learn about the different phases of the load testing process:
+앞 섹션에서 부하 테스트가 무엇인지, 성능 테스트와 어떻게 다른지, 그리고 테스트 시나리오 유형이 무엇인지 배웠습니다. 이 섹션에서는 부하 테스트 프로세스의 다양한 단계에 대해 알아봅니다:
 
-- Planning for load testing
-- Scripting a load test
-- Executing load tests
-- Analysis of load testing results
+- 부하 테스트 계획
+- 부하 테스트 스크립팅
+- 부하 테스트 실행
+- 부하 테스트 결과 분석
 
-For clarity, these activities are shown as distinct phases here; however, in practice, they often overlap. Like the application release process, the testing process should be continuous and Agile, with each small increment building upon previous work, growing more and more robust over time.
+명확성을 위해 이 활동들은 여기서 별개의 단계로 표시되지만, 실제로는 종종 겹치는 경우가 많습니다. 애플리케이션 릴리스 프로세스와 마찬가지로, 테스트 프로세스는 지속적이고 애자일해야 하며, 각각의 작은 증분이 이전 작업을 기반으로 구축되어 시간이 지남에 따라 점점 더 견고해져야 합니다.
 
-![Continuous Testing Snowball](../../images/continuous-testing-snowball.png)
-
-
-Just like application code, a test starts slowly. At the mountain's peak, the test is in its simplest form. You can think of an early-stage test as primarily **risk-based**: testing at this level is a reaction to probable failures. These tests are written specifically to prevent failure in an application's most critical components, and there might not be enough time for anything else.
-
-As testing matures within the project, it may start to include **regression**. Now that all the high-risk areas are covered, teams have time to make tests a bit more backward-compatible and preventative, and they write tests to see if new code breaks past functionalities.
-
-The Continuous Testing Snowball gathers speed as the team grows along with the test suite, focusing on **automating** more and more parts of the testing process with every iteration or sprint. A repeatable framework is established. In this stage, the snowball is at its fastest speed.
-
-At the bottom of the slope, continuous testing has evolved testing to such an extent that the team can expand its focus from addressing specific defects to increasing overall **reliability and confidence** in the application's ability to withstand unexpected events. The framework is made even more robust with more exploratory types of testing like Chaos Engineering.
-
-The focus of Continuous Testing is on organically and iteratively evolving the testing suite in parallel with the application, starting with something small with the goal of making enough incremental changes until it is more robust.
+![지속적 테스트 스노우볼](../../images/continuous-testing-snowball.png)
 
 
-## Planning for load testing
+애플리케이션 코드와 마찬가지로, 테스트는 천천히 시작됩니다. 산 정상에서 테스트는 가장 단순한 형태입니다. 초기 단계의 테스트는 주로 **위험 기반(risk-based)**으로 생각할 수 있습니다: 이 수준의 테스트는 발생 가능한 장애에 대한 대응입니다. 이러한 테스트는 애플리케이션의 가장 중요한 구성 요소의 장애를 방지하기 위해 특별히 작성되며, 다른 것에는 충분한 시간이 없을 수 있습니다.
 
-Planning for a load test is the first part of the process. It involves identifying the reasons _why_ to test, finding _what_ to test, and outlining _how_, generally, to test it.
+프로젝트 내에서 테스트가 성숙해짐에 따라 **회귀(regression)** 테스트가 포함되기 시작할 수 있습니다. 이제 높은 위험 영역이 모두 커버되었으므로, 팀은 테스트를 좀 더 이전 버전과 호환되고 예방적으로 만들 시간을 가지며, 새로운 코드가 이전 기능을 손상시키는지 확인하기 위한 테스트를 작성합니다.
 
-In this phase, we formulate requirements for load testing:
-- Clarify the scope of testing
-- Define SLOs
-- Identify workload models
-- Set up an environment for testing, including monitoring
-- Agree on the frequency and schedule of tests
-- Prepare test data, if applicable
+지속적 테스트 스노우볼은 팀이 테스트 스위트와 함께 성장하면서 속도를 얻으며, 매 반복 또는 스프린트마다 테스트 프로세스의 점점 더 많은 부분을 **자동화(automating)**하는 데 집중합니다. 반복 가능한 프레임워크가 확립됩니다. 이 단계에서 스노우볼은 가장 빠른 속도로 움직입니다.
 
-Planning for any testing is a team activity, and load testing is no exception. This phase is an opportunity for all stakeholders to get together and understand what testing should look like and what would define a successful round of testing.
+경사면 아래에서, 지속적 테스트는 테스트를 발전시켜 팀이 특정 결함을 해결하는 것에서 카오스 엔지니어링과 같은 더 탐색적인 테스트 유형으로 애플리케이션이 예상치 못한 이벤트를 견딜 수 있는 능력에 대한 전반적인 **신뢰성 및 자신감(reliability and confidence)**을 높이는 것으로 초점을 확장할 수 있습니다. 프레임워크는 더 탐색적인 테스트 유형으로 더욱 견고해집니다.
 
-## Scripting a load test
+지속적 테스트의 초점은 애플리케이션과 병행하여 테스트 스위트를 유기적이고 반복적으로 발전시키는 것으로, 작은 것에서 시작하여 점점 더 견고해질 때까지 충분한 증분 변경을 하는 것을 목표로 합니다.
 
-Scripting the load testing script involves translating the test plan into executable tests. In this phase, you might do some of the following:
-- Create test scenarios that adequately cover the requirements
-- Write test scripts using load testing tools
-- Make scripts realistic
-- Run shakeout tests to verify that the script works as expected
-- Run tests against upstream environments, usually dev or staging
-- Share test scripts with the team
-- Set up a testing framework that can grow with the test suite
 
-While tests may be executed while scripting, they are usually for debugging or shakeout purposes rather than full load tests. The scripting phase may spill into the test-execution phase as changes are made to existing scripts or new scripts are made to address issues found during test execution.
+## 부하 테스트 계획
 
-## Executing load tests
+부하 테스트 계획은 프로세스의 첫 번째 부분입니다. 테스트하는 _이유_, 테스트할 _대상_, 그리고 일반적으로 _어떻게_ 테스트할지를 파악하는 것을 포함합니다.
 
-During test execution, the load testing scripts run against their intended targets, often test environments or production. In the test execution phase, you might do some of the following:
-- Set up cloud or on-premise infrastructure
-- Set up observability tools to monitor application server and load-generator health
-- Run shakeout tests to verify that test environments work as expected
-- Run baseline tests to understand current system behavior
-- Make changes to the code or environment and run tests to compare against the baseline test
-- Increase the scope of tests
-- Do distributed testing by ramping up or scaling out the load test
+이 단계에서 부하 테스트에 대한 요구사항을 공식화합니다:
+- 테스트 범위 명확화
+- SLO 정의
+- 워크로드 모델 식별
+- 모니터링을 포함한 테스트 환경 설정
+- 테스트 빈도 및 일정 합의
+- 해당하는 경우 테스트 데이터 준비
 
-Executing load tests involves more than just running tests, because the tests themselves may not be helpful without proper observability tools in place to monitor the health of the system and the health of the test.
+모든 테스트 계획은 팀 활동이며, 부하 테스트도 예외가 아닙니다. 이 단계는 모든 이해관계자가 함께 모여 테스트가 어떤 모습이어야 하는지, 그리고 무엇이 성공적인 테스트 라운드를 정의하는지 이해할 수 있는 기회입니다.
 
-## Analysis of load testing results
+## 부하 테스트 스크립팅
 
-During the analysis phase, you may do some of the following:
-- Collate data from application servers as well as from load generators
-- Aggregate data to get a big-picture understanding of what happened during the test
-- Use data visualization and analysis tools to determine how the system behaved under test conditions
-- Report findings to stakeholders
-- Remediate bottlenecks
-- Rerun tests to confirm issues or fixes
+부하 테스트 스크립트를 작성하는 것은 테스트 계획을 실행 가능한 테스트로 변환하는 것을 포함합니다. 이 단계에서 다음과 같은 작업을 수행할 수 있습니다:
+- 요구사항을 적절히 커버하는 테스트 시나리오 생성
+- 부하 테스트 도구를 사용하여 테스트 스크립트 작성
+- 스크립트를 현실적으로 만들기
+- 스크립트가 예상대로 작동하는지 확인하기 위한 쉐이크아웃 테스트 실행
+- 일반적으로 개발 또는 스테이징인 업스트림 환경에서 테스트 실행
+- 팀과 테스트 스크립트 공유
+- 테스트 스위트와 함께 성장할 수 있는 테스트 프레임워크 설정
 
-Using the data collected during the test to understand how the system behaves during different test conditions is a big part of what makes load testing valuable. It's important to examine the data objectively and to communicate the results to the team in a comprehensible way.
+테스트는 스크립팅 중에 실행될 수 있지만, 일반적으로 전체 부하 테스트보다는 디버깅이나 쉐이크아웃 목적으로 실행됩니다. 테스트 실행 중 발견된 문제를 해결하기 위해 기존 스크립트를 변경하거나 새 스크립트가 작성됨에 따라, 스크립팅 단계는 테스트 실행 단계로 넘어갈 수 있습니다.
 
-## Continuous load testing
+## 부하 테스트 실행
 
-Continuous load testing is a practice that spans all the testing phases. In continuous testing, you might:
-- Add load testing scripts into a version-controlled repository
-- Incorporate load tests into a CI/CD pipeline
-- Automate reporting
-- Set up notifications for failed tests
-- Set up a repeatable framework for running load tests, one tied with code changes or release cycles
-- Capture test results in a database to view historical trends
+테스트 실행 중에 부하 테스트 스크립트는 의도한 대상(보통 테스트 환경 또는 프로덕션)에 대해 실행됩니다. 테스트 실행 단계에서 다음과 같은 작업을 수행할 수 있습니다:
+- 클라우드 또는 온프레미스 인프라 설정
+- 애플리케이션 서버와 부하 생성기 상태를 모니터링하기 위한 관찰 가능성 도구 설정
+- 테스트 환경이 예상대로 작동하는지 확인하기 위한 쉐이크아웃 테스트 실행
+- 현재 시스템 동작을 이해하기 위한 기준선 테스트 실행
+- 코드 또는 환경을 변경하고 기준선 테스트와 비교하기 위한 테스트 실행
+- 테스트 범위 확대
+- 부하 테스트를 램프업하거나 스케일 아웃하여 분산 테스트 수행
 
-Without ensuring that load testing is done continuously, load testing can become a one-off process. Incorporating it into existing CI/CD pipelines keeps performance front-of-mind for everyone involved.
+부하 테스트 실행은 단순히 테스트를 실행하는 것 이상을 포함합니다. 시스템의 상태와 테스트의 상태를 모니터링하기 위한 적절한 관찰 가능성 도구가 없으면 테스트 자체가 도움이 되지 않을 수 있기 때문입니다.
 
-As the testing suite grows in maturity and scope, teams should naturally create more efficient frameworks for running tests, managing notifications, analyzing results, and reporting. In this way, testing can start very simply, usually around the most critical or high-risk functionalities of the application, then evolve and improve organically along with the application.
+## 부하 테스트 결과 분석
 
-## Test your knowledge
+분석 단계에서 다음과 같은 작업을 수행할 수 있습니다:
+- 애플리케이션 서버와 부하 생성기의 데이터 수집
+- 테스트 중 발생한 일에 대한 전체적인 이해를 얻기 위한 데이터 집계
+- 테스트 조건에서 시스템이 어떻게 동작했는지 파악하기 위한 데이터 시각화 및 분석 도구 사용
+- 이해관계자에게 결과 보고
+- 병목 현상 개선
+- 문제 또는 수정 사항을 확인하기 위한 테스트 재실행
 
-### Question 1
+테스트 중 수집된 데이터를 사용하여 다양한 테스트 조건에서 시스템이 어떻게 동작하는지 이해하는 것은 부하 테스트를 가치 있게 만드는 큰 부분입니다. 데이터를 객관적으로 검토하고 결과를 팀에 이해하기 쉬운 방식으로 전달하는 것이 중요합니다.
 
-Which of the following statements is true?
+## 지속적 부하 테스트
 
-A: Doing the activities is more important than having a clear distinction between phases of the load testing process.
+지속적 부하 테스트는 모든 테스트 단계에 걸쳐 있는 실천법입니다. 지속적 테스트에서 다음을 수행할 수 있습니다:
+- 버전 관리 저장소에 부하 테스트 스크립트 추가
+- CI/CD 파이프라인에 부하 테스트 통합
+- 보고 자동화
+- 실패한 테스트에 대한 알림 설정
+- 코드 변경 또는 릴리스 사이클과 연결된 부하 테스트 실행을 위한 반복 가능한 프레임워크 설정
+- 역사적 추세를 보기 위해 데이터베이스에 테스트 결과 저장
 
-B: The phases of the load testing process must always be done sequentially, so as not to miss any vital activities.
+부하 테스트가 지속적으로 수행되도록 보장하지 않으면, 부하 테스트는 일회성 프로세스가 될 수 있습니다. 기존 CI/CD 파이프라인에 통합하면 관련된 모든 사람에게 성능을 항상 중요하게 생각하도록 유지시킵니다.
 
-C: Planning for a load test is best done by test managers, who are in the best situation to understand what is required from load testing.
+테스트 스위트가 성숙도와 범위가 성장함에 따라, 팀은 자연스럽게 테스트 실행, 알림 관리, 결과 분석, 보고를 위한 더 효율적인 프레임워크를 만들어야 합니다. 이렇게 하면 테스트는 보통 애플리케이션의 가장 중요하거나 고위험 기능을 중심으로 매우 단순하게 시작하여, 애플리케이션과 함께 유기적으로 발전하고 개선될 수 있습니다.
 
-### Question 2
+## 지식 확인
 
-When is the best time to start thinking about load testing and observability tools?
+### 문제 1
 
-A: Planning
+다음 중 참인 진술은?
 
-B: Scripting
+A: 부하 테스트 프로세스의 단계 간 명확한 구분보다 활동을 수행하는 것이 더 중요합니다.
 
-C: Execution
+B: 부하 테스트 프로세스의 단계는 중요한 활동을 놓치지 않도록 항상 순차적으로 수행해야 합니다.
 
-### Question 3
+C: 부하 테스트 계획은 테스트 관리자가 가장 잘 수행할 수 있으며, 부하 테스트에서 무엇이 요구되는지 가장 잘 이해하고 있는 위치에 있습니다.
 
-Why is continuous load testing important?
+### 문제 2
 
-A: Automating load testing verifies system behavior over time.
+부하 테스트와 관찰 가능성 도구에 대해 생각하기 시작하는 가장 좋은 시점은?
 
-B: Incorporating load testing into CI/CD pipelines means it's not necessary to hire specialized load testers.
+A: 계획
 
-C: Running load tests automatically stops developers from checking in code that is not performant.
+B: 스크립팅
 
-### Answers
+C: 실행
 
-1. A. While it can be useful to think of distinct phases in testing to understand the process, in practice, testing should be tightly integrated with other activities in the software development lifecycle.
-2. A. The testing and observability stack selected can have an impact on the type of testing you do and your testing results, so we recommend you consider your options as early as possible.
-3. A. Incorporating load testing into continuous integration pipelines helps you see trends in performance over time.
+### 문제 3
 
+지속적 부하 테스트가 중요한 이유는?
+
+A: 부하 테스트를 자동화하면 시간이 지남에 따라 시스템 동작을 검증합니다.
+
+B: CI/CD 파이프라인에 부하 테스트를 통합하면 전문 부하 테스터를 고용할 필요가 없어집니다.
+
+C: 부하 테스트를 자동으로 실행하면 개발자가 성능이 좋지 않은 코드를 체크인하는 것을 막을 수 있습니다.
+
+### 정답
+
+1. A. 테스트를 이해하기 위해 뚜렷한 단계를 생각하는 것이 유용할 수 있지만, 실제로 테스트는 소프트웨어 개발 생명 주기의 다른 활동들과 긴밀하게 통합되어야 합니다.
+2. A. 선택한 테스트 및 관찰 가능성 스택은 수행하는 테스트 유형과 테스트 결과에 영향을 미칠 수 있으므로, 가능한 한 빨리 옵션을 고려하는 것을 권장합니다.
+3. A. 지속적 통합 파이프라인에 부하 테스트를 통합하면 시간에 따른 성능 추세를 파악하는 데 도움이 됩니다.

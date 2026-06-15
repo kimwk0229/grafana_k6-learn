@@ -1,2 +1,1 @@
-# Using a proxy with k6
-
+# k6와 함께 프록시 사용하기

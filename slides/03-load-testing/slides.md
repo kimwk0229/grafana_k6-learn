@@ -8,94 +8,94 @@
   }
 </style>
 
-## Load Testing
+## 부하 테스팅
 
-**Performance testing != Load testing**
+**성능 테스팅 != 부하 테스팅**
 
 ---
 
-## Common test parameters
+## 일반적인 테스트 매개변수
 
-_Test parameters_ include the distribution, shape, and pattern of the load.
+_테스트 매개변수_는 부하의 분포, 형태, 패턴을 포함합니다.
 
 - **Virtual users (VUs)**  
 - **Iterations**
-- **Throughput**
-- **User flows**
-- **Load profile**
-- **Duration**
+- **처리량(Throughput)**
+- **사용자 흐름(User flows)**
+- **부하 프로필(Load profile)**
+- **지속 시간(Duration)**
 
 ---
 
-## How to simulate load
+## 부하를 시뮬레이션하는 방법
 
-1. **Protocol-based load testing**
-2. **Browser-based load testing**
-3. **Hybrid load testing**
+1. **프로토콜 기반 부하 테스팅**
+2. **브라우저 기반 부하 테스팅**
+3. **하이브리드 부하 테스팅**
 
 ---
 
-## Load test types
+## 부하 테스트 유형
 
-### Shakeout test
+### 셰이크아웃 테스트(Shakeout test)
 
 ![](../../images/scenarios-shakeout.png) 
 <!-- .element class="stretch" -->
 
 ---
 
-### Average load test
+### 평균 부하 테스트(Average load test)
 
 ![](../../images/test-scenario-average.png)
 <!-- .element class="stretch" -->
 
 ---
 
-### Stress test
+### 스트레스 테스트(Stress test)
 
 ![](../../images/test-scenario-stress.png)
 <!-- .element class="stretch" -->
 
 ---
 
-### Soak or endurance test
+### 소크 또는 내구성 테스트(Soak or endurance test)
 
 ![](../../images/test-scenario-soak.png)
 <!-- .element class="stretch" -->
 
 ---
 
-### Spike test
+### 스파이크 테스트(Spike test)
 
 ![](../../images/test-scenario-spike-test.png)
 <!-- .element class="stretch" -->
 
 ---
 
-### Breakpoint test
+### 브레이크포인트 테스트(Breakpoint test)
 
 ![](../../images/test-scenarios-breakpoint.png)
 <!-- .element class="stretch" -->
 
 ---
 
-## Load testing process
+## 부하 테스팅 프로세스
 
 <div class="container">
   <div class="col">
 
-  ### High level overview
+  ### 고수준 개요
 
-  - Planning for load testing
-  - Scripting a load test
-  - Executing load tests
-  - Analysis of load testing results  
+  - 부하 테스팅 계획
+  - 부하 테스트 스크립팅
+  - 부하 테스트 실행
+  - 부하 테스팅 결과 분석  
 
   </div>
 
   <div class="col">
 
-  ![Continuous Testing Snowball](../../images/continuous-testing-snowball.png)
+  ![지속적 테스팅 눈덩이](../../images/continuous-testing-snowball.png)
 
   </div>
 </div>
@@ -104,4 +104,4 @@ _Test parameters_ include the distribution, shape, and pattern of the load.
 
 ## k6 OSS
 
-- Move to: [04-getting-started-with-k6-oss](?p=04-getting-started-with-k6-oss)
+- 이동: [04-getting-started-with-k6-oss](?p=04-getting-started-with-k6-oss)

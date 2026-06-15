@@ -1,10 +1,10 @@
-# k6 results
+# k6 결과
 
 ---
 
-## The End-of-test summary report
+## 테스트 종료 요약 보고서
 
-Here's that output again:
+다시 한번 해당 출력을 확인해 봅시다:
 
 ```shell
 $ k6 run test.js
@@ -46,9 +46,9 @@ default ✓ [======================================] 1 VUs  00m00.7s/10m0s  1/1 
 
 ---
 
-## k6 built-in metrics
+## k6 내장 메트릭
 
-### Response time
+### 응답 시간
 
 ```shell
 http_req_duration..............: avg=130.19ms min=130.19ms med=130.19ms max=130.19ms p(90)=130.19ms p(95)=130.19ms
@@ -58,9 +58,9 @@ http_req_duration..............: avg=130.19ms min=130.19ms med=130.19ms max=130.
 
 ### http_req_duration
 
-> 💡 `http_req_duration` is the value for *all* requests.
+> 💡 `http_req_duration`은 *모든* 요청에 대한 값입니다.
 
-The line below reports the response time for *only* the successful requests.
+아래 줄은 *성공한 요청만*에 대한 응답 시간을 보고합니다.
 
 ```shell
   { expected_response:true }...: avg=130.19ms min=130.19ms med=130.19ms max=130.19ms p(90)=130.19ms p(95)=130.19ms
@@ -68,9 +68,9 @@ The line below reports the response time for *only* the successful requests.
 
 ---
 
-### Error rate
+### 오류율
 
-The `http_req_failed` metric describes the error rate for the test. The error rate is the number of requests that failed during the test as a percentage of the total requests.
+`http_req_failed` 메트릭은 테스트의 오류율을 나타냅니다. 오류율은 전체 요청 중 테스트 중 실패한 요청의 비율입니다.
 
 ```shell
 http_req_failed................: 0.00%  ✓ 0        ✗ 1
@@ -78,9 +78,9 @@ http_req_failed................: 0.00%  ✓ 0        ✗ 1
 
 ---
 
-### Number of requests
+### 요청 수
 
-The number of total requests sent by all VUs during the test is described in the line below.
+테스트 중 모든 VU가 전송한 총 요청 수는 아래 줄에 표시됩니다.
 
 ```shell
 http_reqs......................: 1      1.525116/s
@@ -90,7 +90,7 @@ http_reqs......................: 1      1.525116/s
 
 ### Iteration duration
 
-The iteration duration is the amount of time it took for k6 to perform a single loop of your VU code.
+iteration duration은 k6가 VU 코드의 단일 루프를 수행하는 데 걸린 시간입니다.
 
 ```shell
 iteration_duration.............: avg=654.72ms min=654.72ms med=654.72ms max=654.72ms p(90)=654.72ms p(95)=654.72ms
@@ -98,9 +98,9 @@ iteration_duration.............: avg=654.72ms min=654.72ms med=654.72ms max=654.
 
 ---
 
-### Number of iterations
+### Iteration 수
 
-The number of iterations describes how many times k6 looped through your script in total, including the iterations for all VUs. 
+iteration 수는 k6가 모든 VU의 iteration을 포함하여 스크립트를 총 몇 번 반복했는지를 나타냅니다.
 
 ```plain
 iterations.....................: 1      1.525116/s
@@ -108,6 +108,6 @@ iterations.....................: 1      1.525116/s
 
 ---
 
-## Adding checks to your k6 script
+## k6 스크립트에 check 추가하기
 
-- Move to: [07-adding-checks-to-your-script](?p=07-adding-checks-to-your-script)
+- 이동: [07-adding-checks-to-your-script](?p=07-adding-checks-to-your-script)

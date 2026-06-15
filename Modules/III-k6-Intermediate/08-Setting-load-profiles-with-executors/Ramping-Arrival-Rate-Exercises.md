@@ -1,16 +1,16 @@
 # Ramping Arrival Rate Executor
 
-As noted in [Setting load profiles with executors](Setting-load-profiles-with-executors.md#Ramping-Arrival-Rate), the _Ramping Arrival Rate_ executor has a primary focus on the _iteration rate_ being applied over a specified duration within _stages_.
+[executor로 부하 프로필 설정하기](Setting-load-profiles-with-executors.md#Ramping-Arrival-Rate)에서 언급한 바와 같이, _Ramping Arrival Rate_ executor는 _stage_ 내의 지정된 duration 동안 적용되는 _iteration rate_에 주된 초점을 둡니다.
 
-This is a scenario typically seen with [stress or spike testing](https://k6.io/docs/test-types/stress-testing/) when there is a need to gradually push an API beyond its breaking point or to simulate spikes to extreme load over a very short period of time.
+이는 API를 한계점 이상으로 점진적으로 밀어붙이거나 매우 짧은 기간에 극도의 부하로 급증을 시뮬레이션해야 할 때 [stress 또는 spike 테스트](https://k6.io/docs/test-types/stress-testing/)에서 일반적으로 볼 수 있는 시나리오입니다.
 
-## Exercises
+## 연습 문제
 
-For our exercises, let's start with a basic script that runs an HTTP request and tries to achieve 30 requests per time unit (which defaults to 1 second) during the only _stage_ we define. We're providing some console output as things change.
+이번 연습에서는 HTTP 요청을 실행하고 정의하는 유일한 _stage_ 동안 시간 단위당(기본값은 1초) 30개의 요청을 달성하려는 기본 스크립트로 시작합니다. 변경 사항에 따른 콘솔 출력도 확인할 수 있습니다.
 
-### Creating our script
+### 스크립트 작성
 
-Let's begin by implementing our test script. Create a file named _test.js_ with the following content:
+테스트 스크립트를 구현하는 것부터 시작하겠습니다. 다음 내용으로 _test.js_ 파일을 생성하세요:
 
 ```js
 import http from 'k6/http';
@@ -33,17 +33,17 @@ export default function () {
 }
 ```
 
-Our "basic" script is a little more complicated than most of our previous examples. This is due to the need to define `stages` in addition to the `executor` itself. At least a single _stage_ is required, each of which must include a `target` and `duration`. In this case, `target` represents the desired _iteration rate_ to be achieved by the end of the `duration` within the `stage`. Let's defer the discussion of the required `preAllocatedVUs` for the moment until we get our initial test execution completed.
+이 "기본" 스크립트는 이전 대부분의 예시보다 약간 더 복잡합니다. `executor` 자체 외에도 `stages`를 정의해야 하기 때문입니다. 최소 하나의 _stage_가 필요하며, 각각 `target`과 `duration`을 포함해야 합니다. 이 경우 `target`은 `stage` 내의 `duration` 종료 시 달성해야 할 원하는 _iteration rate_를 나타냅니다. 초기 테스트 실행이 완료될 때까지 필수 `preAllocatedVUs`에 대한 논의는 잠시 미뤄두겠습니다.
 
-### Initial test run
+### 초기 테스트 실행
 
-Let's go ahead and run our script using the k6 CLI:
+k6 CLI를 사용하여 스크립트를 실행해 보겠습니다:
 
 ```bash
 k6 run test.js
 ```
 
-Your test will now start printing results to your terminal...
+테스트가 이제 터미널에 결과를 출력하기 시작합니다...
 
 ```bash
   execution: local
@@ -88,27 +88,27 @@ k6_workshop ✓ [======================================] 0/2 VUs  30s  29.95 ite
      vus_max........................: 2      min=2       max=2
 ```
 
-While _successful_, a closer inspection of our results shows that our test behavior was not as intended.
+_성공_이긴 하지만, 결과를 자세히 살펴보면 테스트 동작이 의도한 대로 되지 않았습니다.
 
-Looking at the output, we see the following:
+출력을 보면 다음과 같은 내용이 확인됩니다:
 
 ```bash
 WARN[0015] Insufficient VUs, reached 2 active VUs and cannot initialize more  executor=ramping-arrival-rate scenario=k6_workshop
 ```
 
-What happened? 
+무슨 일이 일어났을까요?
 
-With the `preAllocatedVUs` setting we glossed over earlier, we told k6 to start the test with 2 virtual users. With this pre-allocation, k6 could **not** achieve the desired iteration rate within the stage. 
+앞서 살짝 언급했던 `preAllocatedVUs` 설정으로 k6에게 2개의 virtual user로 테스트를 시작하도록 지시했습니다. 이 사전 할당으로 인해 k6는 stage 내에서 원하는 iteration rate를 **달성하지 못했습니다**.
 
-This fact is evident by looking at the `iterations` value in the test summary; our test was only able to attain a rate of 10.47 iterations per second and we wanted 30.
+이 사실은 테스트 요약의 `iterations` 값에서 확인할 수 있습니다. 테스트는 초당 10.47번의 iteration만 달성했으며 우리가 원했던 것은 30이었습니다.
 
-### Adjusting preallocated virtual users
+### 사전 할당된 virtual user 조정
 
-Restating once again, the _Ramping Arrival Rate_ executor is focused on the _iteration rate_ over a time frame within each stage. k6 aims to eliminate the need to be overly concerned about the actual number of users required to achieve such a rate. However, we still need to give our script enough VUs to achieve that rate.
+다시 한번 말하지만, _Ramping Arrival Rate_ executor는 각 stage 내의 시간 동안 _iteration rate_에 초점을 맞춥니다. k6는 그러한 rate를 달성하는 데 필요한 실제 사용자 수에 대해 과도하게 신경 쓸 필요를 없애는 것을 목표로 합니다. 그러나 여전히 해당 rate를 달성하기에 충분한 VU를 스크립트에 제공해야 합니다.
 
-From our example above, we have that our request duration -- or latency -- is, on average, 116.57ms, and the 95 percentile is around 151.35ms. With just 2 VUs (`preAllocatedVUs`), in a very optimistic scenario, we cannot expect much more than `2 VUs / 0.116 s = 17.24 iterations/s`. Even if this was the only factor at play, which we will see is not in the [next section](#ramping-effect).
+위의 예시에서 요청 duration 또는 지연 시간은 평균 116.57ms이며 95 퍼센타일은 약 151.35ms입니다. `preAllocatedVUs`가 2개뿐인 경우 매우 낙관적인 시나리오에서도 `2 VUs / 0.116 s = 17.24 iterations/s` 이상을 기대하기 어렵습니다. 이것이 유일한 요인이 아니라는 것은 [다음 섹션](#ramping-effect)에서 확인할 수 있습니다.
 
-Playing a bit with the number of `preAllocatedVUs`, we can update your script to a higher value, e.g. 10.
+`preAllocatedVUs` 수를 조금씩 변경하면서 더 높은 값, 예를 들어 10으로 업데이트할 수 있습니다.
 
 ```js
 export const options = {
@@ -124,7 +124,7 @@ export const options = {
 };
 ```
 
-Let's run our test once again:
+테스트를 다시 실행해 보겠습니다:
 ```bash
 k6 run test.js
 ```
@@ -151,15 +151,15 @@ k6_workshop ✓ [======================================] 00/10 VUs  30s  29.95 i
      vus_max........................: 10     min=10      max=10
 ```
 
-And we can see the iterations/s increased. However, not enough.
+iterations/s가 증가했음을 확인할 수 있습니다. 하지만 아직 충분하지 않습니다.
 
-### Ramping effect
+### Ramping 효과
 
-Looking at the previous summary, it also seems that our _iteration rate_ ended at 14.92 iterations per second, and we wanted 30! The number of VUs is not the only factor at play when controlling the _iteration rate_.
+이전 요약을 보면 _iteration rate_가 초당 14.92번의 iteration으로 끝났고 우리가 원했던 것은 30이었습니다! VU 수만이 _iteration rate_를 제어할 때 작용하는 요인이 아닙니다.
 
-This brings up the _ramping_ aspect of this executor: k6 will linearly scale up or down the iteration rate to achieve the `target` rate within the stage. The `duration` will determine how long the ramping up/down will take place.
+이것이 이 executor의 _ramping_ 측면을 보여줍니다. k6는 stage 내에서 `target` rate를 달성하기 위해 iteration rate를 선형적으로 확장하거나 축소합니다. `duration`은 ramping up/down이 얼마나 오래 진행될지를 결정합니다.
 
-Because we did not specify a `startRate` option, k6 used the default value of 0 iterations per second. Therefore, our test started from 0, then _ramped up_ to 30 iterations per second over a period of 30 seconds. 
+`startRate` 옵션을 지정하지 않았으므로 k6는 기본값인 초당 0번의 iteration을 사용했습니다. 따라서 테스트는 0에서 시작하여 30초에 걸쳐 초당 30번의 iteration으로 _ramping up_되었습니다.
 
 ```text
 Rate
@@ -173,11 +173,11 @@ Rate
                  S T A G E  # 1    
 ```
 
-Because we have this linear progression, it makes sense that our overall rate was 14.92 iterations/s as this is roughly equal to the midpoint of 0 - 30.
+이 선형적인 진행 때문에 전체 rate가 14.92 iterations/s인 것이 타당합니다. 이는 대략 0 - 30의 중간 지점과 같습니다.
 
-### Altering the slope
+### 기울기 변경
 
-With _ramping_, each stage defines the `target` to be achieved at the end of the `duration`. For the first stage, the beginning rate is defined by the `startRate` option. As mentioned, if omitted, the default starting rate will be 0. Let's _flatten_ our slope in this next example, providing a `startRate`:
+_ramping_에서 각 stage는 `duration` 종료 시 달성할 `target`을 정의합니다. 첫 번째 stage의 경우, 시작 rate는 `startRate` 옵션으로 정의됩니다. 앞서 언급한 바와 같이 생략하면 기본 시작 rate는 0입니다. 다음 예시에서 `startRate`를 제공하여 기울기를 _평평하게_ 만들어 보겠습니다:
 
 ```js
 export const options = {
@@ -194,7 +194,7 @@ export const options = {
 };
 ```
 
-Running our test once again using `k6 run test.js` produces the following:
+`k6 run test.js`로 테스트를 다시 실행하면 다음과 같은 결과가 나타납니다:
 
 ```bash
 running (0m30.8s), 00/10 VUs, 897 complete and 0 interrupted iterations
@@ -206,7 +206,7 @@ k6_workshop ✓ [======================================] 00/10 VUs  30s  30.00 i
      vus............................: 10     min=10      max=10
      vus_max........................: 10     min=10      max=10
 ```
-This time we requested the test to start with an iteration rate of 30, using 10 VUs, and this was enough get us close to that rate.
+이번에는 30의 iteration rate로 테스트를 시작하도록 요청했고, 10개의 VU를 사용했으며, 이것으로 해당 rate에 가깝게 도달하기에 충분했습니다.
 
 ```text
 Rate
@@ -218,17 +218,17 @@ Rate
                  S T A G E  # 1    
 ```
 
-You might be tempted to set a lower value for [`preAllocatedVUs` and use `maxVUs` option](https://k6.io/docs/using-k6/scenarios/executors/ramping-arrival-rate/) to autoscale the test. `maxVUs` is the maximum number of VUs to allow during the test run, which defaults to `preAllocatedVUs` when not set. However, it's usually best to leave the default value for `maxVUs` and increase the `preAllocatedVUs`. In this way, the VUs are allocated before the test starts and will be used when (and only if) necessary.
+[`preAllocatedVUs`에 낮은 값을 설정하고 `maxVUs` 옵션](https://k6.io/docs/using-k6/scenarios/executors/ramping-arrival-rate/)을 사용하여 테스트를 자동으로 확장하고 싶을 수 있습니다. `maxVUs`는 테스트 실행 중 허용되는 최대 VU 수로, 설정하지 않으면 기본적으로 `preAllocatedVUs`와 같습니다. 그러나 일반적으로 `maxVUs`의 기본값을 유지하고 `preAllocatedVUs`를 늘리는 것이 가장 좋습니다. 이 방법으로 VU는 테스트 시작 전에 미리 할당되어 필요할 때만 사용됩니다.
 
-Allocating VUs in the middle of the test can be costly in terms of CPU resources in the load generator instance, and can skew the tests. Preallocating VUs will allow the test to start with all the VUs available with no need to wait to allocate more when needed in the middle of the test run.
+테스트 도중에 VU를 할당하면 부하 생성기 인스턴스에서 CPU 리소스 측면에서 비용이 많이 들고, 테스트가 왜곡될 수 있습니다. VU를 사전 할당하면 테스트 실행 중간에 더 많이 할당하기를 기다릴 필요 없이 테스트가 모든 VU를 사용 가능한 상태로 시작됩니다.
 
-If we wanted a single stage with a flat---or _constant_---rate we'd use the _Constant Arrival Rate_ executor instead! This executor can be useful for [stress or spike testing](https://k6.io/docs/test-types/stress-testing/) as we'll see in the next section.
+단일 stage에 평탄하거나 _일정한_ rate를 원한다면 대신 _Constant Arrival Rate_ executor를 사용하면 됩니다! 이 executor는 다음 섹션에서 볼 수 있는 것처럼 [stress 또는 spike 테스트](https://k6.io/docs/test-types/stress-testing/)에 유용할 수 있습니다.
 
-### Adding stages to simulate spikes
+### 급증을 시뮬레이션하기 위한 stage 추가
 
-The real power of _ramping_ is the ability to simulate activity spikes. This can be done by defining multiple stages. 
+_ramping_의 진정한 힘은 활동 급증을 시뮬레이션하는 능력에 있습니다. 이는 여러 stage를 정의함으로써 가능합니다.
 
-Let's say we have a big sale that we're anticipating a spike in activity right at the opening, stays there for a short time, then mellows out to a steady but higher-than-usual pace:
+오픈 직후 활동 급증이 예상되는 대규모 세일이 있다고 가정해 봅시다. 급증 후에는 잠시 머물다가 평소보다 높은 안정된 페이스로 수그러든다고 합시다:
 
 ```text
 Rate
@@ -241,7 +241,7 @@ Rate
      +------------+--+---+-------+-----------+ 30s
            #1      #2  #3   #4         #5
 ```
-We can simulate this by updating our `options` section in the script as follows:
+다음과 같이 스크립트의 `options` 섹션을 업데이트하여 이를 시뮬레이션할 수 있습니다:
 ```js
 export const options = {
   scenarios: {
@@ -266,13 +266,13 @@ export const options = {
 };
 ```
 
-### Other rate options
+### 기타 rate 옵션
 
-From our examples so far, we've been basing our _iteration rate_ upon iterations per second. We can change the rate denominator using the `timeUnit` option. Again, by default, the setting value is `1s`.
+지금까지 예시에서 초당 iteration을 기준으로 _iteration rate_를 설정했습니다. `timeUnit` 옵션을 사용하여 rate 분모를 변경할 수 있습니다. 다시 말하지만 기본 설정 값은 `1s`입니다.
 
-> :point_up: The `timeUnit` applies to the `target` rates within all stages as well as the `startRate`.
+> :point_up: `timeUnit`은 모든 stage 내의 `target` rate와 `startRate`에 적용됩니다.
 
-Let's slow down our example by changing our rates from iterations per second, to iterations per minute.
+예시에서 rate를 초당 iteration에서 분당 iteration으로 변경하여 속도를 늦춰 보겠습니다.
 ```js
 export const options = {
   scenarios: {
@@ -298,6 +298,6 @@ export const options = {
 };
 ```
 
-### Wrapping up
+### 마무리
 
-With this exercise, you should be able to see the power of being able to ramp up and down the iteration rate to model your test activity more realistically.
+이 연습을 통해 iteration rate를 ramping up 및 down하여 테스트 활동을 보다 현실적으로 모델링하는 능력의 장점을 확인할 수 있었습니다.

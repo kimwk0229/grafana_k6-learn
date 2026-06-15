@@ -1,30 +1,30 @@
-# k6 results
+# k6 결과
 
 ---
 
-## What we have done so far
+## 지금까지 한 것들
 
-![k6 end of summary report](../../images/k6-end-of-summary.png)
-
----
-
-## The output option
-
-![k6 output options](../../images/k6-output-options.png)
+![k6 테스트 종료 요약 보고서](../../images/k6-end-of-summary.png)
 
 ---
 
-### Saving k6 results as a CSV
+## 출력 옵션
+
+![k6 출력 옵션](../../images/k6-output-options.png)
+
+---
+
+### k6 결과를 CSV로 저장하기
 
 ```shell
 k6 run test.js -o csv=results.csv
 ```
 
-> 💡 You can also use `--out` instead of `-o`.
+> 💡 `-o` 대신 `--out`을 사용할 수도 있습니다.
 
 ---
 
-### CSV results output format
+### CSV 결과 출력 형식
 
 ```csv
 metric_name,timestamp,metric_value,check,error,error_code,expected_response,group,method,name,proto,scenario,service,status,subproto,tls_version,url,extra_tags
@@ -44,13 +44,13 @@ vus_max,1641298536,100.000000,,,,,,,,,,,,,,,
 
 ---
 
-### Saving k6 results as a JSON
+### k6 결과를 JSON으로 저장하기
 
 ```shell
 k6 run test.js -o json=results.json
 ```
 
-### JSON results output format
+### JSON 결과 출력 형식
 
 ```JSON
 {"type":"Metric","data":{"name":"http_reqs","type":"counter","contains":"default","tainted":null,"thresholds":[],"submetrics":null,"sub":{"name":"","parent":"","suffix":"","tags":null}},"metric":"http_reqs"}
@@ -69,6 +69,6 @@ k6 run test.js -o json=results.json
 
 ---
 
-## Let's wrap this up!
+## 마무리합시다!
 
-- Move to [end](?p=end)
+- 이동 [end](?p=end)

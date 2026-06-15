@@ -1,95 +1,94 @@
-# What is performance testing?
+# 성능 테스트란 무엇인가?
 
-The primary concern of performance testing is _how well_ a system works. Unlike functional testing, which tests _whether_ a system works, performance testing seeks to measure qualitative aspects of a user's experience of a system, such as its responsiveness and reliability.
+성능 테스트의 주요 관심사는 시스템이 _얼마나 잘_ 작동하는가입니다. 시스템이 _제대로_ 작동하는지를 검사하는 기능 테스트와 달리, 성능 테스트는 시스템에 대한 사용자 경험의 질적인 측면, 예를 들어 응답성과 신뢰성 등을 측정하는 것을 목표로 합니다.
 
-## Why should we do performance testing?
+## 왜 성능 테스트를 해야 하는가?
 
-With performance testing, your team can:
+성능 테스트를 통해 팀이 얻을 수 있는 것:
 
-- **Improve user experience.** Identify potential bottlenecks and issues early in the development process. Performance testing provides a complete picture of what the experience of a user accessing your application is like, beyond just the application functionality.
-- **Prepare for unexpected demand.** Test beyond expected load to find the breaking points of the application and formulate better procedures for responding to and capitalizing on unprecedented success.
-- **Increase confidence in the application.** Lower the overall risk of failure with systematic performance testing. This reduced risk also builds team confidence. Teams can work better knowing their application can withstand unexpected conditions in production.
-- **Assess and optimize infrastructure.** Reduce unnecessary infrastructure costs without compromising performance. Simulate scenarios to observe horizontal and vertical scaling, and run experiments to verify the resources that the system under test actually requires.
+- **사용자 경험 개선.** 개발 프로세스 초기에 잠재적인 병목 현상과 문제를 식별합니다. 성능 테스트는 단순한 애플리케이션 기능을 넘어서, 사용자가 애플리케이션에 접근하는 경험의 완전한 그림을 제공합니다.
+- **예상치 못한 수요에 대한 대비.** 예상 부하를 초과하여 테스트함으로써 애플리케이션의 한계점을 찾고, 전례 없는 성공에 대응하고 활용하기 위한 더 나은 절차를 수립합니다.
+- **애플리케이션에 대한 신뢰도 향상.** 체계적인 성능 테스트를 통해 전체적인 장애 위험을 낮춥니다. 이러한 위험 감소는 팀의 자신감도 높여줍니다. 팀은 애플리케이션이 프로덕션의 예기치 못한 상황을 견딜 수 있다는 것을 알고 더 잘 일할 수 있습니다.
+- **인프라 평가 및 최적화.** 성능을 저해하지 않으면서 불필요한 인프라 비용을 줄입니다. 수평 및 수직 확장을 관찰하기 위한 시나리오를 시뮬레이션하고, 테스트 대상 시스템이 실제로 필요로 하는 리소스를 검증하는 실험을 실행합니다.
 
-If performance testing is so valuable, why don't more teams do it?
+성능 테스트가 이렇게 가치 있다면, 왜 더 많은 팀이 하지 않는 걸까요?
 
-## Common excuses for not performance testing
+## 성능 테스트를 하지 않는 일반적인 변명들
 
-These concerns are often rooted in misconceptions about the necessary cost and complexity of testing performance.
+이러한 우려들은 테스트 성능에 필요한 비용과 복잡성에 대한 오해에 뿌리를 두고 있는 경우가 많습니다.
 
-### Our application is too small
+### 우리 애플리케이션은 너무 작다
 
-The idea that only larger corporations or more complex applications require performance testing stems mostly from the misconception that performance testing needs to simulate hundreds or even thousands of users. In fact, measuring how a system performs with just a handful of users can bring significant benefits. Even simulating a single user could highlight bottlenecks in the application that would not have otherwise been spotted. Costly performance inefficiencies can also exist in small systems.
+더 큰 기업이나 더 복잡한 애플리케이션만 성능 테스트가 필요하다는 생각은 주로 성능 테스트가 수백 혹은 수천 명의 사용자를 시뮬레이션해야 한다는 오해에서 비롯됩니다. 사실, 소수의 사용자만으로 시스템 성능을 측정하는 것도 상당한 이점을 가져올 수 있습니다. 심지어 단 한 명의 사용자를 시뮬레이션하는 것만으로도 그렇지 않았으면 발견되지 않았을 애플리케이션의 병목 현상을 찾아낼 수 있습니다. 비용이 많이 드는 성능 비효율도 소규모 시스템에 존재할 수 있습니다.
 
-### It's expensive or time-consuming
+### 비용이 많이 들거나 시간이 많이 걸린다
 
-Performance testing *can* be expensive and time-consuming, but teams can pick and choose the type of activities that fall within their budgets for cost and time. The cost of _not_ performance testing is often far greater than the initial investment in some performance-testing practices.
+성능 테스트는 *비용이 많이 들고 시간이 많이 걸릴 수 있지만*, 팀은 비용과 시간 예산에 맞는 활동 유형을 선택할 수 있습니다. 성능 테스트를 _하지 않는_ 비용은 종종 일부 성능 테스트 관행에 대한 초기 투자보다 훨씬 더 큽니다.
 
-### It requires extensive technical knowledge
+### 광범위한 기술 지식이 필요하다
 
-Different types of performance testing require more different degrees of technical knowledge. On its face, however, performance testing is no more or less complex than other forms of testing. Teams can choose from a spectrum of performance-testing activities according to their appetite for complexity. Accessing a web page while looking at timings from the Network panel of DevTools within a browser is a type of performance testing that adds immediate value for little effort.
+다양한 종류의 성능 테스트는 서로 다른 수준의 기술 지식을 필요로 합니다. 하지만 기본적으로, 성능 테스트는 다른 형태의 테스트보다 더 복잡하거나 덜 복잡하지 않습니다. 팀은 복잡성에 대한 선호도에 따라 다양한 성능 테스트 활동 중에서 선택할 수 있습니다. 브라우저의 DevTools 네트워크 패널에서 타이밍을 확인하면서 웹 페이지에 접근하는 것도 적은 노력으로 즉각적인 가치를 더하는 성능 테스트의 한 형태입니다.
 
-### We don't have a performance environment
+### 성능 환경이 없다
 
-Performance testing doesn't always mean load testing, and even load testing doesn't always involve stressing an application to its breaking point. Some ways to assess performance don't require dedicated performance-testing environments, for example:
-- Unit tests for performance during development
-- API tests during System testing
-- And synthetic monitoring or low-load tests in production.
+성능 테스트가 항상 부하 테스트를 의미하는 것은 아니며, 부하 테스트조차도 항상 애플리케이션을 한계까지 스트레스 테스트하는 것을 의미하지 않습니다. 전용 성능 테스트 환경이 필요 없는 성능 평가 방법도 있습니다. 예를 들어:
+- 개발 중 성능에 대한 단위 테스트
+- 시스템 테스트 중 API 테스트
+- 프로덕션에서의 합성 모니터링 또는 저부하 테스트
 
-### Observability trumps performance testing
+### 관찰 가능성이 성능 테스트보다 중요하다
 
-Having a mature observability platform encourages many to forego performance testing in favor of monitoring application performance in production. However, the efficacy of observability depends on having data to observe, and without the ability to generate data artificially, application performance is often observed only after bottlenecks are already live.
+성숙한 관찰 가능성(observability) 플랫폼을 보유하고 있으면 프로덕션에서 애플리케이션 성능을 모니터링하는 것을 선호하여 성능 테스트를 포기하는 경우가 많습니다. 그러나 관찰 가능성의 효율성은 관찰할 데이터가 있어야 한다는 점에 달려 있으며, 인위적으로 데이터를 생성할 수 없다면 애플리케이션 성능은 병목 현상이 이미 프로덕션에 발생한 후에야 관찰되는 경우가 많습니다.
 
-With performance testing, teams can simulate rich user scenarios *before* potential performance issues are released to production, making observability useful in test environments as well. Some types of tests, such as disaster recovery, chaos engineering, and reliability testing, also help teams prepare for inevitable failures.
+성능 테스트를 통해 팀은 잠재적인 성능 문제가 프로덕션에 릴리스되기 *전에* 풍부한 사용자 시나리오를 시뮬레이션할 수 있어, 테스트 환경에서도 관찰 가능성을 유용하게 활용할 수 있습니다. 재해 복구, 카오스 엔지니어링, 신뢰성 테스트 등의 일부 테스트 유형은 팀이 불가피한 장애에 대비하는 데도 도움이 됩니다.
 
-Both performance testing and observability are essential components to improving the quality of a system.
+성능 테스트와 관찰 가능성 모두 시스템 품질을 향상시키기 위한 필수적인 구성 요소입니다.
 
-### The cloud is infinite; we can always scale up
+### 클라우드는 무한하다; 언제든지 확장할 수 있다
 
-Now that many applications are hosted in the cloud, it can be tempting to think that horizontal or vertical scaling negates the need to test performance. However, this belief can lead to significantly increased costs if efficiency is not taken into account.
+많은 애플리케이션이 클라우드에서 호스팅되면서, 수평 또는 수직 확장이 성능 테스트의 필요성을 없애준다고 생각하는 유혹이 생길 수 있습니다. 그러나 이러한 믿음은 효율성을 고려하지 않으면 비용을 크게 증가시킬 수 있습니다.
 
-Scalability is only *one* aspect of application performance that should be tested. Even efficiently scaled systems can be slow or prone to failure and outages that render the application unusable. In fact, scaling systems up can exacerbate some types of cascading failures, like retry storms and the thundering-herd problem.
+확장성은 테스트해야 할 애플리케이션 성능의 *하나의* 측면에 불과합니다. 효율적으로 확장된 시스템도 느리거나 애플리케이션을 사용 불가능하게 만드는 장애 및 중단에 취약할 수 있습니다. 사실, 시스템을 확장하면 재시도 폭풍(retry storms)과 천둥 떼 문제(thundering-herd problem)와 같은 일부 유형의 연쇄 장애를 악화시킬 수 있습니다.
 
 
-## Test your knowledge
+## 지식 확인
 
-### Question 1
+### 문제 1
 
-Which of the following are *not* reasons why we should do performance testing?
+다음 중 성능 테스트를 해야 하는 이유가 *아닌* 것은?
 
-A: We want to make using our application a more pleasant experience for our customers.
+A: 우리 애플리케이션을 사용하는 고객에게 더 즐거운 경험을 제공하고 싶다.
 
-B: Who knows what could happen in production? We want to be ready for anything.
+B: 프로덕션에서 무슨 일이 일어날지 모른다. 무엇에든 대비하고 싶다.
 
-C: We want to replace our observability stack with a more proactive testing suite.
+C: 관찰 가능성 스택을 더 적극적인 테스트 스위트로 대체하고 싶다.
 
-### Question 2
+### 문제 2
 
-Someone tells you performance testing is too expensive. What's a good way to respond?
+누군가 성능 테스트가 너무 비싸다고 말합니다. 어떻게 대응하는 것이 좋을까요?
 
-A: More and more professionals are adding performance testing to their CV, so we may be able to hire someone for cheap.
+A: 점점 더 많은 전문가들이 성능 테스트를 이력서에 추가하고 있으므로, 저렴하게 인력을 채용할 수 있을 것이다.
 
-B: Recording a script and replaying it costs very little, so we can just do that.
+B: 스크립트를 녹화하고 재생하는 것은 비용이 거의 들지 않으므로, 그냥 그렇게 하면 된다.
 
-C: Performance defects are potentially more expensive to fix after they are deployed to production.
+C: 성능 결함은 프로덕션에 배포된 후에 수정하는 것이 잠재적으로 더 비쌀 수 있다.
 
-D: A and B.
+D: A와 B.
 
-### Question 3
+### 문제 3
 
-Which of the following statements is true?
+다음 중 참인 진술은?
 
-A: Performance testing is always about generating high user load or traffic against application servers.
+A: 성능 테스트는 항상 애플리케이션 서버에 대한 높은 사용자 부하나 트래픽을 생성하는 것에 관한 것이다.
 
-B: Performance testing is an activity that requires specialized expertise to carry out.
+B: 성능 테스트는 수행하기 위해 전문 지식이 필요한 활동이다.
 
-C: Performance testing requires a production-like environment.
+C: 성능 테스트에는 프로덕션과 유사한 환경이 필요하다.
 
-D: Performance testing improves overall team morale by building confidence in what the application can withstand.
+D: 성능 테스트는 애플리케이션이 견딜 수 있는 것에 대한 자신감을 키워 전체적인 팀 사기를 높인다.
 
-### Answers
+### 정답
 
-1. C. Performance testing and observability complement each other. They do not replace each other, and instead work together to improve confidence in a system.
-2. C. Performance bottlenecks and other issues often cost more to fix when identified in production. Proactive performance testing can more than offset its cost when it identifies and fixes these defects earlier on in development.
-3. D. A is incorrect because performance testing can be done at lower load levels. B is incorrect because anyone can do  performance testing, not just specialized performance testers. C is incorrect because performance testing can be done in development, staging, and test environments as well.
-
+1. C. 성능 테스트와 관찰 가능성은 서로를 보완합니다. 이 둘은 서로를 대체하는 것이 아니라, 함께 시스템에 대한 신뢰를 향상시키는 방향으로 작동합니다.
+2. C. 성능 병목 현상 및 기타 문제는 프로덕션에서 발견될 때 수정 비용이 더 많이 드는 경우가 많습니다. 적극적인 성능 테스트는 개발 초기에 이러한 결함을 식별하고 수정함으로써 비용을 충분히 상쇄할 수 있습니다.
+3. D. A는 성능 테스트가 더 낮은 부하 수준에서도 수행될 수 있기 때문에 틀립니다. B는 전문 성능 테스터만이 아니라 누구나 성능 테스트를 할 수 있기 때문에 틀립니다. C는 성능 테스트가 개발, 스테이징, 테스트 환경에서도 수행될 수 있기 때문에 틀립니다.

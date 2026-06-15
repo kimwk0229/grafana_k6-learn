@@ -1,31 +1,31 @@
-# Parallel requests in k6
-Parallel requests are requests that are sent at the same time. Parallel requests are sometimes called "concurrent" requests.
+# k6에서의 병렬 요청
+병렬 요청은 동시에 전송되는 요청입니다. 병렬 요청은 "동시(concurrent)" 요청이라고도 합니다.
 
-This screenshot shows the Network panel in Chrome DevTools while a site is loaded. Each bar shows when resources embedded in the page were requested throughout the first 4000 ms.
+이 스크린샷은 사이트가 로드되는 동안 Chrome DevTools의 Network 패널을 보여줍니다. 각 막대는 처음 4000ms 동안 페이지에 포함된 리소스가 요청된 시점을 보여줍니다.
 
 ![](../../images/parallel-requests.png)
 
-The orange arrow points to three parallel requests. This indicates that the client (in this case, the browser) sent three different HTTP requests at the same time.
+주황색 화살표는 세 개의 병렬 요청을 가리킵니다. 이는 클라이언트(이 경우, 브라우저)가 동시에 세 가지 다른 HTTP 요청을 보냈음을 나타냅니다.
 
-Parallel requests influence load testing results because they increase test throughput. Increased test throughput affects load testing in two ways:
-- First, sending requests in parallel takes less time than sending them sequentially, so the load generator may experience higher resource utilization over a shorted amount of time.
-- Second, parallel requests also get to the application server faster, which could increase resource utilization on the server side as well.
+병렬 요청은 테스트 처리량을 증가시키기 때문에 부하 테스트 결과에 영향을 미칩니다. 증가된 테스트 처리량은 두 가지 방식으로 부하 테스트에 영향을 줍니다:
+- 첫째, 요청을 병렬로 보내면 순차적으로 보내는 것보다 시간이 덜 걸리므로, 부하 생성기는 더 짧은 시간 동안 더 높은 리소스 사용률을 경험할 수 있습니다.
+- 둘째, 병렬 요청은 또한 애플리케이션 서버에 더 빨리 도달하므로, 서버 측에서도 리소스 사용률이 증가할 수 있습니다.
 
-If parallel requests potentially increase utilization on the load generator running the script _and_ the application server, why would we use them?
+병렬 요청이 스크립트를 실행하는 부하 생성기 _와_ 애플리케이션 서버 모두의 사용률을 잠재적으로 증가시킨다면, 왜 사용하는 걸까요?
 
-## When should you use parallel requests?
+## 병렬 요청을 언제 사용해야 하나요?
 
-Parallel requests should be used when they are also used in production. In these situations, parallel requests make a test more realistic. Modern browsers have a degree of parallelism by default, so a load test for a website or web app should typically account for parallel requests.
+병렬 요청은 프로덕션에서도 사용될 때 사용해야 합니다. 이러한 상황에서 병렬 요청은 테스트를 더 현실적으로 만듭니다. 현대 브라우저는 기본적으로 어느 정도의 병렬성을 가지므로, 웹사이트나 웹 앱에 대한 부하 테스트는 일반적으로 병렬 요청을 고려해야 합니다.
 
-In contrast, API calls may _not_ typically be triggered simultaneously, so it may be more realistic to send requests sequentially.
+반대로, API 호출은 일반적으로 동시에 트리거되지 _않을_ 수 있으므로, 요청을 순차적으로 보내는 것이 더 현실적일 수 있습니다.
 
-When in doubt about whether you should use parallel requests, use your browser's DevTools or a proxy sniffer while you access your application to see how requests are sent in production.
+병렬 요청을 사용해야 하는지 확신이 없다면, 브라우저의 DevTools나 프록시 스니퍼를 사용하여 애플리케이션에 접근할 때 프로덕션에서 요청이 어떻게 전송되는지 확인하세요.
 
-## Batching in k6
+## k6에서의 배치(Batching)
 
-By default, each k6 user sends each request in the script sequentially. To change this behavior, you can use batching.
+기본적으로 각 k6 사용자는 스크립트의 각 요청을 순차적으로 보냅니다. 이 동작을 변경하려면 배치(batching)를 사용할 수 있습니다.
 
-Batching signals to k6 that the requests within a batch must be sent simultaneously, and you can use it like this:
+배치(batching)는 k6에 배치 내의 요청이 동시에 전송되어야 함을 알리며, 다음과 같이 사용할 수 있습니다:
 
 ```js
 import { check } from 'k6';
@@ -46,44 +46,44 @@ export default function () {
 }
 ```
 
-The script above sends four requests in parallel, all of which are embedded into the homepage. Each of the responses is saved as an array in the variable `responses`, and the check verifies that the very first element of that array, `responses[0]`, the homepage, contains text that proves that the script successfully retrieved the HTML body.
+위 스크립트는 홈페이지에 포함된 네 가지 요청을 병렬로 보냅니다. 각 응답은 변수 `responses`에 배열로 저장되며, check는 해당 배열의 첫 번째 요소인 `responses[0]`(홈페이지)에 스크립트가 HTML 바디를 성공적으로 검색했다는 것을 증명하는 텍스트가 포함되어 있는지 확인합니다.
 
-You can batch requests even if they are not all HTTP GET requests. For example, you could use HTTP GET and HTTP POST requests in the same batch. You can find [more information here](https://k6.io/docs/javascript-api/k6-http/batch-requests/).
+모든 요청이 HTTP GET 요청이 아니더라도 요청을 배치로 처리할 수 있습니다. 예를 들어, 동일한 배치에서 HTTP GET과 HTTP POST 요청을 사용할 수 있습니다. [자세한 정보는 여기에서 확인하세요](https://k6.io/docs/javascript-api/k6-http/batch-requests/).
 
-## Test your knowledge
+## 지식 확인
 
 ### Question 1
 
-Which of the following statements is true?
+다음 중 어떤 진술이 맞습니까?
 
-A: Whether or not to use parallel requests depends on your test scenario.
+A: 병렬 요청을 사용할지 여부는 테스트 scenario에 따라 달라집니다.
 
-B: Using parallel requests is always recommended as a performance testing best practice.
+B: 병렬 요청 사용은 성능 테스트 모범 사례로 항상 권장됩니다.
 
-C: Parallel requests should always be used for testing websites.
+C: 웹사이트 테스트에는 병렬 요청을 항상 사용해야 합니다.
 
 ### Question 2
 
-Which of the following might be a side effect of you including parallel requests in your script?
+스크립트에 병렬 요청을 포함하면 어떤 부작용이 생길 수 있습니까?
 
-A: Your load generator sends fewer requests when some are batched.
+A: 일부 요청이 배치되면 부하 생성기는 더 적은 요청을 보냅니다.
 
-B: Your load test's executed requests per second (rps) will increase.
+B: 부하 테스트의 초당 실행 요청 수(rps)가 증가합니다.
 
-C: The application server caches batched requests and performance is improved.
+C: 애플리케이션 서버가 배치된 요청을 캐시하여 성능이 향상됩니다.
 
 ### Question 3
 
-When might you _not_ want to use parallel requests?
+병렬 요청을 사용하고 _싶지 않을_ 때는 언제입니까?
 
-A: When you want to increase the number of requests your test is sending
+A: 테스트가 보내는 요청 수를 늘리고 싶을 때
 
-B: When you have requests using multiple types of HTTP methods
+B: 여러 유형의 HTTP 메서드를 사용하는 요청이 있을 때
 
-C: When you're testing API endpoints
+C: API endpoint를 테스트할 때
 
-### Answers
+### 정답
 
-1. A. Parallel requests are sometimes, but not always, useful. For example, they are useful if you're trying to simulate a user accessing a web app on a browser, but not so useful if you're trying to mimic sequential requests to an API endpoint.
-2. B. All other things being equal, increasing the parallelism of your requests will increase the throughput (rps) of your test.
-3. A. The key here is your objective, not *what* you're testing. If you want to increase your test throughput (the number of requests sent by k6), parallel requests *would* be a valid way to do that. Whether you're using multiple HTTP methods or testing API endpoints is beside the point.
+1. A. 병렬 요청은 때로는, 항상은 아니지만, 유용합니다. 예를 들어, 브라우저에서 웹 앱에 접근하는 사용자를 시뮬레이션하려는 경우에는 유용하지만, API endpoint에 대한 순차적 요청을 모방하려는 경우에는 그다지 유용하지 않습니다.
+2. B. 다른 모든 것이 동등하다면, 요청의 병렬성을 높이면 테스트의 처리량(rps)이 증가합니다.
+3. A. 여기서 핵심은 *무엇을* 테스트하느냐가 아니라 목표입니다. 테스트 처리량(k6가 보내는 요청 수)을 늘리고 싶다면, 병렬 요청이 *유효한* 방법이 될 것입니다. 여러 HTTP 메서드를 사용하는지 또는 API endpoint를 테스트하는지는 요점이 아닙니다.
